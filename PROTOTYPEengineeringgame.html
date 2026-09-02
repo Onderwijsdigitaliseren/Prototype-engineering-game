@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PROTOTYPE — Engineering game</title>
+<meta name="description" content="Interactieve game: ontdek Engineering op het mbo. Vier missies, vier problemen, één engineer: jij.">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  /* huisstijl: indigo + wit, combinatie blauw + mint met verloop */
+  --indigo:#20116e;--indigo2:#2d1b8f;--blue:#1164b3;--mint:#47d7ad;--teal:#138273;
+  --orange:#ff8f1a;--lav:#9678dc;--fuchsia:#f391c8;--fuchsia-d:#c02a86;--pink:#f391c8;--red:#dd1c50;--yel:#ffc915;--lime:#e4f621;
+  --bg:#ffffff;--bg2:#f4f4f9;--card:#ffffff;--card2:#f4f4f9;--line:#e3e2ef;--line2:#cfcde3;
+  --txt:#1c1740;--mut:#5f5b86;--dim:#9a97b8;
+  --acc:var(--blue);--grn:var(--teal);--org:var(--orange);--pur:var(--lav);
+  --m1:#1164b3;--m2:#ff8f1a;--m3:#c02a86;--m4:#138273;
+  --grad:linear-gradient(90deg,var(--blue),var(--mint));
+  --grad2:linear-gradient(90deg,var(--indigo),var(--fuchsia));
+  --r:14px;--sh:0 8px 24px rgba(32,17,110,.08);
+  --serif:"Zilla Slab","Bitter",Georgia,"Times New Roman",serif;--sans:"Source Sans 3","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px;
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.45;min-height:100%}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input,select{font:inherit}
+h1,h2,h3{margin:0 0 .4em;line-height:1.15;font-weight:700;font-family:var(--serif);color:var(--indigo);text-wrap:balance}
+h1{font-size:2rem}h2{font-size:1.5rem}h3{font-size:1.12rem}
+p{margin:.4em 0}
+small,.mut{color:var(--mut)}
+.dim{color:var(--dim)}
+#app{max-width:760px;margin:0 auto;padding:0 14px 120px;min-height:100vh}
+html{scroll-padding-bottom:120px}
+/* topbar — indigo balk zoals de Summa-titelbalk */
+#top{position:sticky;top:0;z-index:20;background:var(--indigo);color:#fff;margin:0 -14px 14px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(32,17,110,.25)}
+#top:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;background:linear-gradient(90deg,var(--blue),var(--mint) 60%,var(--fuchsia))}
+#top .logo{font-family:var(--serif);font-weight:700;letter-spacing:.08em;font-size:1rem;color:#fff}
+#top .logo span{color:var(--fuchsia)}
+#top .xp{flex:1;min-width:60px}
+.bar{height:8px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;background:var(--grad);border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+#top .xpl{font-size:.72rem;color:rgba(255,255,255,.8);display:flex;justify-content:space-between;margin-bottom:3px}
+.icon-btn{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);display:grid;place-items:center;color:#fff;flex:none}
+/* screens */
+.screen{animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:12px 0;box-shadow:var(--sh)}
+.card.tight{padding:14px}
+.card.acc{border-color:transparent;background:var(--indigo);color:#fff;position:relative;overflow:hidden}
+.card.acc h2,.card.acc h3{color:#fff}.card.acc .mut,.card.acc small{color:rgba(255,255,255,.75)}
+.card.acc:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--grad)}
+.card.acc .input{background:#fff;color:var(--txt)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:12px;font-weight:700;background:var(--indigo);color:#fff;transition:transform .12s,box-shadow .2s,opacity .2s;box-shadow:0 6px 18px rgba(32,17,110,.22);min-height:46px;text-align:center}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.sec{background:var(--card2);color:var(--indigo);border:1px solid var(--line2);box-shadow:none}
+.btn.ghost{background:transparent;color:var(--mut);box-shadow:none;padding:10px 14px}
+.btn.org{background:var(--grad);color:#fff;box-shadow:0 6px 18px rgba(17,100,179,.28)}
+.btn.grn{background:var(--teal);color:#fff;box-shadow:0 6px 18px rgba(19,130,115,.28)}
+.btn.big{width:100%;padding:16px;font-size:1.05rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+.row.end{justify-content:flex-end}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:var(--bg2);color:var(--mut)}
+.tag.c1{background:rgba(17,100,179,.12);color:var(--m1)}
+.tag.c2{background:rgba(255,143,26,.16);color:#b85d00}
+.tag.c3{background:rgba(243,145,200,.25);color:var(--fuchsia-d)}
+.tag.c4{background:rgba(19,130,115,.14);color:var(--m4)}
+.tag.eng{background:rgba(17,100,179,.12);color:var(--blue)}
+.tag.vak{background:rgba(255,143,26,.16);color:#b85d00}
+.tag.sam{background:rgba(243,145,200,.25);color:var(--fuchsia-d)}
+.tag.ok{background:rgba(71,215,173,.22);color:var(--teal)}.tag.bad{background:rgba(221,28,80,.12);color:var(--red)}
+.card.acc .tag.eng{background:rgba(255,255,255,.15);color:#fff}
+.sticky-bottom{pointer-events:none;position:fixed;left:0;right:0;bottom:0;z-index:15;background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.96) 35%);padding:18px 14px 14px}
+.sticky-bottom>div{max-width:760px;margin:0 auto;display:flex;gap:10px;justify-content:flex-end;align-items:center}
+.sticky-bottom>div>*{pointer-events:auto}
+/* start */
+.hero{text-align:center;padding:36px 10px 20px}
+.hero .kicker{color:var(--fuchsia-d);letter-spacing:.3em;font-weight:700;font-size:.8rem}
+.hero h1{font-size:clamp(2.6rem,10vw,4.2rem);letter-spacing:-.02em;margin:.1em 0;color:var(--indigo)}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--mint) 55%,var(--fuchsia));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:1.1rem;color:var(--mut);max-width:34ch;margin:0 auto}
+.payoff{display:inline-block;background:#fff;color:var(--indigo);font-weight:700;line-height:1.05;padding:8px 10px;border-radius:6px;font-size:.85rem;text-align:left}
+.input{width:100%;padding:14px 16px;border-radius:12px;background:var(--bg2);border:1px solid var(--line2);color:var(--txt);outline:none;font-size:1.05rem}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(17,100,179,.15)}
+.avatars{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.avatars button{aspect-ratio:1;border-radius:12px;border:2px solid transparent;display:grid;place-items:center;font-weight:900;font-size:1.3rem;transition:transform .12s;color:#fff}
+.avatars button.on{border-color:var(--indigo);transform:scale(1.06);box-shadow:0 0 0 3px rgba(255,255,255,.9)}
+.av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:900;color:#fff;flex:none}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:10px;align-items:flex-end;max-width:92%;animation:in .3s ease}
+.msg .b{background:var(--bg2);border:1px solid var(--line);padding:11px 14px;border-radius:16px;border-bottom-left-radius:4px}
+.msg .name{font-size:.72rem;color:var(--blue);margin-bottom:2px;font-weight:700}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.typing{display:inline-flex;gap:4px;padding:6px 2px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--dim);animation:ty 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes ty{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+/* hub */
+.mission{display:flex;gap:14px;align-items:center;padding:14px 14px 14px 18px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);margin:10px 0;text-align:left;width:100%;transition:transform .12s,box-shadow .2s;position:relative;overflow:hidden;box-shadow:var(--sh)}
+.mission:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(32,17,110,.12)}
+.mission .ic{width:56px;height:56px;border-radius:12px;display:grid;place-items:center;flex:none}
+.mission .ic svg{width:32px;height:32px}
+.mission .t{flex:1;min-width:0}
+.mission .t h3{margin:0}
+.mission .t p{margin:2px 0 0;color:var(--mut);font-size:.9rem}
+.mission .sc{font-weight:900;font-size:1.2rem;text-align:right;flex:none;font-family:var(--serif)}
+.mission .sc small{display:block;font-weight:600;font-size:.7rem;font-family:var(--sans)}
+.mission.done{border-color:rgba(71,215,173,.6)}
+.mission .stripe{position:absolute;left:0;top:0;bottom:0;width:6px}
+/* steps */
+.steps{display:flex;gap:6px;margin:6px 0 14px}
+.steps span{flex:1;height:6px;border-radius:99px;background:var(--line)}
+.steps span.on{background:var(--grad)}
+.steps span.done{background:var(--blue);opacity:.45}
+.steps span.vak.on{background:var(--orange)}.steps span.vak.done{background:var(--orange)}
+.steplabel{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--blue);font-weight:700}
+/* controls */
+.ctl{margin:12px 0}
+.ctl label{display:flex;justify-content:space-between;font-weight:700;font-size:.92rem;margin-bottom:6px;color:var(--indigo)}
+.ctl label b{color:var(--blue);font-variant-numeric:tabular-nums;white-space:nowrap;margin-left:10px}
+input[type=range]{width:100%;accent-color:var(--blue);height:28px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:70px;padding:10px 6px;overflow-wrap:anywhere;line-height:1.2;border-radius:10px;background:var(--bg2);border:1px solid var(--line2);font-weight:700;font-size:.88rem;color:var(--mut)}
+.seg button.on{background:var(--indigo);border-color:var(--indigo);color:#fff}
+.tog{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:10px;background:var(--bg2);border:1px solid var(--line2);margin:6px 0;width:100%;text-align:left}
+.tog .sw{width:44px;height:26px;border-radius:99px;background:var(--line2);position:relative;flex:none;transition:background .2s}
+.tog .sw:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tog.on{border-color:var(--blue)}
+.tog.on .sw{background:var(--grad)}.tog.on .sw:after{left:21px}
+.tog small{display:block;color:var(--mut)}
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+.met{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.met .l{font-size:.72rem;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.met .v{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--indigo);font-family:var(--serif)}
+.met .s{font-size:.75rem;color:var(--mut)}
+.met.ok{border-color:var(--mint);background:rgba(71,215,173,.1)}.met.ok .v{color:var(--teal)}
+.met.bad{border-color:rgba(221,28,80,.5);background:rgba(221,28,80,.06)}.met.bad .v{color:var(--red)}
+.met.warn{border-color:var(--yel);background:rgba(255,201,21,.12)}.met.warn .v{color:#8a6a00}
+.viz{background:linear-gradient(180deg,#eef3fb,#f7f8fc);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:10px 0;position:relative}
+.viz svg,.viz canvas{display:block;width:100%;height:auto}
+.viz .hint{position:absolute;right:10px;top:8px;font-size:.72rem;color:var(--mut);background:rgba(255,255,255,.8);padding:3px 8px;border-radius:99px}
+.fb{padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);margin:10px 0;font-size:.95rem}
+.fb.ok{border-color:var(--mint);background:rgba(71,215,173,.12)}
+.fb.bad{border-color:rgba(221,28,80,.4);background:rgba(221,28,80,.06)}
+.fb.info{border-color:rgba(17,100,179,.3);background:rgba(17,100,179,.06)}
+.fb.vak{border-color:rgba(255,143,26,.5);background:rgba(255,143,26,.1)}
+/* persona */
+.persona{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);margin:8px 0}
+.persona .stars{color:var(--fuchsia-d);letter-spacing:2px;font-size:.95rem}
+.persona .q{color:var(--txt);font-size:.95rem;font-style:italic;font-family:var(--serif)}
+/* choices */
+.choice{display:block;width:100%;text-align:left;padding:14px;border-radius:12px;background:var(--bg2);border:1px solid var(--line2);margin:8px 0;transition:border-color .15s}
+.choice:hover{border-color:var(--blue)}
+.choice.good{border-color:var(--teal);background:rgba(71,215,173,.15)}
+.choice.bad{border-color:var(--red);background:rgba(221,28,80,.07)}
+.choice[disabled]{cursor:default}
+/* wie doet wat */
+.wdw-card{background:var(--indigo);color:#fff;border-radius:16px;padding:26px 20px;text-align:center;min-height:150px;display:grid;place-items:center;font-size:1.15rem;font-weight:700;margin:12px 0;animation:in .3s ease;font-family:var(--serif)}
+.wdw-card .mut{color:rgba(255,255,255,.75)}
+.wdw-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.wdw-btns button{padding:14px 6px;border-radius:12px;font-weight:700;border:1px solid var(--line2);background:var(--bg2)}
+.wdw-btns button.eng{color:var(--blue)}.wdw-btns button.vak{color:#b85d00}.wdw-btns button.sam{color:var(--fuchsia-d)}
+.wdw-btns button.hit{background:rgba(71,215,173,.3);border-color:var(--teal)}
+.wdw-btns button.miss{background:rgba(221,28,80,.12);border-color:var(--red)}
+/* badges */
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:99px;background:rgba(243,145,200,.12);border:1px solid rgba(243,145,200,.5);font-size:.85rem;font-weight:700;color:var(--indigo)}
+.badge.off{background:var(--bg2);border-color:var(--line)}
+.badge .d{width:10px;height:10px;border-radius:50%;background:var(--fuchsia);box-shadow:0 0 8px rgba(243,145,200,.9)}
+.badge.off{opacity:.4}.badge.off .d{background:var(--dim);box-shadow:none}
+/* score ring */
+.ring{width:130px;height:130px;margin:0 auto;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;font-weight:700;font-family:var(--serif);color:var(--indigo)}
+.ring .n small{display:block;font-size:.7rem;color:var(--mut);text-align:center;font-family:var(--sans)}
+/* toast */
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--indigo);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;z-index:50;box-shadow:var(--sh);max-width:92vw;text-align:center;width:max-content}
+#toast.show{opacity:1;transform:translateX(-50%)}
+/* impact counters */
+.impact{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.impact .it{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.impact .it .n{font-size:1.8rem;font-weight:700;font-family:var(--serif)}
+.impact .it .l{font-size:.85rem;color:var(--mut)}
+/* compare */
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+.vs .col{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.vs .col h3{font-size:1rem}
+.vs .col ul{margin:6px 0 0;padding-left:18px;color:var(--mut);font-size:.9rem}
+.vs .col ul li{margin:4px 0}
+.vs .mid{display:grid;place-items:center;font-weight:900;color:var(--dim)}
+.vs .col.eng{border-color:rgba(17,100,179,.4);border-top:4px solid var(--blue)}.vs .col.eng h3{color:var(--blue)}
+.vs .col.vak{border-color:rgba(255,143,26,.5);border-top:4px solid var(--orange)}.vs .col.vak h3{color:#b85d00}
+@media(max-width:520px){.vs{grid-template-columns:1fr}.vs .mid{display:none}}
+.fact{border-left:4px solid var(--orange);padding:8px 12px;background:rgba(255,143,26,.08);border-radius:0 10px 10px 0;font-size:.9rem;margin:10px 0}
+.fact b{color:#b85d00}
+.pulse{animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(17,100,179,.45)}70%{box-shadow:0 0 0 12px rgba(17,100,179,0)}}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line2);font-size:.95rem}
+.kv:last-child{border:0}
+.kv b{font-variant-numeric:tabular-nums;color:var(--indigo)}
+.center{text-align:center}
+.mt{margin-top:14px}.mb{margin-bottom:14px}
+.hidden{display:none!important}
+/* roles */
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:520px){.roles{grid-template-columns:1fr}}
+.role{position:relative;text-align:left;padding:18px;border-radius:var(--r);background:var(--card);border:2px solid var(--line);transition:transform .15s,border-color .2s;min-height:150px;box-shadow:var(--sh)}
+.role:hover{transform:translateY(-2px)}
+.role .role-ic{font-size:2rem;margin-bottom:6px}
+.role h3{margin:0}.role p{margin:0 0 8px;font-size:.9rem}
+.role .role-lines{display:none;margin:0;padding-left:18px;color:var(--txt);font-size:.92rem}
+.role .role-lines li{margin:4px 0}
+.role .tap{font-size:.75rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-top:8px}
+.role.open .role-lines{display:block;animation:in .3s ease}
+.role.open .tap{display:none}
+.role.vak.open{border-color:var(--orange);background:linear-gradient(180deg,rgba(255,143,26,.1),transparent),var(--card)}
+.role.eng.open{border-color:var(--blue);background:linear-gradient(180deg,rgba(17,100,179,.1),transparent),var(--card)}
+/* eisen chips */
+.eisen{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.eis{font-size:.85rem;font-weight:600;padding:7px 11px;border-radius:8px;background:var(--bg2);border:1px solid var(--line2);color:var(--txt)}
+.eis.ok{border-color:var(--teal);color:var(--teal);background:rgba(71,215,173,.15)}
+.eis.bad{border-color:var(--red);color:var(--red);background:rgba(221,28,80,.07)}
+/* sketch pad */
+.pad{position:relative;aspect-ratio:5/3;border-radius:12px;overflow:hidden;border:1px solid var(--line2);background:#fff;touch-action:none;margin:10px 0 8px;box-shadow:inset 0 0 0 1px #fff,var(--sh)}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pad canvas:last-child{cursor:crosshair}
+.tools{margin-bottom:10px}
+.swatches{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sw{width:32px;height:32px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px var(--line2)}
+.sw.on{box-shadow:0 0 0 2px var(--indigo);transform:scale(1.1)}
+.tb{padding:7px 11px;border-radius:8px;background:var(--bg2);border:1px solid var(--line2);font-size:.82rem;font-weight:700;color:var(--mut)}
+.tb.on{border-color:var(--indigo);color:var(--indigo);background:#fff}
+.sketch-result{margin-top:12px}
+.sketch-result img{width:100%;max-width:360px;border-radius:10px;border:2px solid var(--fuchsia);display:block;margin:0 auto 6px}
+.sketchbook{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sketchbook figure{margin:0}.sketchbook img{width:100%;border-radius:8px;border:1px solid var(--line2);display:block}
+.sketchbook figcaption{font-size:.8rem;color:var(--mut);margin-top:4px}
+.mission img.ic{object-fit:cover;border:1px solid var(--line2)}
+/* precision meter */
+.meter{position:relative;height:46px;border-radius:10px;background:var(--bg2);border:1px solid var(--line2);margin:14px 0;overflow:hidden}
+.zone{position:absolute;top:0;bottom:0;background:rgba(71,215,173,.35);border-left:2px solid var(--teal);border-right:2px solid var(--teal)}
+.needle{position:absolute;top:-2px;bottom:-2px;width:6px;margin-left:-3px;background:var(--indigo);border-radius:3px;box-shadow:0 0 8px rgba(32,17,110,.4)}
+.needle.hit{background:var(--teal);box-shadow:0 0 14px var(--mint)}.needle.miss{background:var(--red);box-shadow:0 0 14px var(--red)}
+/* time slider (sporthal) */
+.clock{display:flex;align-items:center;gap:10px;margin:8px 0}
+.clock b{min-width:52px;text-align:right;color:var(--indigo);font-variant-numeric:tabular-nums}
+/* naam + initiaal */
+.name-row{display:flex;gap:10px;align-items:center}
+.name-row .input{flex:1}
+.av.big-av{width:52px;height:52px;font-size:1.4rem;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:background .3s}
+.card.acc .btn{background:var(--grad);color:#fff;box-shadow:0 6px 18px rgba(71,215,173,.25)}
+.card.acc .btn.ghost{background:transparent;color:rgba(255,255,255,.75);box-shadow:none}
+.card.acc .btn.ghost:hover{color:#fff}
+.card.acc .pulse{animation:pulseW 1.4s infinite}
+@keyframes pulseW{0%,100%{box-shadow:0 0 0 0 rgba(71,215,173,.5)}70%{box-shadow:0 0 0 12px rgba(71,215,173,0)}}
+.icon-btn.fx{background:rgba(243,145,200,.22);border-color:rgba(243,145,200,.6);font-size:1.15rem;font-weight:700}
+.icon-btn.fx:hover{background:var(--fuchsia);color:var(--indigo)}
+</style>
+</head>
+<body>
+<div id="top"></div>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+/* ===== PROTOTYPE — core ===== */
+'use strict';
+const $ = (s, el = document) => el.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v;
+    else if (k === 'html') n.innerHTML = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null) n.append(k.nodeType ? k : document.createTextNode(k));
+  return n;
+};
+const fmt = (n, d = 0) => Number(n).toLocaleString('nl-NL', { maximumFractionDigits: d, minimumFractionDigits: d });
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const rnd = (a, b) => a + Math.random() * (b - a);
+
+/* ---- sound (WebAudio, no files) ---- */
+const Snd = {
+  ctx: null, on: true,
+  init() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.on = false; } } },
+  tone(f, t = .08, type = 'sine', g = .08, when = 0) {
+    if (!this.on || !this.ctx) return;
+    const c = this.ctx, o = c.createOscillator(), a = c.createGain();
+    o.type = type; o.frequency.value = f; a.gain.value = g;
+    o.connect(a); a.connect(c.destination);
+    const s = c.currentTime + when; o.start(s); a.gain.setValueAtTime(g, s); a.gain.exponentialRampToValueAtTime(.0001, s + t); o.stop(s + t + .02);
+  },
+  click() { this.tone(660, .05, 'square', .03); },
+  ok() { [523, 659, 784].forEach((f, i) => this.tone(f, .12, 'triangle', .06, i * .07)); },
+  win() { [523, 659, 784, 1047].forEach((f, i) => this.tone(f, .18, 'triangle', .07, i * .1)); },
+  bad() { this.tone(220, .18, 'sawtooth', .04); this.tone(180, .2, 'sawtooth', .04, .08); },
+  tick() { this.tone(1200, .03, 'square', .015); }
+};
+document.addEventListener('pointerdown', () => Snd.init(), { once: true });
+
+/* ---- state ---- */
+const DEFAULT = () => ({ name: '', avatar: 0, xp: 0, started: Date.now(), missions: {}, badges: [], wdw: { ok: 0, tot: 0 }, iterations: 0, seenIntro: false });
+let S = DEFAULT();
+const store = {
+  load() { try { const j = localStorage.getItem('prototype_v1'); if (j) S = Object.assign(DEFAULT(), JSON.parse(j)); } catch (e) { } },
+  save() { try { localStorage.setItem('prototype_v1', JSON.stringify(S)); } catch (e) { } },
+  reset() { S = DEFAULT(); try { localStorage.removeItem('prototype_v1'); } catch (e) { } }
+};
+const AV_COLORS = ['#1164b3', '#ff8f1a', '#c02a86', '#138273', '#20116e', '#9678dc'];
+const CONFETTI = ['#1164b3', '#47d7ad', '#ff8f1a', '#f391c8', '#20116e', '#ffc915'];
+const avColor = n => AV_COLORS[[...(n || 'x')].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length];
+const initial = n => (n || '?').trim().charAt(0).toUpperCase();
+
+const BADGES = [
+  { id: 'first', t: 'Eerste prototype', d: 'Je eerste ontwerp goedgekeurd' },
+  { id: 'iter', t: 'Iteratie-kampioen', d: '3+ testrondes in één missie — zo werkt engineering' },
+  { id: 'green', t: 'Duurzame denker', d: 'Een goedgekeurd ontwerp met 4+ blaadjes duurzaamheid' },
+  { id: 'hands', t: 'Gouden handen', d: 'Vakmens-ronde foutloos' },
+  { id: 'team', t: 'Teamspeler', d: 'Twee keer bijna perfect samengewerkt met de vakmensen' },
+  { id: 'world', t: 'Wereldveranderaar', d: 'Alle vier de ontwerpen afgerond' },
+];
+function giveBadge(id) {
+  if (S.badges.includes(id)) return;
+  S.badges.push(id); store.save();
+  const b = BADGES.find(x => x.id === id);
+  toast('🏅 Badge: ' + b.t); Snd.win();
+}
+function addXP(n) { S.xp += n; store.save(); renderTop(); }
+
+/* ---- ui helpers ---- */
+function toast(txt, ms = 2200) {
+  const t = $('#toast'); t.textContent = txt; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), ms);
+}
+function confetti() {
+  const c = el('canvas', { class: 'confetti' }); document.body.append(c);
+  c.width = innerWidth; c.height = innerHeight; const x = c.getContext('2d');
+  const P = Array.from({ length: 120 }, () => ({ x: rnd(0, c.width), y: rnd(-c.height, 0), r: rnd(4, 9), c: CONFETTI[Math.floor(rnd(0, 6))], v: rnd(2, 5), a: rnd(0, 6) }));
+  let f = 0; (function loop() {
+    x.clearRect(0, 0, c.width, c.height);
+    P.forEach(p => { p.y += p.v; p.a += .1; x.fillStyle = p.c; x.save(); x.translate(p.x, p.y); x.rotate(p.a); x.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * .6); x.restore(); });
+    if (++f < 160) requestAnimationFrame(loop); else c.remove();
+  })();
+}
+function ring(pct, color = 'var(--blue)', label = 'punten') {
+  const r = 54, C = 2 * Math.PI * r;
+  const w = el('div', { class: 'ring' });
+  w.innerHTML = `<svg viewBox="0 0 130 130" width="130" height="130"><circle cx="65" cy="65" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="65" cy="65" r="${r}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" style="transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1)"/></svg><div class="n"><span>0<small>${label}</small></span></div>`;
+  requestAnimationFrame(() => setTimeout(() => {
+    w.querySelectorAll('circle')[1].style.strokeDashoffset = C * (1 - clamp(pct, 0, 100) / 100);
+    countTo(w.querySelector('.n span'), Math.round(pct), 1000, label);
+  }, 50));
+  return w;
+}
+function countTo(node, target, ms = 1000, label = '', suffix = '') {
+  const t0 = performance.now();
+  (function step(t) {
+    const k = clamp((t - t0) / ms, 0, 1), e = 1 - Math.pow(1 - k, 3);
+    node.innerHTML = fmt(Math.round(target * e)) + suffix + (label ? `<small>${label}</small>` : '');
+    if (k < 1) requestAnimationFrame(step);
+  })(t0);
+}
+function steps(cur, labels) {
+  return el('div', {}, el('div', { class: 'steplabel' }, `Stap ${cur + 1}/${labels.length} · ${labels[cur]}`),
+    el('div', { class: 'steps' }, labels.map((l, i) => el('span', { class: i < cur ? 'done' : i === cur ? 'on' : '' }))));
+}
+async function chat(container, msgs, { speed = 1, skipBtn = true } = {}) {
+  const box = el('div', { class: 'chat' }); container.append(box);
+  let skip = false;
+  const sb = skipBtn ? el('button', { class: 'btn ghost', onclick: () => { skip = true; } }, 'Overslaan ›') : null;
+  if (sb) container.append(el('div', { class: 'row end' }, sb));
+  for (const m0 of msgs) {
+    const m = { ...m0, text: m0.text.replace(/\{name\}/g, S.name) };
+    if (!skip) {
+      const ty = el('div', { class: 'msg' + (m.me ? ' me' : '') }, el('div', { class: 'b' }, el('div', { class: 'typing' }, el('i'), el('i'), el('i'))));
+      box.append(ty); ty.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      await wait(clamp(m.text.length * 14 / speed, 350, 1400));
+      ty.remove();
+    }
+    const who = m.me ? S.name : (m.from || 'Sam');
+    box.append(el('div', { class: 'msg' + (m.me ? ' me' : '') }, el('div', { class: 'b' }, el('div', { class: 'name' }, who), el('div', { html: m.text }))));
+    if (!skip) { Snd.tick(); box.lastChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); await wait(220 / speed); }
+  }
+  if (sb) sb.remove();
+}
+function seg(options, value, onChange) {
+  const w = el('div', { class: 'seg' });
+  const draw = () => { w.innerHTML = ''; options.forEach(o => w.append(el('button', { class: o.v === value ? 'on' : '', onclick: () => { value = o.v; Snd.click(); draw(); onChange(value); } }, o.t))); };
+  draw(); return w;
+}
+function slider(label, min, max, step, value, unitFn, onChange) {
+  const b = el('b', {}, unitFn(value));
+  const inp = el('input', { type: 'range', min, max, step, value });
+  inp.addEventListener('input', () => { b.textContent = unitFn(+inp.value); onChange(+inp.value); });
+  const w = el('div', { class: 'ctl' }, el('label', {}, el('span', {}, label), b), inp);
+  w.set = v => { inp.value = v; b.textContent = unitFn(v); };
+  return w;
+}
+function toggle(label, sub, value, onChange) {
+  const t = el('button', { class: 'tog' + (value ? ' on' : ''), onclick: () => { value = !value; t.classList.toggle('on', value); Snd.click(); onChange(value); } },
+    el('div', {}, el('div', { html: `<b>${label}</b>` }), sub ? el('small', {}, sub) : null), el('span', { class: 'sw' }));
+  return t;
+}
+function metric(l, v, s, state) { return el('div', { class: 'met ' + (state || '') }, el('div', { class: 'l' }, l), el('div', { class: 'v' }, v), s ? el('div', { class: 'ss s' }, s) : null); }
+
+/* ---- router ---- */
+const app = () => $('#app');
+function show(node) { const a = app(); a.innerHTML = ''; a.append(node); window.scrollTo({ top: 0 }); renderTop(); }
+function renderTop() {
+  const t = $('#top'); if (!t) return;
+  const lvl = Math.floor(S.xp / 100) + 1, into = S.xp % 100;
+  t.innerHTML = '';
+  t.append(el('div', { class: 'logo' }, 'PROTO', el('span', {}, 'TYPE')));
+  if (S.name) {
+    t.append(el('div', { class: 'xp' }, el('div', { class: 'xpl' }, el('span', {}, `Level ${lvl}`), el('span', {}, `${S.xp} XP`)), el('div', { class: 'bar' }, el('i', { style: `width:${into}%` }))));
+    t.append(el('div', { class: 'av', title: S.name, style: `background:${avColor(S.name)}` }, initial(S.name)));
+  } else t.append(el('div', { class: 'xp' }));
+  t.append(el('button', { class: 'icon-btn', title: 'Geluid aan/uit', onclick: () => { Snd.on = !Snd.on; renderTop(); } }, Snd.on ? '🔊' : '🔇'));
+  t.append(el('button', { class: 'icon-btn fx', title: 'Opnieuw beginnen', onclick: restartGame }, '↻'));
+}
+
+function restartGame() {
+  if (!S.name || confirm('Opnieuw beginnen? Alle scores, schetsen en badges van deze speler worden gewist.')) { store.reset(); Snd.click(); screenStart(); }
+}
+/* ===== SCREENS ===== */
+function screenStart() {
+  const inp = el('input', { class: 'input', placeholder: 'Hoe heet je?', maxlength: 18, value: S.name || '' });
+  const badge = el('div', { class: 'av big-av', style: `background:${avColor(S.name)}` }, initial(S.name));
+  inp.addEventListener('input', () => { badge.textContent = initial(inp.value); badge.style.background = avColor(inp.value.trim()); });
+  const go = () => {
+    const n = inp.value.trim(); if (!n) { inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 400); inp.focus(); return; }
+    const fresh = !S.name; S.name = n; if (fresh) S.started = Date.now(); store.save(); Snd.ok();
+    S.seenIntro ? screenHub() : screenIntro();
+  };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  const hasSave = !!S.name;
+  show(el('div', { class: 'screen' },
+    el('div', { class: 'hero' },
+      el('div', { class: 'kicker' }, 'ENGINEERING GAME'),
+      el('h1', { html: 'PROTO<em>TYPE</em>' }),
+      el('p', { class: 'lead' }, 'Vier opdrachtgevers. Vier problemen. Jij schetst, ontwerpt en test de oplossing.')),
+    el('div', { class: 'card acc' },
+      el('h3', {}, 'Wie ben jij?'),
+      el('p', { class: 'mut', style: 'margin-top:-4px' }, 'Vul je naam in — je opdrachtgevers spreken je straks persoonlijk aan.'),
+      el('div', { class: 'name-row' }, badge, inp),
+      el('div', { class: 'mt' }, el('button', { class: 'btn big pulse', onclick: go }, hasSave ? 'Verder spelen →' : 'Start de game →')),
+      hasSave ? el('div', { class: 'center mt' }, el('button', { class: 'btn ghost', onclick: restartGame }, '↻ Opnieuw beginnen')) : null),
+    el('div', { class: 'card tight' }, el('small', {}, '⏱ Speelduur ± 30 minuten · werkt op telefoon, tablet en laptop · je voortgang wordt op dit apparaat bewaard.'))
+  ));
+}
+
+function domainIcon(id) {
+  const I = {
+    m1: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 17h20M4 17V9l8-5 8 5v8M8 17v-6M16 17v-6M12 17V8"/></svg>',
+    m2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="8" width="18" height="9" rx="2"/><circle cx="8" cy="12.5" r="1.5"/><circle cx="16" cy="12.5" r="1.5"/><path d="M12 8V4M9 4h6M7 17v3M17 17v3"/></svg>',
+    m3: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 13a8 8 0 0 1 16 0v2H4z"/><path d="M4 15h16M7 15v3M17 15v3M12 5v3"/></svg>',
+    m4: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>'
+  };
+  return I[id];
+}
+
+function screenHub() {
+  const done = Object.values(S.missions).filter(m => m.done).length;
+  const box = el('div', { class: 'screen' });
+  box.append(el('div', { class: 'card acc' },
+    el('div', { class: 'row between' }, el('h2', { style: 'margin:0' }, done === 0 ? `Je bureau, ${S.name}` : done < 4 ? `Goed bezig, ${S.name}` : `Alles opgelost, ${S.name}!`), el('span', { class: 'tag eng' }, `${done}/4 missies`)),
+    el('p', { class: 'mut' }, done === 0 ? 'Kies een opdracht. Elke missie duurt ongeveer 6 minuten.' : done < 4 ? 'De volgende opdrachtgever wacht op je.' : 'Bekijk jouw impact op de wereld.')));
+  MISSIONS.forEach((m, i) => {
+    const st = S.missions[m.id] || {};
+    const b = el('button', { class: 'mission' + (st.done ? ' done' : ''), onclick: () => startMission(m) },
+      el('span', { class: 'stripe', style: `background:${m.color}` }),
+      el('div', { class: 'ic', style: `background:${m.color}22;color:${m.color}`, html: domainIcon(m.id) }),
+      el('div', { class: 't' }, el('span', { class: 'tag c' + (i + 1) }, m.domain), el('h3', {}, m.title), el('p', {}, m.client)),
+      el('div', { class: 'sc' }, st.done ? el('span', { style: 'color:var(--grn)' }, st.score, el('small', {}, 'van 100')) : el('span', { style: 'color:var(--mut)' }, '›')));
+    box.append(b);
+  });
+  if (done === 4) box.append(el('button', { class: 'btn big grn mt', onclick: screenFinale }, '🌍 Bekijk jouw impact op de wereld →'));
+  box.append(el('div', { class: 'card tight mt' }, el('h3', {}, 'Badges'), el('div', { class: 'badges' }, BADGES.map(b => el('span', { class: 'badge' + (S.badges.includes(b.id) ? '' : ' off'), title: b.d }, el('i', { class: 'd' }), b.t)))));
+  box.append(el('div', { class: 'center mt' }, el('button', { class: 'btn ghost', onclick: screenStart }, '‹ Naar start')));
+  show(box);
+}
+
+/* ===== INTRO ===== */
+async function screenIntro() {
+  const box = el('div', { class: 'screen' });
+  const c = el('div', { class: 'card' }); box.append(c);
+  show(box);
+  await chat(c, [
+    { text: `Hé {name}! Welkom bij <b>Studio NEXT</b>. Ik ben Sam.` },
+    { text: 'Je fiets, je telefoon, de robot die je pakketje sorteert: iemand heeft dat ooit <b>bedacht</b>. Vandaag ben jij die iemand.' },
+    { text: 'Maar eerst: in techniek heb je twee soorten helden. Tik ze allebei aan. 👇' },
+  ]);
+  let seen = new Set();
+  const goBtn = el('button', { class: 'btn big', disabled: true, onclick: () => { S.seenIntro = true; store.save(); addXP(10); screenHub(); } }, 'Ik ben de engineer. Start! →');
+  const mk = (role, icon, title, sub, lines, cls) => {
+    const b = el('button', { class: 'role ' + cls, onclick: () => { b.classList.add('open'); seen.add(role); Snd.ok(); if (seen.size === 2) { goBtn.disabled = false; goBtn.classList.add('pulse'); } } },
+      el('div', { class: 'role-ic' }, icon), el('h3', {}, title), el('p', { class: 'mut' }, sub),
+      el('ul', { class: 'role-lines' }, lines.map(l => el('li', {}, l))), el('div', { class: 'tap' }, 'tik om te ontdekken'));
+    return b;
+  };
+  box.append(el('div', { class: 'roles' },
+    mk('vak', '🔧', 'De vakmens', 'Techniek · máákt het', ['Last, bouwt, monteert, installeert', 'Meester met machines en materiaal', 'Ziet in de praktijk wat wél werkt'], 'vak'),
+    mk('eng', '🧠', 'De engineer', 'Engineering · bedénkt het', ['Ontwerpt: schetst, tekent in 3D, rekent', 'Test, verbetert, kiest duurzaam', 'Zorgt dat het veilig, betaalbaar en slim is'], 'eng')));
+  box.append(el('div', { class: 'fb info center', html: 'Zonder vakmensen blijft een idee een tekening.<br>Zonder engineers is er niets om te maken.<br><b>Samen veranderen ze de wereld.</b>' }));
+  box.append(el('div', { class: 'mt' }, goBtn));
+}
+
+/* ===== HUB ===== */
+function screenHub() {
+  const done = Object.values(S.missions).filter(m => m.done).length;
+  const box = el('div', { class: 'screen' });
+  box.append(el('div', { class: 'card acc' },
+    el('div', { class: 'row between' }, el('h2', { style: 'margin:0' }, done === 0 ? `Jouw bureau, ${S.name}` : done < 4 ? `Goed bezig, ${S.name}` : `Alles ontworpen, ${S.name}!`), el('span', { class: 'tag eng' }, `${done}/4 ontwerpen`)),
+    el('p', { class: 'mut' }, done === 0 ? 'Kies een opdracht. Jij schetst, ontwerpt en test. Daarna gaat het naar de vakmensen.' : done < 4 ? 'De volgende opdrachtgever wacht op je.' : 'Bekijk jouw impact op de wereld.')));
+  MISSIONS.forEach((m, i) => {
+    const st = S.missions[m.id] || {};
+    const b = el('button', { class: 'mission' + (st.done ? ' done' : ''), onclick: () => startMission(m) },
+      el('span', { class: 'stripe', style: `background:${m.color}` }),
+      st.sketch ? el('img', { class: 'ic', src: st.sketch, alt: '' }) : el('div', { class: 'ic', style: `background:${m.color}22;color:${m.color}`, html: domainIcon(m.id) }),
+      el('div', { class: 't' }, el('span', { class: 'tag c' + (i + 1) }, m.domain), el('h3', {}, m.title), el('p', {}, m.client)),
+      el('div', { class: 'sc' }, st.done ? el('span', { style: 'color:var(--grn)' }, st.score, el('small', {}, leaves(st.eco || 0))) : el('span', { style: 'color:var(--mut)' }, '›')));
+    box.append(b);
+  });
+  if (done === 4) box.append(el('button', { class: 'btn big grn mt', onclick: screenFinale }, '🌍 Bekijk jouw impact op de wereld →'));
+  box.append(el('div', { class: 'card tight mt' }, el('h3', {}, 'Badges'), el('div', { class: 'badges' }, BADGES.map(b => el('span', { class: 'badge' + (S.badges.includes(b.id) ? '' : ' off'), title: b.d }, el('i', { class: 'd' }), b.t)))));
+  box.append(el('div', { class: 'row mt', style: 'justify-content:center' }, el('button', { class: 'btn ghost', onclick: screenStart }, '‹ Naar start'), el('button', { class: 'btn ghost', onclick: restartGame }, '↻ Opnieuw beginnen')));
+  show(box);
+}
+const leaves = n => '🌱'.repeat(Math.round(clamp(n, 0, 5))) || '·';
+
+/* ===== MISSION FRAMEWORK ===== */
+const STEPS = [
+  { t: 'Briefing', role: 'eng' }, { t: 'Schetsen', role: 'eng' }, { t: 'Ontwerpen & testen', role: 'eng' }, { t: 'Maken', role: 'vak' }, { t: 'Resultaat', role: 'eng' }
+];
+function stepBar(cur) {
+  const s = STEPS[cur];
+  return el('div', {}, el('div', { class: 'row between' }, el('div', { class: 'steplabel' }, `Stap ${cur + 1}/5 · ${s.t}`), el('span', { class: 'tag ' + s.role }, s.role === 'eng' ? '🧠 jij als engineer' : '🔧 de vakmens aan zet')),
+    el('div', { class: 'steps' }, STEPS.map((x, i) => el('span', { class: (i < cur ? 'done ' : i === cur ? 'on ' : '') + x.role }))));
+}
+function startMission(m) {
+  const run = { m, sketchScore: 0, designScore: 0, makeScore: 0, attempts: 0, best: null, sketch: null };
+  mBriefing(run);
+}
+function missionHeader(run, step) {
+  const i = MISSIONS.indexOf(run.m);
+  return el('div', {}, el('div', { class: 'row between' }, el('span', { class: 'tag c' + (i + 1) }, run.m.domain), el('button', { class: 'btn ghost', onclick: () => { if (confirm('Missie afbreken?')) screenHub(); } }, '✕')),
+    el('h2', {}, run.m.title), stepBar(step));
+}
+async function mBriefing(run) {
+  const box = el('div', { class: 'screen' }, missionHeader(run, 0));
+  const c = el('div', { class: 'card' }); box.append(c); show(box);
+  await chat(c, run.m.briefing);
+  box.append(el('div', { class: 'card tight' }, el('div', { class: 'steplabel' }, 'De klant wil'), el('div', { class: 'eisen' }, run.m.eisen.map(e => el('span', { class: 'eis' }, e)))));
+  box.append(el('div', { class: 'row end mt' }, el('button', { class: 'btn big', onclick: () => mSketch(run) }, '✏️ Ik ga schetsen →')));
+}
+
+/* ---- sketch canvas ---- */
+function sketchPad(m, onChange) {
+  const wrap = el('div', { class: 'pad' });
+  const bg = el('canvas'), fg = el('canvas');
+  wrap.append(bg, fg);
+  const COLORS = ['#20116e', '#1164b3', '#47d7ad', '#ff8f1a', '#f391c8'];
+  let color = COLORS[0], size = 4, eraser = false, strokes = 0, hist = [];
+  const W = 800, H = 480;
+  [bg, fg].forEach(c => { c.width = W; c.height = H; });
+  const bx = bg.getContext('2d'), fx = fg.getContext('2d');
+  bx.fillStyle = '#ffffff'; bx.fillRect(0, 0, W, H);
+  bx.strokeStyle = '#e9e9f3'; bx.lineWidth = 1; for (let x = 0; x <= W; x += 40) { bx.beginPath(); bx.moveTo(x, 0); bx.lineTo(x, H); bx.stroke(); } for (let y = 0; y <= H; y += 40) { bx.beginPath(); bx.moveTo(0, y); bx.lineTo(W, y); bx.stroke(); }
+  if (m.sketchBg) m.sketchBg(bx, W, H);
+  fx.lineCap = 'round'; fx.lineJoin = 'round';
+  let drawing = false, last = null;
+  const pos = e => { const r = fg.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+  fg.addEventListener('pointerdown', e => { e.preventDefault(); fg.setPointerCapture(e.pointerId); hist.push(fx.getImageData(0, 0, W, H)); if (hist.length > 20) hist.shift(); drawing = true; last = pos(e); dot(last); });
+  fg.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e); line(last, p); last = p; strokes++; if (strokes % 8 === 0) onChange(strokes); });
+  const up = () => { drawing = false; onChange(strokes); }; fg.addEventListener('pointerup', up); fg.addEventListener('pointercancel', up);
+  function stroke() { fx.globalCompositeOperation = eraser ? 'destination-out' : 'source-over'; fx.strokeStyle = color; fx.fillStyle = color; fx.lineWidth = eraser ? size * 5 : size; }
+  function dot(p) { stroke(); fx.beginPath(); fx.arc(p[0], p[1], fx.lineWidth / 2, 0, 7); fx.fill(); }
+  function line(a, b) { stroke(); fx.beginPath(); fx.moveTo(a[0], a[1]); fx.lineTo(b[0], b[1]); fx.stroke(); }
+  const tools = el('div', { class: 'tools' });
+  const sw = el('div', { class: 'swatches' });
+  const drawTools = () => {
+    sw.innerHTML = '';
+    COLORS.forEach(c => sw.append(el('button', { class: 'sw' + (c === color && !eraser ? ' on' : ''), style: `background:${c}`, onclick: () => { color = c; eraser = false; drawTools(); } })));
+    sw.append(el('button', { class: 'tb' + (eraser ? ' on' : ''), onclick: () => { eraser = !eraser; drawTools(); } }, '◻ Gum'));
+    sw.append(el('button', { class: 'tb' + (size === 4 ? ' on' : ''), onclick: () => { size = 4; drawTools(); } }, 'dun'));
+    sw.append(el('button', { class: 'tb' + (size === 10 ? ' on' : ''), onclick: () => { size = 10; drawTools(); } }, 'dik'));
+    sw.append(el('button', { class: 'tb', onclick: () => { const h = hist.pop(); if (h) fx.putImageData(h, 0, 0); } }, '↶ Ongedaan'));
+    sw.append(el('button', { class: 'tb', onclick: () => { hist.push(fx.getImageData(0, 0, W, H)); fx.clearRect(0, 0, W, H); } }, '✕ Wis'));
+  };
+  drawTools(); tools.append(sw);
+  const api = {
+    node: el('div', {}, wrap, tools),
+    export() { const c = document.createElement('canvas'); c.width = W / 2; c.height = H / 2; const x = c.getContext('2d'); x.drawImage(bg, 0, 0, W / 2, H / 2); x.drawImage(fg, 0, 0, W / 2, H / 2); return c.toDataURL('image/jpeg', .7); },
+    get strokes() { return strokes; }
+  };
+  return api;
+}
+function mSketch(run) {
+  const box = el('div', { class: 'screen' }, missionHeader(run, 1));
+  box.append(el('div', { class: 'fb info', html: `<b>Schets je eerste idee.</b> ${run.m.sketchHint} Het hoeft niet mooi — elke engineer begint met een krabbel.` }));
+  const status = el('span', { class: 'mut' }, 'Teken iets…');
+  const next = el('button', { class: 'btn', disabled: true, onclick: () => { run.sketch = pad.export(); run.sketchScore = pad.strokes > 120 ? 10 : 6; addXP(run.sketchScore); mDesign(run); } }, 'Schets klaar →');
+  const pad = sketchPad(run.m, n => { if (n > 25) { next.disabled = false; status.textContent = n > 120 ? 'Mooie schets! +10 XP' : 'Goed bezig'; } });
+  box.append(pad.node);
+  box.append(el('div', { class: 'card tight' }, el('div', { class: 'steplabel' }, 'De klant wil'), el('div', { class: 'eisen' }, run.m.eisen.map(e => el('span', { class: 'eis' }, e)))));
+  box.append(el('div', { class: 'sticky-bottom' }, el('div', {}, status, el('button', { class: 'btn ghost', onclick: () => mDesign(run) }, 'Overslaan'), next)));
+  show(box);
+}
+
+/* ---- design ---- */
+function mDesign(run) {
+  const box = el('div', { class: 'screen' }, missionHeader(run, 2));
+  box.append(el('div', { class: 'fb info', html: run.m.designIntro }));
+  const checks = el('div', { class: 'eisen' }); box.append(el('div', { class: 'card tight' }, el('div', { class: 'row between' }, el('div', { class: 'steplabel' }, 'Checklist van de klant'), el('span', { class: 'mut', style: 'font-size:.8rem' }, 'wordt live bijgewerkt')), checks));
+  const host = el('div', {}); box.append(host);
+  const status = el('span', { class: 'mut' }, 'Nog niet getest');
+  const next = el('button', { class: 'btn grn', disabled: true, onclick: () => mMake(run) }, 'Naar de werkvloer →');
+  box.append(el('div', { class: 'sticky-bottom' }, el('div', {}, status, next)));
+  const ctx = {
+    live(states) { checks.innerHTML = ''; run.m.eisen.forEach((e, i) => checks.append(el('span', { class: 'eis ' + (states[i] === true ? 'ok' : states[i] === false ? 'bad' : '') }, (states[i] === true ? '✓ ' : states[i] === false ? '✗ ' : '○ ') + e))); },
+    report(res) {
+      run.attempts++; S.iterations++;
+      if (!run.best || res.score > run.best.score) run.best = res;
+      status.textContent = `Test ${run.attempts} · ${res.score}/50` + (res.pass ? ' ✓' : '');
+      if (res.pass) { next.disabled = false; next.classList.add('pulse'); Snd.ok(); if (res.eco >= 4) giveBadge('green'); }
+      else { Snd.bad(); if (run.attempts >= 4) { next.disabled = false; next.textContent = 'Toch indienen →'; next.classList.remove('grn'); next.classList.add('sec'); } }
+      if (run.attempts === 3) giveBadge('iter');
+    }
+  };
+  ctx.live([null, null, null]);
+  run.m.design(host, ctx);
+  show(box);
+}
+
+/* ---- maken: vakmens mini-game + telefoontje + wie doet wat ---- */
+function mMake(run) {
+  run.designScore = run.best ? run.best.score : 0; addXP(run.designScore);
+  const M = run.m.maak;
+  const box = el('div', { class: 'screen' }, missionHeader(run, 3));
+  box.append(el('div', { class: 'fb vak', html: `<b>Jouw ontwerp is klaar.</b> Nu gaat het naar de werkvloer. Even van rol wisselen: jij bent nu de <b>vakmens</b>, ${M.who}. ${M.intro}` }));
+  const card = el('div', { class: 'card' }); box.append(card);
+  const title = el('h3', {}, M.rounds[0].t);
+  const meter = el('div', { class: 'meter' }); const zone = el('div', { class: 'zone' }); const needle = el('div', { class: 'needle' }); meter.append(zone, needle);
+  const info = el('p', { class: 'mut' }, M.action);
+  const stopBtn = el('button', { class: 'btn big org', onclick: stop }, '⏺ ' + M.verb);
+  const res = el('div', { class: 'row', style: 'gap:6px;margin-top:8px' });
+  card.append(el('div', { class: 'row between' }, el('span', { class: 'tag vak' }, '🔧 ' + M.who), el('span', { class: 'mut' }, 'ronde 1/3')), title, meter, info, stopBtn, res);
+  let round = 0, t0 = performance.now(), raf, running = true, hits = 0;
+  const speeds = [1.4, 1.9, 2.5], widths = [26, 20, 15];
+  let zoneL = 40, zoneW = widths[0];
+  function setZone() { zoneW = widths[round]; zoneL = 20 + Math.random() * (60 - zoneW / 2); zone.style.left = zoneL + '%'; zone.style.width = zoneW + '%'; }
+  setZone();
+  function loop(t) { const p = (Math.sin((t - t0) / 1000 * speeds[round]) + 1) / 2 * 100; needle.style.left = p + '%'; needle.dataset.p = p; if (running) raf = requestAnimationFrame(loop); }
+  raf = requestAnimationFrame(loop);
+  function stop() {
+    if (!running) return; running = false; cancelAnimationFrame(raf);
+    const p = +needle.dataset.p; const hit = p >= zoneL && p <= zoneL + zoneW; const near = Math.abs(p - (zoneL + zoneW / 2)) < zoneW;
+    if (hit) { hits++; Snd.ok(); needle.classList.add('hit'); } else { Snd.bad(); needle.classList.add('miss'); }
+    res.append(el('span', { class: 'tag ' + (hit ? 'ok' : 'bad') }, (hit ? '✓ ' : '✗ ') + M.rounds[round].t));
+    info.innerHTML = hit ? `<b style="color:var(--grn)">Strak!</b> ${M.rounds[round].ok}` : `<b style="color:var(--red)">Net niet.</b> ${near ? 'Bijna — vakmanschap is oefening.' : M.rounds[round].miss}`;
+    round++;
+    setTimeout(() => {
+      needle.classList.remove('hit', 'miss');
+      if (round < 3) { title.textContent = M.rounds[round].t; card.querySelector('.row .mut').textContent = `ronde ${round + 1}/3`; setZone(); t0 = performance.now(); running = true; raf = requestAnimationFrame(loop); }
+      else finish();
+    }, 1100);
+  }
+  function finish() {
+    stopBtn.remove(); meter.remove();
+    run.makeScore += hits * 3 + (hits === 3 ? 1 : 0);
+    if (hits === 3) giveBadge('hands');
+    card.append(el('div', { class: 'fb ' + (hits >= 2 ? 'ok' : 'info'), html: `<b>${hits}/3 goed.</b> Dat was <b>techniek</b>: precisie, handen, machines, oefening. ${M.outro}` }));
+    card.append(el('div', { class: 'vs mt' },
+      el('div', { class: 'col eng' }, el('h3', {}, '🧠 Jij als engineer'), el('ul', { html: M.engDid.map(x => `<li>${x}</li>`).join('') })),
+      el('div', { class: 'mid' }, '→'),
+      el('div', { class: 'col vak' }, el('h3', {}, '🔧 ' + M.who), el('ul', { html: M.vakDid.map(x => `<li>${x}</li>`).join('') }))));
+    card.append(el('div', { class: 'row end mt' }, el('button', { class: 'btn', onclick: () => phoneCall(run, box) }, 'Terug in je rol als engineer →')));
+  }
+  show(box);
+}
+function phoneCall(run, box) {
+  const H = run.m.handover;
+  const c = el('div', { class: 'card' }); box.append(c); c.scrollIntoView({ behavior: 'smooth' });
+  (async () => {
+    c.append(el('div', { class: 'row between' }, el('span', { class: 'tag eng' }, '🧠 jij als engineer'), el('span', { class: 'mut' }, '📞 inkomend')));
+    await chat(c, H.chat);
+    c.append(el('h3', { class: 'mt' }, 'Wat doe je?'));
+    const ch = el('div', {}); c.append(ch);
+    H.choices.forEach(o => {
+      const b = el('button', { class: 'choice', onclick: () => {
+        ch.querySelectorAll('.choice').forEach(x => { x.disabled = true; }); b.classList.add(o.good ? 'good' : 'bad');
+        run.makeScore += o.good ? 15 : o.half ? 7 : 0; (o.good ? Snd.ok : Snd.bad).call(Snd);
+        c.append(el('div', { class: 'fb ' + (o.good ? 'ok' : 'bad'), html: o.fb }));
+        c.append(el('div', { class: 'row end mt' }, el('button', { class: 'btn', onclick: () => wieDoetWat(run, box) }, 'Verder →')));
+      } }, o.t);
+      ch.append(b);
+    });
+  })();
+}
+function wieDoetWat(run, box) {
+  const Q = run.m.wdw.slice(); let i = 0, ok = 0;
+  const c = el('div', { class: 'card' }); box.append(c); c.scrollIntoView({ behavior: 'smooth' });
+  c.append(el('h3', {}, '⚡ Snelle ronde: wie doet dit?'), el('p', { class: 'mut' }, 'Engineer (bedenkt), vakmens (maakt) of samen? Tik.'));
+  const card = el('div', { class: 'wdw-card' }); const btns = el('div', { class: 'wdw-btns' }); const prog = el('div', { class: 'mut center mt' });
+  c.append(card, btns, prog);
+  const LAB = { eng: '🧠 Engineer', vak: '🔧 Vakmens', sam: '🤝 Samen' };
+  function draw() {
+    if (i >= Q.length) {
+      S.wdw.ok += ok; S.wdw.tot += Q.length; run.makeScore += Math.round(15 * ok / Q.length); store.save();
+      card.innerHTML = `<div>${ok}/${Q.length} goed<br><small class="mut" style="font-weight:400">${ok === Q.length ? 'Jij snapt precies hoe het team werkt.' : 'Onthoud: de engineer bedenkt en berekent, de vakmens maakt — en veel doen ze samen.'}</small></div>`;
+      btns.innerHTML = ''; prog.innerHTML = '';
+      c.append(el('div', { class: 'row end mt' }, el('button', { class: 'btn big', onclick: () => mResult(run) }, 'Bekijk resultaat →')));
+      return;
+    }
+    const q = Q[i]; card.textContent = q.t; prog.textContent = `${i + 1} / ${Q.length}`; btns.innerHTML = '';
+    ['eng', 'vak', 'sam'].forEach(k => btns.append(el('button', { class: k, onclick: () => {
+      btns.querySelectorAll('button').forEach(b => b.disabled = true);
+      const hit = k === q.a; if (hit) { ok++; Snd.ok(); } else Snd.bad();
+      btns.querySelector('.' + k).classList.add(hit ? 'hit' : 'miss'); btns.querySelector('.' + q.a).classList.add('hit');
+      card.innerHTML = `<div style="font-size:.95rem;font-weight:500"><span class="tag ${q.a}">${LAB[q.a]}</span><br><br>${q.why}</div>`;
+      setTimeout(() => { i++; draw(); }, hit ? 1200 : 2200);
+    } }, LAB[k])));
+  }
+  draw();
+}
+
+/* ---- result ---- */
+function mResult(run) {
+  const total = clamp(run.sketchScore + run.designScore + run.makeScore, 0, 100);
+  addXP(run.makeScore);
+  const eco = run.best ? run.best.eco : 0;
+  const prev = S.missions[run.m.id] || {};
+  S.missions[run.m.id] = { done: true, score: Math.max(total, prev.score || 0), best: run.best, attempts: run.attempts, sketch: run.sketch || prev.sketch || null, eco };
+  store.save(); giveBadge('first');
+  if (Object.values(S.missions).filter(x => x.done).length === 4) giveBadge('world');
+  if (run.makeScore >= 38) { S.perfectHand = (S.perfectHand || 0) + 1; if (S.perfectHand >= 2) giveBadge('team'); }
+  if (total >= 70) confetti();
+  const box = el('div', { class: 'screen' }, missionHeader(run, 4));
+  box.append(el('div', { class: 'card center' }, ring(total, run.m.color, 'van 100'),
+    el('h2', { class: 'mt' }, total >= 85 ? 'Meesterwerk.' : total >= 70 ? 'Sterk ontwerp!' : total >= 50 ? 'Het werkt — en dat is een begin.' : 'Elke engineer begint ergens.'),
+    el('p', { class: 'mut' }, run.m.impactText(run.best)),
+    run.sketch ? el('div', { class: 'sketch-result' }, el('img', { src: run.sketch, alt: 'jouw schets' }), el('small', { class: 'mut' }, 'Van jouw schets…  naar een werkend ontwerp.')) : null));
+  box.append(el('div', { class: 'card tight' },
+    el('div', { class: 'kv' }, el('span', {}, '✏️ Schets'), el('b', {}, `${run.sketchScore} / 10`)),
+    el('div', { class: 'kv' }, el('span', {}, `🧠 Ontwerp (${run.attempts} test${run.attempts === 1 ? '' : 's'})`), el('b', {}, `${run.designScore} / 50`)),
+    el('div', { class: 'kv' }, el('span', {}, '🔧 Maken & samenwerken'), el('b', {}, `${run.makeScore} / 40`)),
+    el('div', { class: 'kv' }, el('span', {}, '🌱 Duurzaamheid van je ontwerp'), el('b', { style: 'color:var(--grn)' }, leaves(eco) + ` ${eco}/5`))));
+  if (run.best && run.best.ecoNote) box.append(el('div', { class: 'fb ' + (eco >= 4 ? 'ok' : 'info'), html: `<b>🌱 Duurzame keuze:</b> ${run.best.ecoNote}` }));
+  box.append(el('div', { class: 'fact', html: run.m.fact }));
+  box.append(el('div', { class: 'row end mt' }, el('button', { class: 'btn big', onclick: screenHub }, 'Terug naar het bureau →')));
+  show(box);
+}
+
+/* ===== FINALE ===== */
+function screenFinale() {
+  const mins = Math.max(1, Math.round((Date.now() - S.started) / 60000));
+  const total = MISSIONS.reduce((a, m) => a + ((S.missions[m.id] || {}).score || 0), 0);
+  const ecoAvg = MISSIONS.reduce((a, m) => a + ((S.missions[m.id] || {}).eco || 0), 0) / 4;
+  const best = MISSIONS.slice().sort((a, b) => ((S.missions[b.id] || {}).score || 0) - ((S.missions[a.id] || {}).score || 0))[0];
+  const box = el('div', { class: 'screen' });
+  box.append(el('div', { class: 'hero', style: 'padding-top:20px' }, el('div', { class: 'kicker' }, 'JOUW IMPACT'), el('h1', { style: 'font-size:clamp(2rem,8vw,3rem)' }, `${S.name} veranderde de wereld`), el('p', { class: 'lead' }, `In ${mins} minuten. Stel je voor wat je in drie jaar kunt.`)));
+  const imp = el('div', { class: 'impact' });
+  MISSIONS.forEach(m => { const it = m.impact((S.missions[m.id] || {}).best); const n = el('div', { class: 'n', style: `color:${m.color}` }, '0'); imp.append(el('div', { class: 'it' }, n, el('div', { class: 'l' }, it.l))); setTimeout(() => countTo(n, it.n, 1600, '', it.s || ''), 300); });
+  box.append(el('div', { class: 'card' }, imp));
+  const sk = MISSIONS.filter(m => (S.missions[m.id] || {}).sketch);
+  if (sk.length) box.append(el('div', { class: 'card' }, el('h3', {}, '✏️ Jouw schetsboek'), el('p', { class: 'mut' }, 'Zo begint elk ontwerp: met een idee op papier.'), el('div', { class: 'sketchbook' }, sk.map(m => el('figure', {}, el('img', { src: S.missions[m.id].sketch, alt: m.title }), el('figcaption', {}, m.title))))));
+  box.append(el('div', { class: 'card center' }, ring(total / 4, best.color, 'gemiddeld'), el('h3', { class: 'mt' }, 'Jouw engineer-profiel'), el('p', { html: `Je scoorde het sterkst op <b style="color:${best.color}">${best.domain}</b>. ${best.profile}` }),
+    el('div', { class: 'fb ' + (ecoAvg >= 3.5 ? 'ok' : 'info'), html: `🌱 <b>Duurzaamheid: ${leaves(ecoAvg)}</b> — ${ecoAvg >= 4 ? 'jij kiest bijna altijd voor materiaal en energie die de aarde sparen. Dat is de engineer van de toekomst.' : ecoAvg >= 2.5 ? 'je hebt duurzame keuzes gemaakt, en er is nog meer te winnen. Elke engineer beslist mee over materiaal, energie en levensduur.' : 'duurzaamheid was nog niet jouw focus. Goed om te weten: als engineer bepaal jíj welk materiaal en hoeveel energie een product gebruikt.'}` }),
+    el('div', { class: 'badges', style: 'justify-content:center;margin-top:10px' }, BADGES.filter(b => S.badges.includes(b.id)).map(b => el('span', { class: 'badge' }, el('i', { class: 'd' }), b.t)))));
+  box.append(el('div', { class: 'card' }, el('h3', {}, 'Wat je net deed, heet engineering'),
+    el('p', { class: 'mut', html: 'Schetsen, ontwerpen, testen, verbeteren — en samenwerken met de vakmensen die het bouwen. Precies dat leer je bij <b>Engineering op het mbo</b>.' }),
+    el('div', { class: 'vs mt' },
+      el('div', { class: 'col eng' }, el('h3', {}, '🧠 Engineer · bedenkt het'), el('ul', { html: '<li>Schetst en tekent in 3D-CAD</li><li>Rekent, test en verbetert prototypes</li><li>Kiest materiaal en energie: veilig, betaalbaar, duurzaam</li><li>Mbo niveau 4 · daarna werken of naar het hbo</li>' })),
+      el('div', { class: 'mid' }, '&'),
+      el('div', { class: 'col vak' }, el('h3', {}, '🔧 Vakmens · maakt het'), el('ul', { html: '<li>Lassen, verspanen, monteren, installeren</li><li>Werkt met de nieuwste machines en materialen</li><li>Ziet elke dag iets echts ontstaan</li><li>Zonder hen geen brug, robot of warmtepomp</li>' }))),
+    el('p', { class: 'mt', html: 'Vier richtingen die je proefde: <b>werktuigbouwkunde</b>, <b>mechatronica</b>, <b>industrieel productontwerpen</b> en <b>energie & duurzame installaties</b>. In alle vier bedenk jij dingen die er nog niet zijn.' })));
+  box.append(el('div', { class: 'card tight center' }, el('p', { class: 'mut' }, `Totaalscore ${total}/400 · ${S.xp} XP · ${S.wdw.ok}/${S.wdw.tot} "wie doet wat" goed · ${S.iterations} testrondes`),
+    el('div', { class: 'row', style: 'justify-content:center' }, el('button', { class: 'btn sec', onclick: screenHub }, '‹ Bureau'), el('button', { class: 'btn', onclick: restartGame }, '↻ Speel opnieuw'))));
+  show(box);
+}
+
+/* boot */
+window.addEventListener('DOMContentLoaded', () => { store.load(); renderTop(); screenStart(); });
+/* ===== MISSIE 1 — Werktuigbouwkunde: de fietsbrug ===== */
+window.MISSIONS = window.MISSIONS || [];
+MISSIONS.push({
+  id: 'm1', color: '#1164b3', domain: 'Werktuigbouwkunde', title: 'De fietsbrug', client: 'Gemeente Waterland · 3.000 fietsers per dag',
+  briefing: [
+    { from: 'Wethouder De Jong', text: 'Hoi {name}! We willen een fietsbrug van <b>24 meter</b> over het kanaal, zodat leerlingen niet meer hoeven om te fietsen.' },
+    { from: 'Wethouder De Jong', text: 'Budget: <b>€ 400.000</b>. En de rondvaartboten moeten er gewoon onderdoor kunnen.' },
+    { from: 'Sam', text: 'Jij ontwerpt de brug: vorm, hoogte, materiaal. Eerst schetsen, dan rekenen we samen. 💪' },
+  ],
+  eisen: ['Buigt max. 96 mm door bij 200 fietsers', 'Kost minder dan € 400.000', 'Boten kunnen eronderdoor'],
+  sketchHint: 'Teken de brug van de zijkant: hoe overbrug jij 24 meter water? Boog, vakwerk, tuien, dikke balk?',
+  sketchBg(x, W, H) {
+    x.fillStyle = '#d7ecf7'; x.fillRect(0, H * .72, W, H * .28);
+    x.fillStyle = '#e3e2ef'; x.fillRect(0, H * .55, W * .12, H * .45); x.fillRect(W * .88, H * .55, W * .12, H * .45);
+    x.fillStyle = '#9a97b8'; x.font = 'bold 14px system-ui'; x.textAlign = 'center'; x.fillText('← 24 meter →', W / 2, H * .68); x.fillText('kanaal (boten!)', W / 2, H * .9);
+    x.fillStyle = '#9a97b8'; x.beginPath(); x.moveTo(W * .45, H * .8); x.lineTo(W * .55, H * .8); x.lineTo(W * .53, H * .85); x.lineTo(W * .47, H * .85); x.fill();
+  },
+  designIntro: '<b>Ontwerp de hoofdligger.</b> Schuif, kies en kijk live wat er gebeurt. Test zo vaak als je wilt.',
+  design(host, ctx) {
+    const st = { type: 'I', h: 800, mat: 'staal', pillar: false };
+    const MAT = { staal: { E: 210000, cost: 1, co2: 1, eco: 2, t: 'Staal' }, rstaal: { E: 210000, cost: 1.1, co2: .45, eco: 4, t: 'Gerecycled staal' }, alu: { E: 70000, cost: 2.2, co2: 1.6, eco: 1, t: 'Aluminium' }, hout: { E: 13000, cost: .4, co2: .2, eco: 5, t: 'Hout' } };
+    const TYPE = { I: { k: 1, cost: 1, t: 'I-profiel' }, koker: { k: 1.4, cost: 1.2, t: 'Koker' }, vakwerk: { k: 2.5, cost: 1.3, t: 'Vakwerk' } };
+    const L = 24000, q = 15, LIMIT = 96, BUDGET = 400;
+    function calc() {
+      const m = MAT[st.mat], ty = TYPE[st.type];
+      const I = ty.k * 3.4 * Math.pow(st.h, 3);
+      const span = st.pillar ? L / 2 : L;
+      const defl = 5 * q * Math.pow(span, 4) / (384 * m.E * I);
+      const cost = 120 + (st.h / 1000) * 250 * m.cost * ty.cost + (st.pillar ? 90 : 0);
+      const co2 = Math.round((st.h / 1000) * 180 * m.co2 * (st.type === 'vakwerk' ? .7 : 1) + (st.pillar ? 40 : 0));
+      const eco = clamp(Math.round(m.eco - (st.h > 1200 && st.mat !== 'hout' ? 1 : 0) + (st.type === 'vakwerk' ? 1 : 0) - (st.pillar ? 1 : 0)), 0, 5);
+      return { defl, cost, co2, eco };
+    }
+    const viz = el('div', { class: 'viz' }); const svg = el('div'); viz.append(svg, el('div', { class: 'hint' }, '↕ sleep over de brug = hoogte'));
+    const mets = el('div', { class: 'metrics' });
+    const fb = el('div', { class: 'fb', html: 'Pas je ontwerp aan en druk op <b>Test belasting</b>.' });
+    let t = 0, anim, testT = -1, lastTest = null;
+    const W = 600, y0 = 120, x0 = 60, x1 = 540, mid = (x0 + x1) / 2;
+    const cyclist = (x, y, s = 1, c = '#20116e') => `<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-6" cy="0" r="5" fill="none" stroke="${c}" stroke-width="1.6"/><circle cx="6" cy="0" r="5" fill="none" stroke="${c}" stroke-width="1.6"/><path d="M-6 0 L-1 -7 L4 -7 L6 0 M-1 -7 L1 -1" stroke="${c}" stroke-width="1.6" fill="none"/><path d="M-1 -7 L-3 -14 L2 -16" stroke="${c}" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="3" cy="-18" r="2.4" fill="${c}"/></g>`;
+    function draw(test) {
+      const r = calc();
+      const load = test ? clamp(testT, 0, 1) : .25;
+      const sagFull = clamp(r.defl, 0, 400) / 400 * 55;
+      const sag = sagFull * load;
+      const hpx = st.h / 2000 * 36 + 6;
+      const deckY = p => y0 + 4 * p * (1 - p) * sag;
+      const deck = `M${x0} ${y0} Q ${mid} ${y0 + sag * 2} ${x1} ${y0}`;
+      const deckBottom = `M${x1} ${y0 + hpx} Q ${mid} ${y0 + hpx + sag * 2} ${x0} ${y0 + hpx}`;
+      const matFill = st.mat === 'hout' ? '#c08a4a' : st.mat === 'alu' ? '#c9d3e6' : st.mat === 'rstaal' ? '#7f8ca3' : '#8b97ad';
+      const fail = test && r.defl > LIMIT && load > .95;
+      const strokeC = test && load > .95 ? (r.defl > LIMIT ? '#dd1c50' : '#138273') : '#20116e';
+      let truss = '';
+      if (st.type === 'vakwerk') { const n = 10, dx = (x1 - x0) / n; for (let i = 0; i < n; i++) { const pa = i / n, pb = (i + 1) / n, pm = (pa + pb) / 2; const xa = x0 + i * dx, xb = xa + dx, xm = xa + dx / 2; truss += `<path d="M${xa} ${deckY(pa) + hpx} L${xm} ${deckY(pm)} L${xb} ${deckY(pb) + hpx}" stroke="${matFill}" stroke-width="3" fill="none" stroke-linejoin="round"/><path d="M${xm} ${deckY(pm)} L${xm} ${deckY(pm) + hpx}" stroke="${matFill}" stroke-width="2"/>`; } }
+      const nC = test ? 14 : 5;
+      const cyc = Array.from({ length: nC }, (_, i) => { const p = test ? (0.08 + i / nC * .84 + (t * .0002 % .03)) : ((t * .00035 + i / nC) % 1); const x = x0 + p * (x1 - x0); return cyclist(x, deckY(p) - 3, .9, i % 3 === 0 ? '#1164b3' : i % 3 === 1 ? '#20116e' : '#dd1c50'); }).join('');
+      const boatX = 300 + Math.sin(t * .0007) * 170; const boatDir = Math.cos(t * .0007) >= 0 ? 1 : -1;
+      const boatHit = st.pillar && Math.abs(boatX - mid) < 44;
+      const waves = Array.from({ length: 3 }, (_, k) => { let d = `M0 ${176 + k * 12}`; for (let x = 0; x <= W; x += 20) d += ` Q ${x + 10} ${176 + k * 12 + Math.sin((x + t * .08 + k * 40) / 30) * 3} ${x + 20} ${176 + k * 12}`; return `<path d="${d}" stroke="#ffffff" stroke-opacity=".55" stroke-width="1.5" fill="none"/>`; }).join('');
+      const cloud = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})" fill="#fff" opacity=".9"><circle r="12"/><circle cx="14" cy="4" r="9"/><circle cx="-14" cy="5" r="8"/><rect x="-20" y="4" width="40" height="8" rx="4"/></g>`;
+      const cracks = fail ? `<path d="M${mid - 14} ${deckY(.5) + 2} l6 8 l-4 6 l7 9 M${mid + 12} ${deckY(.5) + 1} l-5 9 l5 5 l-6 8" stroke="#dd1c50" stroke-width="2" fill="none"/><text x="${mid}" y="${deckY(.5) - 22}" text-anchor="middle" fill="#dd1c50" font-size="14" font-weight="800">KRAAK!</text>` : '';
+      svg.innerHTML = `<svg viewBox="0 0 ${W} 240"><defs>
+        <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#dcefff"/><stop offset="1" stop-color="#f7fbff"/></linearGradient>
+        <linearGradient id="water" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7cc4ea"/><stop offset="1" stop-color="#1164b3"/></linearGradient>
+        <linearGradient id="deckg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient></defs>
+        <rect width="${W}" height="240" fill="url(#sky)"/>
+        <circle cx="520" cy="42" r="18" fill="#ffc915"/>
+        ${cloud(120 + (t * .01) % 60, 40, 1)}${cloud(380 - (t * .006) % 40, 62, .7)}
+        <rect x="0" y="168" width="${W}" height="72" fill="url(#water)"/>${waves}
+        <path d="M0 240 L0 150 L${x0 - 6} 150 L${x0 - 6} 240 Z" fill="#b9d8c3"/><path d="M${W} 240 L${W} 150 L${x1 + 6} 150 L${x1 + 6} 240 Z" fill="#b9d8c3"/>
+        <rect x="${x0 - 22}" y="${y0 - 2}" width="24" height="90" fill="#9a97b8"/><rect x="${x1 - 2}" y="${y0 - 2}" width="24" height="90" fill="#9a97b8"/>
+        ${st.pillar ? `<rect x="${mid - 9}" y="${y0 + hpx}" width="18" height="${240 - y0 - hpx}" fill="#9a97b8"/>` : ''}
+        <g transform="translate(${boatX} 176) scale(${boatDir} 1) ${boatHit ? 'rotate(-8)' : ''}"><path d="M-36 0 L36 0 L26 14 L-28 14 Z" fill="${boatHit ? '#dd1c50' : '#20116e'}"/><rect x="-16" y="-12" width="30" height="12" rx="2" fill="#fff"/><rect x="-12" y="-9" width="6" height="5" fill="#1164b3"/><rect x="-3" y="-9" width="6" height="5" fill="#1164b3"/><rect x="6" y="-9" width="6" height="5" fill="#1164b3"/><path d="M-30 -2 L-30 -22 L-20 -18 L-30 -14" fill="#ff8f1a"/>${boatHit ? '<text x="0" y="-30" text-anchor="middle" fill="#dd1c50" font-size="14" font-weight="800" transform="scale(' + boatDir + ' 1)">BONK!</text>' : ''}</g>
+        ${truss}
+        <path d="${deck} L${x1} ${y0 + hpx} ${deckBottom.replace(/^M[^ ]+ [^ ]+ /, '')} Z" fill="${st.type === 'vakwerk' ? 'none' : matFill}" stroke="${strokeC}" stroke-width="${st.type === 'vakwerk' ? 3 : 1.5}"/>
+        ${st.type !== 'vakwerk' ? `<path d="${deck} L${x1} ${y0 + hpx} ${deckBottom.replace(/^M[^ ]+ [^ ]+ /, '')} Z" fill="url(#deckg)"/>` : `<path d="${deck}" stroke="${matFill}" stroke-width="5" fill="none"/><path d="${deckBottom}" stroke="${matFill}" stroke-width="4" fill="none"/>`}
+        <path d="${deck}" stroke="${strokeC}" stroke-width="2.5" fill="none"/>
+        ${cyc}${cracks}
+        <text x="${W - 12}" y="${test ? 52 : 34}" text-anchor="end" fill="${r.defl > LIMIT ? '#dd1c50' : '#138273'}" font-size="12" font-weight="800">${test && load < 1 ? 'belasten…' : 'doorbuiging ' + fmt(r.defl) + ' mm'}</text>
+        <text x="12" y="20" fill="#5f5b86" font-size="11" font-weight="700">${TYPE[st.type].t} · ${st.h} mm · ${MAT[st.mat].t}</text>
+        <text x="12" y="34" fill="#9a97b8" font-size="10">24 m overspanning</text></svg>`;
+      mets.innerHTML = '';
+      mets.append(metric('Doorbuiging', `${fmt(r.defl)} mm`, `max ${LIMIT} mm`, r.defl <= LIMIT ? 'ok' : 'bad'));
+      mets.append(metric('Kosten', `€ ${fmt(r.cost)}k`, `budget € ${BUDGET}k`, r.cost <= BUDGET ? 'ok' : 'bad'));
+      mets.append(metric('Scheepvaart', st.pillar ? 'Geblokkeerd' : 'Vrij', st.pillar ? 'pijler in het water' : 'geen pijler', st.pillar ? 'bad' : 'ok'));
+      mets.append(metric('🌱 Duurzaam', leaves(r.eco), `${r.co2} ton CO₂ bij de bouw`, r.eco >= 4 ? 'ok' : r.eco >= 2 ? 'warn' : 'bad'));
+      ctx.live([r.defl <= LIMIT, r.cost <= BUDGET, !st.pillar]);
+      return r;
+    }
+    function loop() { t += 16; if (testT >= 0 && testT < 1.6) { testT += .022; draw(true); if (testT >= 1 && lastTest === null) { lastTest = evaluate(); } } else if (testT >= 1.6) { draw(true); } else draw(false); anim = requestAnimationFrame(loop); }
+    const obs = new MutationObserver(() => { if (!document.body.contains(host)) { cancelAnimationFrame(anim); obs.disconnect(); } }); obs.observe(document.body, { childList: true, subtree: true });
+    // sleep over de brug om de hoogte te veranderen
+    let dragY = null, dragH = 0;
+    viz.addEventListener('pointerdown', e => { dragY = e.clientY; dragH = st.h; viz.setPointerCapture(e.pointerId); });
+    viz.addEventListener('pointermove', e => { if (dragY == null) return; const nh = clamp(Math.round((dragH + (e.clientY - dragY) * 4) / 25) * 25, 300, 2000); if (nh !== st.h) { st.h = nh; hSlider.set(nh); testT = -1; } });
+    viz.addEventListener('pointerup', () => { dragY = null; }); viz.addEventListener('pointercancel', () => { dragY = null; });
+    const hSlider = slider('Hoogte van de ligger', 300, 2000, 25, st.h, v => `${v} mm`, v => { st.h = v; testT = -1; });
+    const ctl = el('div', { class: 'card' },
+      el('div', { class: 'ctl' }, el('label', {}, el('span', {}, 'Vorm van de ligger')), seg([{ v: 'I', t: 'I-profiel' }, { v: 'koker', t: 'Koker' }, { v: 'vakwerk', t: 'Vakwerk' }], st.type, v => { st.type = v; testT = -1; })),
+      hSlider,
+      el('div', { class: 'ctl' }, el('label', {}, el('span', {}, 'Materiaal')), seg([{ v: 'staal', t: 'Staal' }, { v: 'rstaal', t: '♻ Gerecycled' }, { v: 'alu', t: 'Alu' }, { v: 'hout', t: '🌳 Hout' }], st.mat, v => { st.mat = v; testT = -1; })),
+      toggle('Extra pijler in het midden', 'Halveert de overspanning — maar wat vindt de schipper?', st.pillar, v => { st.pillar = v; testT = -1; }),
+      el('button', { class: 'btn big org mt', onclick: test }, '⚙️ Test belasting (200 fietsers)'));
+    function test() { if (testT >= 0 && testT < 1) return; Snd.click(); testT = 0; lastTest = null; fb.className = 'fb info'; fb.innerHTML = '200 fietsers rijden de brug op…'; }
+    function evaluate() {
+      const r = calc();
+      const okD = r.defl <= LIMIT, okC = r.cost <= BUDGET, okB = !st.pillar;
+      const pass = okD && okC && okB;
+      let score = 0;
+      if (okD) score += 18; else score += Math.round(9 * clamp(LIMIT / r.defl, 0, 1));
+      if (okC) score += 12; else score += Math.round(6 * clamp(BUDGET / r.cost, 0, 1));
+      if (okB) score += 8;
+      if (pass) { score += r.eco * 2; score += r.defl > LIMIT * .6 ? 2 : 0; }
+      score = clamp(score, 0, 50);
+      const msgs = [];
+      if (!okD) msgs.push(`Buigt <b>${fmt(r.defl)} mm</b> door — te veel. Tip: maak hem hoger (2× zo hoog = 8× zo stijf!) of kies een stijver profiel of materiaal.`);
+      if (!okC) msgs.push(`Te duur: € ${fmt(r.cost)}k. Kan het slanker, of met een ander materiaal?`);
+      if (!okB) msgs.push('De rondvaartboot knalt tegen je pijler. Zonder pijler dus!');
+      if (pass) msgs.push(`<b>Hij staat!</b> ${fmt(r.defl)} mm doorbuiging voor € ${fmt(r.cost)}k.` + (r.eco >= 4 ? ' En duurzaam gebouwd. 🌱' : ' Kun je hem ook nog duurzamer maken?'));
+      fb.className = 'fb ' + (pass ? 'ok' : 'bad'); fb.innerHTML = msgs.join('<br>');
+      const ecoNote = st.mat === 'hout' ? 'Hout slaat CO₂ op in plaats van uit te stoten — het duurzaamste bouwmateriaal dat er is.' : st.mat === 'rstaal' ? 'Gerecycled staal is even sterk als nieuw staal, met minder dan de helft van de CO₂-uitstoot.' : st.type === 'vakwerk' ? 'Een vakwerk gebruikt minder materiaal voor dezelfde stijfheid: slim ontwerpen is ook duurzaam.' : 'Nieuw staal of aluminium kost veel energie. Volgende keer gerecycled staal of hout proberen?';
+      ctx.report({ pass, score, eco: r.eco, ecoNote, defl: r.defl, cost: r.cost, co2: r.co2, mat: st.mat });
+      return r;
+    }
+    host.append(viz, mets, fb, ctl);
+    loop();
+  },
+  maak: {
+    who: 'Mo de lasser', intro: 'De liggers moeten aan elkaar gelast worden. Een lasnaad is alleen sterk als je op precies het goede moment stopt.',
+    action: 'Stop de naald in het groene vlak: niet te heet, niet te koud.', verb: 'Lassen',
+    rounds: [{ t: 'Lasnaad 1: de onderflens', ok: 'Perfecte naad, mooi glad.', miss: 'Te heet: het staal is doorgebrand.' }, { t: 'Lasnaad 2: het lijf', ok: 'Strak. Mo zou trots zijn.', miss: 'Te koud: de las hecht niet.' }, { t: 'Lasnaad 3: de oplegging', ok: 'De brug hangt nu écht aan elkaar.', miss: 'Poreuze las — die moet opnieuw.' }],
+    outro: 'Mo doet dit elke dag, met certificaat en jaren ervaring. Zonder zijn handen blijft jouw brug een tekening.',
+    engDid: ['Schetste en koos de vorm', 'Rekende doorbuiging en kosten door', 'Koos het materiaal en tekende de brug'],
+    vakDid: ['Snijdt en last het staal', 'Ziet of de tekening in de praktijk klopt', 'Bouwt de brug op locatie']
+  },
+  handover: {
+    chat: [
+      { from: 'Mo (lasser)', text: 'Hé engineer, Mo hier. Op je tekening zit de lasnaad bij de oplegging aan de binnenkant. Daar kan ik met mijn toorts niet bij. Aan de buitenkant kan wél — maar is dat sterk genoeg? Dat moet jij weten.' },
+    ],
+    choices: [
+      { t: 'Goed dat je belt. Ik reken de las aan de buitenkant vandaag door en stuur je een nieuwe tekening.', good: true, fb: 'Precies. Mo weet hoe je last, jij weet hoe je rekent. <b>Zo werkt het team.</b>' },
+      { t: 'Doe gewoon wat er op de tekening staat.', good: false, fb: 'Mo kan er letterlijk niet bij. Een engineer die niet luistert naar de werkvloer ontwerpt dingen die niet te maken zijn.' },
+      { t: 'Doe maar wat jij denkt, jij bent de expert.', good: false, half: true, fb: 'Aardig, maar <b>jij</b> bent verantwoordelijk voor de sterkte. Eerst doorrekenen, dan pas lassen.' },
+    ]
+  },
+  wdw: [
+    { t: 'Berekent hoeveel de brug doorbuigt bij 200 fietsers', a: 'eng', why: 'Rekenen aan sterkte: engineerswerk.' },
+    { t: 'Last de stalen liggers aan elkaar', a: 'vak', why: 'Lassen is een vak — en een moeilijk vak.' },
+    { t: 'Tekent de brug in 3D-CAD', a: 'eng', why: 'De engineer legt het ontwerp vast in 3D.' },
+    { t: 'Controleert op de bouwplaats of alles klopt', a: 'sam', why: 'De vakmens meet, de engineer keurt en past aan.' },
+  ],
+  fact: '<b>Wist je dat?</b> Twee keer zo hoog = acht keer zo stijf. Daarom zijn bruggen en balken hoog en dun in plaats van laag en breed. Dat is de reden dat een I-profiel eruitziet als een I.',
+  impactText: b => b ? `Jouw brug scheelt 3.000 fietsers per dag een omweg van 20 minuten. ${fmt(b.defl)} mm doorbuiging bij volle belasting.` : 'De brug staat er nog niet.',
+  impact: b => ({ n: 3000, l: 'fietsers per dag over jouw brug' }),
+  profile: 'Jij houdt van krachten, materialen en dingen die écht moeten blijven staan. Werktuigbouwkundig engineers ontwerpen alles van bruggen tot achtbanen en windturbines.'
+});
+/* ===== MISSIE 2 — Mechatronica: de sorteerrobot ===== */
+MISSIONS.push({
+  id: 'm2', color: '#ff8f1a', domain: 'Mechatronica', title: 'De sorteerrobot', client: 'ReNew Recycling · 40 ton afval per week',
+  briefing: [
+    { from: 'Priya (ReNew)', text: 'Hoi {name}. Over onze band komen blikjes, PET-flesjes en papier. Een machine moet <b>metaal</b> en <b>PET</b> er automatisch uithalen. Papier mag doorlopen.' },
+    { from: 'Priya (ReNew)', text: 'Snel én goed: minstens <b>90 producten per minuut</b> en <b>95% correct</b>. Anders is het gerecyclede plastic waardeloos.' },
+    { from: 'Sam', text: 'Sensoren, duwers, timing: mechatronica. Schets eerst hoe jouw machine eruitziet. Hint voor straks: tijd = afstand ÷ snelheid. 😉' },
+  ],
+  eisen: ['Minimaal 95% correct gesorteerd', 'Minimaal 90 producten per minuut', 'Zuinig met energie'],
+  sketchHint: 'Teken de lopende band van boven: waar zit de sensor, waar de duwer, waar vallen de blikjes en flesjes in?',
+  sketchBg(x, W, H) {
+    x.fillStyle = '#e3e2ef'; x.fillRect(W * .05, H * .38, W * .9, H * .22);
+    x.fillStyle = '#9a97b8'; x.font = 'bold 14px system-ui'; x.textAlign = 'center'; x.fillText('lopende band →', W / 2, H * .5); x.fillText('bak METAAL?', W * .35, H * .85); x.fillText('bak PET?', W * .65, H * .85); x.fillText('sensor?', W * .2, H * .25);
+    ['#cbd5e1', '#38bdf8', '#d9c39a'].forEach((c, i) => { x.fillStyle = c; x.beginPath(); x.arc(W * (.12 + i * .07), H * .49, 12, 0, 7); x.fill(); });
+  },
+  designIntro: '<b>Stel de sorteerlijn in.</b> De sensor ziet het product; de <b>duwer</b> staat 0,80 m verderop, de <b>luchtstoot</b> op 1,60 m. De camera denkt 80 ms na. Reken uit wanneer het product bij de duwer is — en test!',
+  design(host, ctx) {
+    const st = { v: 1.0, d1: 500, d2: 1000, eco: false };
+    const SENS = 0.6, PUSH = 1.4, JET = 2.2, END = 3.0, LAT = .08, SPACING = .5, N = 16;
+    const cv = el('canvas', { width: 720, height: 300 }); const viz = el('div', { class: 'viz' }, cv); const g = cv.getContext('2d');
+    const mets = el('div', { class: 'metrics' }); const fb = el('div', { class: 'fb', html: 'Stel snelheid en timing in en druk op <b>Start de band</b>.' });
+    let sim = null, raf, ff = false;
+    const energy = () => +(0.9 + st.v * st.v * 1.4 * (st.eco ? .55 : 1)).toFixed(1); // kW
+    const ecoScore = () => { const e = energy(); return clamp(Math.round(5 - (e - 1.2) * 2.2), 0, 5); };
+    function updHint() {
+      const items = st.v / SPACING * 60, e = energy(), es = ecoScore();
+      mets.innerHTML = ''; mets.append(metric('Capaciteit', `${fmt(items)}/min`, 'min. 90', items >= 90 ? 'ok' : 'bad'), metric('Correct', sim ? `${sim.pct}%` : '–', 'min. 95%', sim ? (sim.pct >= 95 ? 'ok' : 'bad') : ''), metric('Timing duwer', `${st.d1} ms`, `product doet er ${fmt(0.8 / st.v * 1000)} ms over`, ''), metric('🌱 Energie', leaves(es), `${e} kW · lager is beter`, es >= 4 ? 'ok' : es >= 2 ? 'warn' : 'bad'));
+      ctx.live([sim ? sim.pct >= 95 : null, items >= 90, es >= 3]);
+    }
+    const X = m => 40 + m / END * 640;
+    const rr = (x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r); };
+    function drawItem(it) {
+      const x = X(it.x), y = 150 + it.dy;
+      g.save(); g.translate(x, y);
+      if (it.mat === 'metaal') { rr(-9, -13, 18, 26, 4); g.fillStyle = '#b8c0cf'; g.fill(); g.fillStyle = '#e6eaf2'; g.fillRect(-9, -13, 5, 26); g.strokeStyle = '#7d8798'; g.lineWidth = 1; g.strokeRect(-9, -13, 18, 26); g.fillStyle = '#dd1c50'; g.fillRect(-9, -3, 18, 7); }
+      else if (it.mat === 'pet') { rr(-6, -16, 12, 32, 5); g.fillStyle = '#9bd5f4'; g.fill(); g.fillStyle = '#e9f7ff'; g.fillRect(-6, -14, 3, 26); g.fillStyle = '#1164b3'; g.fillRect(-4, -19, 8, 5); g.strokeStyle = '#5aa9d6'; g.lineWidth = 1; rr(-6, -16, 12, 32, 5); g.stroke(); }
+      else { g.fillStyle = '#fff8e6'; g.fillRect(-11, -14, 22, 28); g.strokeStyle = '#c9b98f'; g.lineWidth = 1; g.strokeRect(-11, -14, 22, 28); g.fillStyle = '#c9b98f'; for (let i = 0; i < 4; i++) g.fillRect(-7, -9 + i * 6, 14, 2); }
+      if (it.state === 'done') { g.fillStyle = it.ok ? '#138273' : '#dd1c50'; g.font = 'bold 14px system-ui'; g.textAlign = 'center'; g.fillText(it.ok ? '✓' : '✗', 0, -22); }
+      g.restore();
+    }
+    function drawScene(s) {
+      g.clearRect(0, 0, 720, 300);
+      // vloer + band
+      g.fillStyle = '#eef1f8'; g.fillRect(0, 0, 720, 300);
+      g.fillStyle = '#cfd4e2'; g.fillRect(30, 104, 660, 92);
+      g.fillStyle = '#3b3f5c'; g.fillRect(40, 110, 640, 80);
+      const off = s ? (s.t * st.v * 640 / END) % 40 : 0;
+      g.strokeStyle = '#555a7a'; g.lineWidth = 2; for (let x = 40 - off; x < 680; x += 40) { g.beginPath(); g.moveTo(x, 110); g.lineTo(x, 190); g.stroke(); }
+      // rollers
+      for (let x = 50; x < 680; x += 40) { g.beginPath(); g.arc(x, 196, 5, 0, 7); g.fillStyle = '#9a97b8'; g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 1; g.beginPath(); const a = (off / 40) * 6.28; g.moveTo(x, 196); g.lineTo(x + Math.cos(a) * 4, 196 + Math.sin(a) * 4); g.stroke(); }
+      // bakken
+      const bins = [[X(PUSH), 'METAAL', '#8b97ad', s ? s.binM : 0], [X(JET), 'PET', '#1164b3', s ? s.binP : 0], [680, 'REST', '#c9b98f', s ? s.binR : 0]];
+      bins.forEach(([bx, lab, col, n]) => { g.fillStyle = '#fff'; rr(bx - 32, 212, 64, 56, 6); g.fill(); g.strokeStyle = col; g.lineWidth = 2; rr(bx - 32, 212, 64, 56, 6); g.stroke(); const h = Math.min(50, n * 7); g.fillStyle = col; g.globalAlpha = .35; g.fillRect(bx - 29, 265 - h, 58, h); g.globalAlpha = 1; g.fillStyle = '#20116e'; g.font = 'bold 11px system-ui'; g.textAlign = 'center'; g.fillText(lab, bx, 226); g.font = 'bold 16px Georgia,serif'; g.fillText(n, bx, 252); });
+      // labels boven
+      g.fillStyle = '#5f5b86'; g.font = 'bold 11px system-ui'; g.textAlign = 'center';
+      g.fillText('sensor + camera', X(SENS), 30); g.fillText('duwer · 0,80 m', X(PUSH), 30); g.fillText('luchtstoot · 1,60 m', X(JET), 30);
+      // sensor / camera
+      const sensOn = s && s.t - s.lastSens < .12;
+      g.fillStyle = '#20116e'; rr(X(SENS) - 12, 36, 24, 18, 4); g.fill(); g.fillStyle = sensOn ? '#47d7ad' : '#9a97b8'; g.beginPath(); g.arc(X(SENS), 45, 5, 0, 7); g.fill();
+      g.strokeStyle = sensOn ? '#47d7ad' : 'rgba(221,28,80,.55)'; g.lineWidth = sensOn ? 4 : 2; g.setLineDash(sensOn ? [] : [4, 4]); g.beginPath(); g.moveTo(X(SENS), 54); g.lineTo(X(SENS), 195); g.stroke(); g.setLineDash([]);
+      // duwer
+      const p1 = s ? clamp(1 - Math.abs(s.t - s.fire1 - .1) / .1, 0, 1) : 0, p2 = s ? clamp(1 - Math.abs(s.t - s.fire2 - .1) / .1, 0, 1) : 0;
+      g.fillStyle = '#9a97b8'; g.fillRect(X(PUSH) - 20, 36, 40, 22); g.fillStyle = '#5f5b86'; g.fillRect(X(PUSH) - 5, 58, 10, 10 + p1 * 50); g.fillStyle = '#ff8f1a'; rr(X(PUSH) - 18, 66 + p1 * 50, 36, 14, 3); g.fill();
+      // luchtstoot
+      g.fillStyle = '#9a97b8'; g.fillRect(X(JET) - 14, 36, 28, 22); g.fillStyle = '#1164b3'; g.fillRect(X(JET) - 5, 58, 10, 40);
+      if (p2 > 0) { g.strokeStyle = 'rgba(17,100,179,.7)'; g.lineWidth = 2; for (let i = 0; i < 3; i++) { g.beginPath(); g.arc(X(JET), 100 + i * 22 * p2, 6 + i * 5, .3, 2.84); g.stroke(); } }
+      if (!s) return;
+      s.items.forEach(it => { if (it.state !== 'wait' && it.state !== 'done') drawItem(it); });
+      // popups
+      s.pops = (s.pops || []).filter(pp => pp.a > 0); s.pops.forEach(pp => { g.globalAlpha = pp.a; g.fillStyle = pp.ok ? '#138273' : '#dd1c50'; g.font = 'bold 13px system-ui'; g.textAlign = 'center'; g.fillText(pp.txt, pp.x, pp.y); pp.y -= .6; pp.a -= .02; }); g.globalAlpha = 1;
+    }
+    function start() {
+      if (sim && !sim.finished) return;
+      Snd.click(); ff = false; ffBtn.classList.remove('hidden'); startBtn.disabled = true;
+      const mats = []; for (let i = 0; i < N; i++) mats.push(['metaal', 'pet', 'papier', 'metaal', 'pet', 'papier', 'pet', 'metaal'][i % 8]); mats.sort(() => Math.random() - .5);
+      sim = { binM: 0, binP: 0, binR: 0, pops: [], t: 0, items: mats.map((m, i) => ({ mat: m, x: -i * SPACING, dy: 0, state: 'wait', ok: false })), q: [], lastSens: -9, fire1: -9, fire2: -9, done: 0, correct: 0, pct: 0, finished: false };
+      let last = performance.now();
+      (function step(now) {
+        const dt = Math.min(.05, (now - last) / 1000) * (ff ? 4 : 1); last = now;
+        const s = sim; const sub = 4;
+        for (let k = 0; k < sub; k++) {
+          const h = dt / sub; s.t += h;
+          s.items.forEach(it => {
+            if (it.state === 'done') return;
+            if (it.state === 'wait') { it.x += st.v * h; if (it.x > -0.01) it.state = 'belt'; return; }
+            if (it.state === 'pushed') { it.dy += 260 * h; if (it.dy > 70) { it.state = 'done'; s.done++; if (it.ok) s.correct++; if (it.bin === 1) s.binM++; else s.binP++; s.pops.push({ x: X(it.x), y: 150, a: 1, ok: it.ok, txt: it.ok ? '+1' : 'fout' }); } it.x += st.v * h * .1; return; }
+            const px = it.x; it.x += st.v * h;
+            if (px < SENS && it.x >= SENS) { s.lastSens = s.t; if (it.mat === 'metaal') s.q.push({ at: s.t + st.d1 / 1000, a: 1 }); if (it.mat === 'pet') s.q.push({ at: s.t + LAT + st.d2 / 1000, a: 2 }); }
+            if (it.x >= END) { it.state = 'done'; it.ok = it.mat === 'papier'; it.dy = 60; it.x = END + .05; s.done++; if (it.ok) s.correct++; s.binR++; s.pops.push({ x: 680, y: 150, a: 1, ok: it.ok, txt: it.ok ? '+1' : (it.mat === 'metaal' ? 'blikje gemist' : 'flesje gemist') }); }
+          });
+          s.q = s.q.filter(ev => {
+            if (s.t < ev.at) return true;
+            const ax = ev.a === 1 ? PUSH : JET; const tol = .05;
+            if (ev.a === 1) s.fire1 = s.t; else s.fire2 = s.t;
+            const tooFast = st.v > 1.6 && Math.random() < (st.v - 1.6) * .6;
+            s.items.forEach(it => { if (it.state === 'belt' && Math.abs(it.x - ax) <= tol && !tooFast) { it.state = 'pushed'; it.bin = ev.a; it.ok = (ev.a === 1 && it.mat === 'metaal') || (ev.a === 2 && it.mat === 'pet'); } });
+            return false;
+          });
+        }
+        s.pct = s.done ? Math.round(100 * s.correct / s.done) : 0;
+        drawScene(s); updHint();
+        if (s.done >= N) { s.finished = true; finish(s); return; }
+        raf = requestAnimationFrame(step);
+      })(last);
+    }
+    function finish(s) {
+      startBtn.disabled = false; ffBtn.classList.add('hidden');
+      const items = st.v / SPACING * 60, es = ecoScore(); const okQ = s.pct >= 95, okC = items >= 90; const pass = okQ && okC;
+      let score = Math.round(28 * clamp((s.pct - 50) / 45, 0, 1)) + (okC ? 12 : Math.round(6 * clamp(items / 90, 0, 1)));
+      if (pass) score += es * 2; score = clamp(score, 0, 50);
+      const msgs = [];
+      if (!okQ) msgs.push(`<b>${s.pct}% correct</b> — te laag. Bij ${fmt(st.v, 2)} m/s doet het product er ${fmt(0.8 / st.v * 1000)} ms over naar de duwer, en ${fmt(1.6 / st.v * 1000)} ms naar de luchtstoot (min de 80 ms van de camera).` + (st.v > 1.6 ? ' En boven 1,6 m/s schieten producten soms langs de duwer.' : ''));
+      if (!okC) msgs.push(`Slechts ${fmt(items)} producten/min. De band mag sneller — maar dan verandert je timing ook.`);
+      if (pass) msgs.push(`<b>Werkt!</b> ${s.pct}% correct bij ${fmt(items)} producten per minuut.` + (es >= 4 ? ' En zuinig. 🌱' : ' Kan het ook met minder stroom?'));
+      fb.className = 'fb ' + (pass ? 'ok' : 'bad'); fb.innerHTML = msgs.join('<br>');
+      const ecoNote = st.eco && st.v <= 1.2 ? 'Een zuinige motor en niet harder draaien dan nodig: de machine gebruikt bijna de helft minder stroom.' : st.eco ? 'De zuinige motor helpt — maar hoe harder de band draait, hoe meer energie hij vreet.' : 'Elke machine draait dag en nacht. Een zuinige motor bespaart hier jaren lang stroom.';
+      ctx.report({ pass, score, eco: es, ecoNote, pct: s.pct, items: Math.round(items), v: st.v });
+    }
+    const startBtn = el('button', { class: 'btn big org mt', onclick: start }, '▶ Start de band (16 producten)');
+    const ffBtn = el('button', { class: 'btn sec hidden', onclick: () => { ff = true; } }, '⏩ Sneller');
+    const ctl = el('div', { class: 'card' },
+      slider('Bandsnelheid', .5, 2, .05, st.v, v => `${fmt(v, 2)} m/s`, v => { st.v = v; updHint(); }),
+      slider('Timing duwer (na sensor)', 100, 2000, 10, st.d1, v => `${v} ms`, v => { st.d1 = v; updHint(); }),
+      slider('Timing luchtstoot (na camera)', 100, 3000, 10, st.d2, v => `${v} ms`, v => { st.d2 = v; updHint(); }),
+      toggle('♻ Energiezuinige motor', 'Iets duurder, 45% minder stroom', st.eco, v => { st.eco = v; updHint(); }),
+      el('div', { class: 'row' }, startBtn, ffBtn));
+    const obs = new MutationObserver(() => { if (!document.body.contains(host)) { cancelAnimationFrame(raf); obs.disconnect(); } }); obs.observe(document.body, { childList: true, subtree: true });
+    host.append(viz, mets, fb, ctl);
+    drawScene(null); updHint();
+  },
+  maak: {
+    who: 'Daan de mechatronica-monteur', intro: 'De sensoren moeten aangesloten worden in de schakelkast. Elke draad op precies de juiste klem.',
+    action: 'Stop de naald in het groene vlak om de draad strak op de klem te zetten.', verb: 'Aansluiten',
+    rounds: [{ t: 'Draad 1: de sensor', ok: 'Vast. De sensor knippert groen.', miss: 'Losse draad — de sensor ziet niets.' }, { t: 'Draad 2: de duwer', ok: 'Klik. De duwer reageert.', miss: 'Verkeerde klem: de duwer schiet willekeurig uit.' }, { t: 'Draad 3: de noodstop', ok: 'De belangrijkste draad zit goed.', miss: 'Zonder noodstop mag de machine niet aan.' }],
+    outro: 'Daan leest schema\'s, meet, sluit aan en test. Jouw programma doet niets zonder zijn kast.',
+    engDid: ['Schetste de machine', 'Bepaalde snelheid en timing', 'Programmeerde de besturing'],
+    vakDid: ['Bouwt de schakelkast', 'Monteert sensoren en duwers', 'Test en lost storingen op']
+  },
+  handover: {
+    chat: [
+      { from: 'Daan (monteur)', text: 'Yo, lijn staat! Maar in de hal komt stof op de lens van de camera. Na een uur ziet hij de PET-flesjes niet meer. Ik heb hem schoongeveegd, maar dat gaat de klant niet elk uur doen hè.' },
+    ],
+    choices: [
+      { t: 'Goed gezien! Ik ontwerp een luchtspoeling voor de lens en een waarschuwing in de software. Test jij hem morgen?', good: true, fb: 'Top. Daan ziet het probleem in de praktijk, jij bedenkt een structurele oplossing. <b>Engineer en vakmens versterken elkaar.</b>' },
+      { t: 'In mijn simulatie werkte het prima. Dat stof is jullie probleem.', good: false, fb: 'Een simulatie is niet de werkelijkheid. Daarom zijn de mensen op de vloer zo waardevol voor een engineer.' },
+      { t: 'Plak er gewoon een stukje tape voor.', good: false, half: true, fb: 'Dan ziet de camera helemaal niets meer. 😅 Een engineer zoekt de oorzaak en lost die structureel op.' },
+    ]
+  },
+  wdw: [
+    { t: 'Programmeert de timing van sensor en duwer', a: 'eng', why: 'De besturing bedenken en programmeren: engineerswerk.' },
+    { t: 'Trekt de kabels en sluit de sensoren aan', a: 'vak', why: 'Monteren en aansluiten: vakwerk.' },
+    { t: 'Merkt dat de lens vies wordt en meldt dat', a: 'vak', why: 'Wie bij de machine staat, ziet het als eerste.' },
+    { t: 'Zoekt uit waarom de machine 1 op de 20 flesjes mist', a: 'sam', why: 'De monteur meet, de engineer analyseert en past aan.' },
+  ],
+  fact: '<b>Wist je dat?</b> Bijna elke machine — van wasstraat tot frietautomaat — werkt met dezelfde drie dingen: <b>sensoren</b> (voelen), een <b>besturing</b> (denken) en <b>actuatoren</b> (doen). Dat is mechatronica.',
+  impactText: b => b ? `Jouw sorteerlijn haalt ${b.pct}% correct bij ${b.items} producten per minuut. Dat is 40 ton beter gerecycled plastic en metaal per week.` : 'De lijn draait nog niet.',
+  impact: b => ({ n: 2080, l: 'ton afval per jaar automatisch gesorteerd' }),
+  profile: 'Jij hebt een kop voor timing, logica en dingen die bewegen. Mechatronica-engineers bouwen robots, machines, drones en de fabrieken van de toekomst.'
+});
+/* ===== MISSIE 3 — Industrieel productontwerpen: de helm ===== */
+MISSIONS.push({
+  id: 'm3', color: '#c02a86', domain: 'Industrieel productontwerpen', title: 'De helm die je wél opzet', client: 'GLIDE deelscooters · 120.000 gebruikers',
+  briefing: [
+    { from: 'Yara (GLIDE)', text: 'Hoi {name}. Bijna niemand zet een helm op bij onze deelscooters. "Lelijk", "te groot", "past niet in mijn tas".' },
+    { from: 'Yara (GLIDE)', text: 'Ontwerp een helm die jongeren <b>wél</b> willen dragen. Veilig (norm EN 1078) en <b>kostprijs max € 45</b>, anders kunnen we hem niet gratis meegeven.' },
+    { from: 'Sam', text: 'Productontwerpen: techniek + mensen + vorm. Schets eerst jouw droomhelm. Daarna testen drie gebruikers hem. Ze zijn eerlijk.' },
+  ],
+  eisen: ['Haalt veiligheidsnorm EN 1078', 'Kostprijs maximaal € 45', 'Gebruikers geven 4+ sterren'],
+  sketchHint: 'Teken jouw helm op het hoofd. Welke vorm? Waar zit het licht, de sluiting, de ventilatie? Maak hem cool.',
+  sketchBg(x, W, H) {
+    x.strokeStyle = '#cfcde3'; x.lineWidth = 3; x.beginPath(); x.ellipse(W / 2, H * .62, W * .13, H * .3, 0, 0, 7); x.stroke();
+    x.beginPath(); x.moveTo(W / 2 - W * .06, H * .9); x.lineTo(W / 2 - W * .1, H); x.moveTo(W / 2 + W * .06, H * .9); x.lineTo(W / 2 + W * .1, H); x.stroke();
+    x.fillStyle = '#9a97b8'; x.font = 'bold 14px system-ui'; x.textAlign = 'center'; x.fillText('teken de helm hierboven ↑', W / 2, H * .96);
+  },
+  designIntro: '<b>Stel de helm samen.</b> Vorm, materiaal, extra\'s, afwerking. Laat hem testen door Noor, Jayden en Lars.',
+  design(host, ctx) {
+    const st = { form: 'klassiek', mat: 'abs', led: false, vent: false, magnet: false, visor: false, repair: false, finish: 'mat' };
+    const FORM = { klassiek: { safe: 4.5, cool: 2.5, w: 330, p: 18, comf: 3.5, t: 'Klassiek' }, urban: { safe: 4.2, cool: 3.8, w: 360, p: 22, comf: 3.8, t: 'Urban' }, vouw: { safe: 3.6, cool: 4.3, w: 420, p: 30, comf: 3.6, t: 'Opvouwbaar' } };
+    const MAT = { abs: { safe: 0, cool: 0, w: 40, p: 0, eco: 1, t: 'ABS', d: 'Goedkoop, robuust, zwaar, nieuw plastic' }, pc: { safe: .4, cool: .3, w: -60, p: 8, eco: 2, t: 'Polycarbonaat', d: 'Licht en sterk, duurder' }, rpp: { safe: -.2, cool: .2, w: 0, p: 1, eco: 4, t: '♻ Gerecycled PP', d: 'Van oude plastic, iets minder stijf' }, flax: { safe: .1, cool: .8, w: -20, p: 14, eco: 5, t: '🌿 Vlasvezel', d: 'Biobased uit Nederlandse vlas, uniek, prijzig' } };
+    const FIN = { mat: { p: 0, cool: 0, c: '#374151', t: 'Mat zwart' }, kleur: { p: 2, cool: .5, c: '#e0479b', t: 'Kleur' }, print: { p: 5, cool: 1, c: 'url(#pr)', t: 'Custom print' } };
+    const PERS = [
+      { n: 'Noor', a: 17, c: '#c02a86', w: { cool: .5, comf: .3, wt: .2 }, q: 'Ik draag echt geen ding dat eruitziet als de helm van mijn vader.', quirk: () => st.form === 'klassiek' ? -.6 : st.finish !== 'mat' ? .3 : 0 },
+      { n: 'Jayden', a: 16, c: '#1164b3', w: { cool: .4, comf: .3, wt: .3 }, q: 'Als er iets slims op zit — licht, magneet, whatever — ben ik om.', quirk: () => (st.led ? .4 : 0) + (st.magnet ? .3 : 0) },
+      { n: 'Lars', a: 19, c: '#138273', w: { cool: .3, comf: .3, wt: .4 }, q: 'Hij moet in mijn tas passen. En ik gooi liever niks weg.', quirk: () => (st.form === 'vouw' ? .8 : st.form === 'urban' ? .1 : -.3) + (st.repair ? .3 : 0) },
+    ];
+    function calc() {
+      const f = FORM[st.form], m = MAT[st.mat], fi = FIN[st.finish];
+      const safe = f.safe + m.safe + (st.led ? .3 : 0);
+      const cool = clamp(f.cool + m.cool + fi.cool + (st.led ? .6 : 0) + (st.visor ? .4 : 0), 0, 5);
+      const comf = clamp(f.comf + (st.vent ? 1.2 : 0) + (st.magnet ? .8 : 0), 0, 5);
+      const w = f.w + m.w + (st.vent ? -10 : 0) + (st.visor ? 25 : 0) + (st.led ? 15 : 0) + (st.repair ? 10 : 0);
+      const p = f.p + m.p + fi.p + (st.led ? 6 : 0) + (st.vent ? 3 : 0) + (st.magnet ? 4 : 0) + (st.visor ? 3 : 0) + (st.repair ? 2 : 0);
+      const wt = clamp(5 - (w - 300) / 50, 1, 5);
+      const stars = PERS.map(pp => clamp(pp.w.cool * cool + pp.w.comf * comf + pp.w.wt * wt + pp.quirk(), 1, 5));
+      const avg = stars.reduce((a, b) => a + b) / 3;
+      const eco = clamp(m.eco + (st.repair ? 1 : 0) - (st.finish === 'print' ? 1 : 0), 0, 5);
+      return { safe: +safe.toFixed(1), cool, comf, w, p, eco, stars, avg };
+    }
+    const viz = el('div', { class: 'viz' }); const mets = el('div', { class: 'metrics' });
+    const fb = el('div', { class: 'fb', html: 'Stel je helm samen en druk op <b>Laat testen</b>.' });
+    const pers = el('div', {});
+    let view = 'zij', dropping = false;
+    function helmetSVG(r) {
+      const fi = FIN[st.finish];
+      const fill = st.finish === 'mat' ? (st.mat === 'flax' ? '#8a6d3b' : st.mat === 'rpp' ? '#3f4a5c' : '#2b2f3a') : fi.c;
+      const side = view === 'zij';
+      const body = side
+        ? (st.form === 'klassiek' ? 'M70 128 C70 58 236 58 240 128 L246 142 C210 156 100 154 66 142 Z' : st.form === 'urban' ? 'M60 130 C60 74 250 74 254 132 L258 144 C210 162 96 160 56 144 Z' : 'M76 128 C76 68 230 68 232 128 L236 142 C200 154 106 154 72 142 Z')
+        : (st.form === 'klassiek' ? 'M78 132 C78 56 222 56 222 132 L222 146 C190 156 110 156 78 146 Z' : st.form === 'urban' ? 'M66 134 C66 70 234 70 234 134 L238 148 C190 162 110 162 62 148 Z' : 'M82 132 C82 66 218 66 218 132 L218 146 C190 154 110 154 82 146 Z');
+      const seams = st.form === 'vouw' ? (side ? '<path d="M118 78 L112 148 M150 70 L150 152 M182 78 L188 148" stroke="#0b0f17" stroke-width="3" opacity=".5"/>' : '<path d="M150 62 L150 152 M112 72 L106 148 M188 72 L194 148" stroke="#0b0f17" stroke-width="3" opacity=".5"/>') : '';
+      const vents = st.vent ? '<path d="M118 96 L114 124 M150 88 L150 118 M182 96 L186 124" stroke="#0b0f17" stroke-width="7" stroke-linecap="round" opacity=".55"/>' : '';
+      const led = st.led ? (side ? '<rect x="226" y="130" width="18" height="8" rx="4" fill="#dd1c50"><animate attributeName="opacity" values="1;.25;1" dur="1s" repeatCount="indefinite"/></rect>' : '<rect x="120" y="140" width="60" height="6" rx="3" fill="#dd1c50" opacity=".5"/>') : '';
+      const visor = st.visor ? (side ? '<path d="M56 146 C66 168 118 176 140 170 L136 158 C106 160 76 156 60 142 Z" fill="#20116e"/>' : '<path d="M80 150 C110 172 190 172 220 150 L214 144 C190 160 110 160 86 144 Z" fill="#20116e"/>') : '';
+      const strap = side ? '<path d="M84 150 L128 200 L150 196" stroke="#5f5b86" stroke-width="4" fill="none" stroke-linecap="round"/>' : '<path d="M96 152 L118 204 M204 152 L182 204" stroke="#5f5b86" stroke-width="4" fill="none" stroke-linecap="round"/>';
+      const buckle = st.magnet ? (side ? '<circle cx="150" cy="196" r="7" fill="#47d7ad"/>' : '<circle cx="150" cy="206" r="7" fill="#47d7ad"/>') : '';
+      const rep = st.repair ? '<path d="M78 146 C110 136 190 136 222 146" stroke="#47d7ad" stroke-width="2.5" stroke-dasharray="5 4" fill="none"/>' : '';
+      const head = side
+        ? '<path d="M90 126 C82 186 96 228 124 238 L150 242 C184 238 206 206 202 170 C200 150 196 136 190 126 Z" fill="#f2c9a8"/><path d="M186 150 C192 160 194 172 190 176" stroke="#d9a687" stroke-width="2" fill="none"/><circle cx="176" cy="172" r="2.5" fill="#20116e"/><path d="M190 190 C186 196 180 198 176 196" stroke="#c98b6c" stroke-width="2" fill="none"/><path d="M104 176 C100 186 104 196 112 196 C116 194 116 180 110 176 Z" fill="#e6b896"/>'
+        : '<path d="M96 126 C90 200 114 240 150 242 C186 240 210 200 204 126 Z" fill="#f2c9a8"/><circle cx="134" cy="176" r="2.5" fill="#20116e"/><circle cx="166" cy="176" r="2.5" fill="#20116e"/><path d="M140 204 C146 210 154 210 160 204" stroke="#c98b6c" stroke-width="2" fill="none"/><path d="M100 168 C94 168 92 184 100 186 M200 168 C206 168 208 184 200 186" stroke="#e6b896" stroke-width="4" fill="none"/>';
+      return `<g class="helm"><ellipse cx="150" cy="244" rx="70" ry="5" fill="#20116e" opacity=".12"/>${head}${strap}
+        <path d="${body}" fill="${fill}" stroke="#20116e" stroke-width="2"/><path d="${body}" fill="url(#gloss)"/>${seams}${vents}${led}${visor}${rep}${buckle}</g>`;
+    }
+    function draw() {
+      const r = calc();
+      viz.innerHTML = `<svg viewBox="0 0 300 250"><defs><pattern id="pr" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#c02a86"/><circle cx="10" cy="10" r="5" fill="#47d7ad"/><circle cx="0" cy="0" r="3" fill="#ff8f1a"/></pattern>
+        <linearGradient id="gloss" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient></defs>
+        ${dropping ? '<rect x="60" y="238" width="180" height="8" rx="2" fill="#9a97b8"/>' : ''}
+        ${helmetSVG(r)}
+        <text x="150" y="20" text-anchor="middle" fill="#5f5b86" font-size="11" font-weight="700">${FORM[st.form].t} · ${MAT[st.mat].t} · ${FIN[st.finish].t}</text></svg>`;
+      viz.append(viewBtn);
+      mets.innerHTML = '';
+      mets.append(metric('Veiligheid', r.safe.toFixed(1), 'norm ≥ 4,0', r.safe >= 4 ? 'ok' : 'bad'), metric('Kostprijs', `€ ${r.p}`, 'max € 45', r.p <= 45 ? 'ok' : 'bad'), metric('Gewicht', `${r.w} g`, r.w <= 350 ? 'lekker licht' : r.w <= 420 ? 'oké' : 'aan de zware kant', r.w <= 350 ? 'ok' : r.w <= 420 ? '' : 'warn'), metric('🌱 Duurzaam', leaves(r.eco), MAT[st.mat].t + (st.repair ? ' · repareerbaar' : ''), r.eco >= 4 ? 'ok' : r.eco >= 2 ? 'warn' : 'bad'));
+      ctx.live([r.safe >= 4, r.p <= 45, lastAvg == null ? null : lastAvg >= 4]);
+      return r;
+    }
+    const viewBtn = el('button', { class: 'tb', style: 'position:absolute;left:10px;bottom:8px', onclick: () => { view = view === 'zij' ? 'voor' : 'zij'; Snd.click(); draw(); viewBtn.textContent = view === 'zij' ? '↻ Voorkant' : '↻ Zijkant'; } }, '↻ Voorkant');
+    let lastAvg = null;
+    const starTxt = s => '★'.repeat(Math.round(s)) + '☆'.repeat(5 - Math.round(s));
+    function test() {
+      if (dropping) return; dropping = true; Snd.click(); pers.innerHTML = ''; fb.className = 'fb info'; fb.innerHTML = '🧪 Valtest volgens EN 1078 én gebruikerstest…';
+      draw(); const hg = viz.querySelector('.helm'); if (hg) { hg.style.transformOrigin = '150px 240px'; hg.animate([{ transform: 'translateY(-90px)' }, { transform: 'translateY(0) scaleY(.94)', offset: .6 }, { transform: 'translateY(-14px)', offset: .8 }, { transform: 'translateY(0)' }], { duration: 900, easing: 'cubic-bezier(.4,0,1,1)' }); }
+      setTimeout(() => { dropping = false; showResult(); }, 950);
+    }
+    function showResult() {
+      const r0 = calc(); lastAvg = r0.avg; const r = draw(); pers.innerHTML = '';
+      const REACT = (s, i) => s >= 4.5 ? ['Oké dit is gewoon nice. Die zet ik op.', 'Wow. Mag ik hem houden?', 'Ja. Gewoon ja.'][i] : s >= 3.5 ? ['Prima. Niet lelijk. Zou kunnen.', 'Best cool eigenlijk.', 'Kan ermee leven.'][i] : s >= 2.5 ? ['Hmm. Ik weet niet.', 'Beetje meh.', 'Ik zou hem eerlijk gezegd vergeten.'][i] : ['Nee. Echt niet.', 'Sorry, nee.', 'Dit ding blijft thuis.'][i];
+      PERS.forEach((pp, i) => pers.append(el('div', { class: 'persona' }, el('div', { class: 'av', style: `background:${pp.c}` }, pp.n[0]), el('div', {}, el('div', { html: `<b>${pp.n}</b> <span class="mut">(${pp.a})</span> <span class="stars">${starTxt(r.stars[i])}</span>` }), el('div', { class: 'q' }, '“' + REACT(r.stars[i], i) + '”'), el('small', { class: 'dim' }, pp.q)))));
+      const okS = r.safe >= 4, okP = r.p <= 45, okU = r.avg >= 4; const pass = okS && okP && okU;
+      let score = (okS ? 12 : Math.round(6 * r.safe / 4)) + (okP ? 10 : 5) + Math.round(18 * clamp((r.avg - 2.5) / 2.5, 0, 1)) + (pass ? r.eco * 2 : 0);
+      score = clamp(score, 0, 50);
+      const msgs = [];
+      if (!okS) msgs.push(`<b>Veiligheid ${r.safe.toFixed(1)}</b> — haalt de norm niet. Steviger materiaal of andere vorm.`);
+      if (!okP) msgs.push(`Kostprijs € ${r.p} is te hoog. Welke extra's zijn écht nodig?`);
+      if (!okU) msgs.push(`Gemiddeld ${r.avg.toFixed(1)} sterren — nog niet overtuigend (doel 4,0). Lees wat ze zeggen.`);
+      if (pass) msgs.push(`<b>Gelukt!</b> Veilig, betaalbaar en ${r.avg.toFixed(1)} sterren.` + (r.eco >= 4 ? ' En duurzaam. 🌱' : ' Kan het ook van een duurzamer materiaal?'));
+      fb.className = 'fb ' + (pass ? 'ok' : 'bad'); fb.innerHTML = msgs.join('<br>');
+      const ecoNote = st.mat === 'flax' ? 'Vlasvezel groeit gewoon op Nederlandse akkers: een helm van planten in plaats van olie.' : st.mat === 'rpp' ? 'Gerecycled PP geeft oud plastic een tweede leven — 120.000 helmen zonder nieuw plastic.' : st.repair ? 'Een vervangbare binnenschaal: na een val vervang je één onderdeel in plaats van de hele helm.' : 'Nieuw plastic (ABS, polycarbonaat) komt uit olie. Volgende keer gerecycled of biobased proberen?';
+      ctx.report({ pass, score, eco: r.eco, ecoNote, avg: r.avg, p: r.p, safe: r.safe, form: st.form, mat: st.mat });
+    }
+    const ctl = el('div', { class: 'card' },
+      el('div', { class: 'ctl' }, el('label', {}, el('span', {}, 'Vorm')), seg(Object.entries(FORM).map(([v, f]) => ({ v, t: f.t })), st.form, v => { st.form = v; draw(); })),
+      el('div', { class: 'ctl' }, el('label', {}, el('span', {}, 'Materiaal buitenschaal')), seg(Object.entries(MAT).map(([v, m]) => ({ v, t: m.t })), st.mat, v => { st.mat = v; draw(); matInfo.textContent = MAT[v].d; })),
+      el('small', { class: 'mut' }, ''),
+      el('div', { class: 'ctl mt' }, el('label', {}, el('span', {}, "Extra's")),
+        toggle('LED-achterlicht', '+€ 6 · zichtbaarheid en cool', st.led, v => { st.led = v; draw(); }),
+        toggle('Ventilatie', '+€ 3 · comfort', st.vent, v => { st.vent = v; draw(); }),
+        toggle('Magneetsluiting', '+€ 4 · met één hand dicht', st.magnet, v => { st.magnet = v; draw(); }),
+        toggle('Zonneklep', '+€ 3 · stijl, iets zwaarder', st.visor, v => { st.visor = v; draw(); }),
+        toggle('♻ Repareerbaar ontwerp', '+€ 2 · vervangbare binnenschaal, gaat jaren langer mee', st.repair, v => { st.repair = v; draw(); })),
+      el('div', { class: 'ctl' }, el('label', {}, el('span', {}, 'Afwerking')), seg(Object.entries(FIN).map(([v, f]) => ({ v, t: f.t })), st.finish, v => { st.finish = v; draw(); })),
+      el('button', { class: 'btn big org mt', onclick: test }, '👥 Laat testen door gebruikers'));
+    const matInfo = ctl.querySelector('small.mut'); matInfo.textContent = MAT[st.mat].d;
+    host.append(viz, mets, fb, pers, ctl);
+    draw();
+  },
+  maak: {
+    who: 'Kim de modelmaker', intro: 'Voor de eerste 500 helmen moet de spuitgietmatrijs perfect afgesteld staan: druk, temperatuur en koeltijd.',
+    action: 'Stop de naald in het groene vlak om de machine goed af te stellen.', verb: 'Afstellen',
+    rounds: [{ t: 'Spuitdruk', ok: 'De schaal loopt mooi vol.', miss: 'Te weinig druk: de schaal is niet compleet.' }, { t: 'Temperatuur', ok: 'Glad oppervlak, geen strepen.', miss: 'Te heet: het plastic verkleurt.' }, { t: 'Koeltijd', ok: 'De helm komt strak uit de matrijs.', miss: 'Te vroeg gelost: de helm trekt krom.' }],
+    outro: 'Kim voelt aan het materiaal wat de machine nodig heeft. Dat leer je niet uit een boek, dat leer je met je handen.',
+    engDid: ['Schetste de helm', 'Koos vorm, materiaal en features', 'Testte met gebruikers en maakte het 3D-model'],
+    vakDid: ['Maakt de matrijs', 'Stelt de spuitgietmachine af', 'Controleert elke helm op kwaliteit']
+  },
+  handover: {
+    chat: [
+      { from: 'Kim (modelmaker)', text: 'Hoi, ik heb je 3D-model in de matrijs gezet. Eén ding: de wand bij de ventilatiegaten is 1,2 mm dik. Bij spuitgieten loopt die niet goed vol — zwakke plekken. 2 mm lukt wel, maar dan wordt hij iets zwaarder.' },
+    ],
+    choices: [
+      { t: 'Dank je Kim! Ik pas het model aan naar 2 mm en bespaar elders gewicht. Stuur je een testexemplaar?', good: true, fb: 'Zo hoort het. Kim kent de machine en het materiaal, jij bewaakt het totaalontwerp. <b>Samen wordt het product beter.</b>' },
+      { t: 'Het model is definitief, doe maar 1,2 mm.', good: false, fb: 'Dan krijgt de helm zwakke plekken, precies waar hij sterk moet zijn. De vakmens waarschuwt niet voor niets.' },
+      { t: 'Verander jij het maar in het model.', good: false, half: true, fb: 'Kim maakt de matrijs, maar het ontwerp — en de veiligheid — is jouw verantwoordelijkheid.' },
+    ]
+  },
+  wdw: [
+    { t: 'Interviewt jongeren over waarom ze geen helm dragen', a: 'eng', why: 'Gebruikersonderzoek: het begin van elk goed ontwerp.' },
+    { t: 'Bedient de spuitgietmachine', a: 'vak', why: 'Machinebediening en afstelling: vakmanschap.' },
+    { t: 'Maakt het 3D-model en print het eerste prototype', a: 'eng', why: 'CAD-modelleren en prototypen doet de productontwerper.' },
+    { t: 'Zorgt dat alle 500 helmen even goed zijn', a: 'sam', why: 'De vakmens meet en stelt bij, de engineer bepaalt wat "goed" is.' },
+  ],
+  fact: '<b>Wist je dat?</b> Industrieel productontwerpers bedenken bijna alles wat je vastpakt: je telefoonhoesje, je koptelefoon, je stoel. Techniek + psychologie + vorm — en de vraag "waarom gebruikt niemand dit?"',
+  impactText: b => b ? `Jouw helm krijgt ${b.avg.toFixed(1)} sterren van gebruikers. Als 120.000 GLIDE-rijders hem dragen, voorkomt dat honderden hoofdletsels per jaar.` : 'De helm ligt nog in de kast.',
+  impact: b => ({ n: 120000, l: 'scooterrijders die jouw helm wél opzetten' }),
+  profile: 'Jij denkt vanuit de gebruiker en hebt gevoel voor vorm én techniek. Industrieel productontwerpers bedenken de producten die iedereen straks in handen heeft.'
+});
+/* ===== MISSIE 4 — Energie & duurzame installaties: de sporthal ===== */
+MISSIONS.push({
+  id: 'm4', color: '#138273', domain: 'Energie & duurzame installaties', title: 'De sporthal van het gas af', client: 'SV Olympia · 1.400 leden',
+  briefing: [
+    { from: 'Bram (voorzitter)', text: 'Hoi {name}. Onze sporthal uit 1978 stookt op gas en de energierekening is niet meer te betalen.' },
+    { from: 'Bram (voorzitter)', text: 'We hebben <b>€ 250.000</b> subsidie. Eis: minstens <b>80% minder CO₂</b>. En de hal moet in januari gewoon warm zijn — 1.400 leden komen sporten.' },
+    { from: 'Sam', text: 'Zon, warmtepomp, isolatie, opslag: alles hangt samen. Schets eerst hoe jij de hal zou aanpakken.' },
+  ],
+  eisen: ['Minimaal 80% minder CO₂', 'Investering binnen € 250.000', 'Hal is in de winter warm'],
+  sketchHint: 'Teken de sporthal en jouw plan: waar komen panelen, een batterij, een warmtepomp, isolatie? Pijlen mogen.',
+  sketchBg(x, W, H) {
+    x.fillStyle = '#e3e2ef'; x.beginPath(); x.moveTo(W * .2, H * .5); x.lineTo(W * .5, H * .3); x.lineTo(W * .8, H * .5); x.closePath(); x.fill(); x.fillRect(W * .2, H * .5, W * .6, H * .35);
+    x.fillStyle = '#9a97b8'; x.font = 'bold 14px system-ui'; x.textAlign = 'center'; x.fillText('SPORTHAL OLYMPIA (1978)', W / 2, H * .7); x.fillText('zon?', W * .1, H * .2); x.fillText('net', W * .92, H * .3); x.fillText('warmte?', W * .1, H * .8);
+    x.fillStyle = '#fbbf24'; x.beginPath(); x.arc(W * .1, H * .12, 18, 0, 7); x.fill();
+  },
+  designIntro: '<b>Ontwerp de installatie.</b> Combineer panelen, batterij, warmtepomp, isolatie en LED. Alles beïnvloedt elkaar — reken door en kijk wat er gebeurt.',
+  design(host, ctx) {
+    const st = { pv: 40, bat: 0, wp: false, iso: 0, led: false };
+    const BUDGET = 250, BASE_E = 60, BASE_H = 120, CO2E = .3, CO2G = .2, PRICE_E = .30, PRICE_G = .12, FEED = .08;
+    const ISO = [{ c: 0, r: 0, t: 'Geen' }, { c: 30, r: .25, t: 'Dak' }, { c: 60, r: .45, t: 'Dak + gevel' }, { c: 100, r: .6, t: 'Compleet' }];
+    function calc() {
+      const cost = st.pv * .45 + st.bat * .6 + (st.wp ? 60 : 0) + ISO[st.iso].c + (st.led ? 15 : 0);
+      const heat = BASE_H * (1 - ISO[st.iso].r);
+      const cop = 2.4 + .4 * st.iso;
+      const elecHeat = st.wp ? heat / cop : 0;
+      const gas = st.wp ? 0 : heat;
+      const demand = BASE_E - (st.led ? 12 : 0) + elecHeat;
+      const solar = st.pv * .38;
+      const sc = Math.min(.85, .35 + st.bat / 200);
+      const direct = Math.min(solar * sc, demand);
+      const exp = solar - direct;
+      const imp = demand - direct;
+      const co2 = Math.max(0, imp * CO2E + gas * CO2G - exp * .5 * CO2E);
+      const base = BASE_E * CO2E + BASE_H * CO2G;
+      const red = (1 - co2 / base) * 100;
+      const bill = imp * PRICE_E + gas * PRICE_G - exp * FEED;
+      const baseBill = BASE_E * PRICE_E + BASE_H * PRICE_G;
+      const saving = baseBill - bill;
+      const payback = saving > 0 ? cost / saving : 99;
+      const comfort = !(st.wp && st.iso === 0);
+      return { cost, heat, cop, demand, solar, direct, exp, imp, gas, co2, base, red, bill, baseBill, saving, payback, comfort };
+    }
+    const ecoOf = r => clamp(Math.round(r.red / 20), 0, 5);
+    const viz = el('div', { class: 'viz' }); const mets = el('div', { class: 'metrics' });
+    const fb = el('div', { class: 'fb', html: 'Stel de installatie samen en druk op <b>Doorrekenen (1 jaar)</b>.' });
+    const detail = el('div', { class: 'card tight hidden' });
+    let hr = 13, playing = false, raf;
+    function dayProfile() {
+      const pk = st.pv * .4; // kWp
+      const sol = h => pk * Math.pow(Math.max(0, Math.sin(Math.PI * (h - 6.5) / 12.5)), 1.3);
+      const heatK = st.wp ? (BASE_H * (1 - ISO[st.iso].r) / (2.4 + .4 * st.iso)) * 1000 / 8760 * 2.2 : 0;
+      const dem = h => (st.led ? 5 : 7) + (h >= 17 && h <= 23 ? 8 : h >= 8 && h < 17 ? 4 : 1) + heatK * (h >= 6 && h <= 22 ? (h < 9 || h > 17 ? 1.6 : .8) : .3);
+      const cap = st.bat; let soc = cap * .3; const rows = [];
+      for (let h = 0; h < 24; h += .5) {
+        const sK = sol(h), dK = dem(h); let toBuild = Math.min(sK, dK), surplus = sK - toBuild, deficit = dK - toBuild, toBat = 0, fromBat = 0;
+        if (surplus > 0 && cap > 0) { toBat = Math.min(surplus, (cap - soc) * 2, cap * .5); soc += toBat / 2; surplus -= toBat; }
+        if (deficit > 0 && soc > 0) { fromBat = Math.min(deficit, soc * 2, cap * .5); soc -= fromBat / 2; deficit -= fromBat; }
+        rows.push({ h, sK, dK, toBuild, toBat, fromBat, exp: surplus, imp: deficit, soc: cap ? soc / cap : 0 });
+      }
+      return rows;
+    }
+    function draw() {
+      const r = calc(); const rows = dayProfile(); const now = rows[Math.min(rows.length - 1, Math.round(hr * 2))];
+      const night = hr < 6.5 || hr > 20; const dusk = !night && (hr < 8.5 || hr > 18);
+      const sky = night ? '#20116e' : dusk ? '#f7b26b' : '#dcefff'; const sky2 = night ? '#3b2aa0' : dusk ? '#fde2c0' : '#f7fbff';
+      const ang = Math.PI * (1 - (hr - 6) / 14); const sunX = 300 + Math.cos(ang) * 250, sunY = 110 - Math.sin(ang) * 85;
+      const mang = Math.PI * (1 - ((hr + 12) % 24 - 6) / 14); const moonX = 300 + Math.cos(mang) * 250, moonY = 110 - Math.sin(mang) * 85;
+      const nP = Math.round(st.pv / 10); let panels = '';
+      for (let i = 0; i < nP; i++) { const row = Math.floor(i / 10), col = i % 10; panels += `<rect x="${150 + col * 15}" y="${74 + row * 11}" width="13" height="9" fill="${now.sK > 0 ? '#1d4fa8' : '#1a2a5e'}" stroke="${now.sK > 5 ? '#9bd5f4' : '#60a5fa'}" stroke-width="1"/>`; }
+      const flow = (x1, y1, x2, y2, c, kw) => kw > .2 ? `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${c}" stroke-width="${clamp(1.5 + kw / 6, 1.5, 6)}" stroke-dasharray="6 6" fill="none" stroke-linecap="round"><animate attributeName="stroke-dashoffset" from="24" to="0" dur="${clamp(2 - kw / 20, .5, 2)}s" repeatCount="indefinite"/></path>` : `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="rgba(154,151,184,.5)" stroke-width="1.5" stroke-dasharray="3 6" fill="none"/>`;
+      const batH = 40 * now.soc;
+      const co2w = 200 * clamp(r.co2 / r.base, 0, 1);
+      const win = night || dusk ? '#ffd966' : '#9bd5f4';
+      viz.innerHTML = `<svg viewBox="0 0 600 300"><defs><linearGradient id="skyg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${sky}"/><stop offset="1" stop-color="${sky2}"/></linearGradient></defs>
+        <rect width="600" height="300" fill="url(#skyg)"/>
+        ${night ? Array.from({ length: 18 }, (_, i) => `<circle cx="${(i * 137) % 600}" cy="${(i * 53) % 120}" r="1.3" fill="#fff" opacity=".8"/>`).join('') : ''}
+        ${!night ? `<circle cx="${sunX}" cy="${sunY}" r="20" fill="#ffc915"><animate attributeName="r" values="20;22;20" dur="3s" repeatCount="indefinite"/></circle>` : `<circle cx="${moonX}" cy="${moonY}" r="14" fill="#f4f4f9"/><circle cx="${moonX + 6}" cy="${moonY - 3}" r="12" fill="${sky}"/>`}
+        <rect x="0" y="200" width="600" height="100" fill="${night ? '#1a4f3f' : '#b9d8c3'}"/>
+        <path d="M120 100 L300 60 L480 100 Z" fill="#8a87a8"/><rect x="120" y="100" width="360" height="100" fill="${st.iso ? '#d9d7ea' : '#c3c1d8'}" stroke="${st.iso >= 2 ? '#138273' : st.iso === 1 ? '#ffc915' : '#9a97b8'}" stroke-width="${st.iso ? 4 : 1}"/>
+        ${st.iso ? `<rect x="124" y="104" width="352" height="92" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="4 4" opacity=".7"/>` : ''}
+        <rect x="150" y="150" width="34" height="50" fill="#20116e"/><rect x="210" y="120" width="230" height="30" fill="${win}" opacity="${night || dusk ? .95 : .6}"/>
+        <text x="300" y="180" text-anchor="middle" fill="#20116e" font-size="12" font-weight="800">SPORTHAL OLYMPIA</text>
+        ${panels}
+        <text x="300" y="58" text-anchor="middle" fill="${night ? '#fff' : '#1164b3'}" font-size="11" font-weight="700">${st.pv} panelen · nu ${fmt(now.sK)} kW</text>
+        <g transform="translate(505 130)"><rect x="0" y="0" width="34" height="50" rx="4" fill="#fff" stroke="${st.bat ? '#1164b3' : '#9a97b8'}" stroke-width="2"/><rect x="4" y="${46 - batH}" width="26" height="${batH}" fill="#47d7ad"/><text x="17" y="66" text-anchor="middle" fill="${night ? '#fff' : '#5f5b86'}" font-size="10">${st.bat ? Math.round(now.soc * 100) + '% · ' + st.bat + ' kWh' : 'geen accu'}</text></g>
+        ${flow(480, 150, 505, 150, now.toBat > now.fromBat ? '#47d7ad' : '#ff8f1a', Math.max(now.toBat, now.fromBat))}
+        <g transform="translate(60 160)"><rect x="0" y="0" width="44" height="40" rx="4" fill="#fff" stroke="${st.wp ? '#138273' : '#dd1c50'}" stroke-width="2"/><circle cx="22" cy="20" r="12" fill="none" stroke="${st.wp ? '#138273' : '#dd1c50'}" stroke-width="2"/>${st.wp ? '<path d="M22 8 L22 32 M10 20 L34 20" stroke="#138273" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 22 20" to="360 22 20" dur="2s" repeatCount="indefinite"/></path>' : '<path d="M16 26 C14 18 22 16 20 10 C28 14 30 22 24 27 Z" fill="#ff8f1a"/>'}<text x="22" y="54" text-anchor="middle" fill="${night ? '#fff' : '#5f5b86'}" font-size="10">${st.wp ? 'warmtepomp' : 'gasketel'}</text></g>
+        ${flow(104, 180, 120, 180, st.wp ? '#138273' : '#dd1c50', 3)}
+        <g transform="translate(545 40)"><path d="M0 60 L15 0 L30 60 M-8 20 L38 20 M-4 38 L34 38" stroke="${night ? '#c3c1d8' : '#5f5b86'}" stroke-width="2" fill="none"/><text x="15" y="76" text-anchor="middle" fill="${night ? '#fff' : '#5f5b86'}" font-size="10">net</text></g>
+        ${flow(480, 110, 545, 70, now.imp > now.exp ? '#dd1c50' : '#47d7ad', Math.max(now.imp, now.exp))}
+        <text x="${480 + 20}" y="100" fill="${now.imp > now.exp ? '#dd1c50' : '#138273'}" font-size="10" font-weight="700">${now.imp > now.exp ? 'koopt ' + fmt(now.imp) + ' kW' : 'levert ' + fmt(now.exp) + ' kW'}</text>
+        <rect x="0" y="252" width="600" height="48" fill="rgba(255,255,255,.85)"/>
+        <text x="16" y="270" fill="#5f5b86" font-size="11">CO₂ per jaar nu</text><rect x="120" y="261" width="200" height="10" fill="#dd1c50" opacity=".5"/>
+        <text x="16" y="291" fill="#5f5b86" font-size="11">CO₂ per jaar straks</text><rect x="120" y="282" width="${co2w}" height="10" fill="${r.red >= 80 ? '#138273' : '#ffc915'}"/><text x="${130 + co2w}" y="291" fill="${r.red >= 80 ? '#138273' : '#8a6a00'}" font-size="11" font-weight="800">−${fmt(clamp(r.red, 0, 100))}%</text>
+        <text x="420" y="280" fill="${r.comfort ? '#138273' : '#dd1c50'}" font-size="11" font-weight="700">${r.comfort ? '🌡 hal wordt warm' : '🥶 hal blijft koud'}</text>
+      </svg>`;
+      clockLbl.textContent = `${String(Math.floor(hr)).padStart(2, '0')}:${hr % 1 ? '30' : '00'}`;
+      clockInfo.innerHTML = `Nu: zon <b>${fmt(now.sK)} kW</b> · verbruik <b>${fmt(now.dK)} kW</b>` + (st.bat ? ` · accu ${Math.round(now.soc * 100)}%` : '');
+      mets.innerHTML = '';
+      mets.append(metric('CO₂-reductie', `${fmt(clamp(r.red, 0, 100))}%`, 'doel ≥ 80%', r.red >= 80 ? 'ok' : 'bad'), metric('Investering', `€ ${fmt(r.cost)}k`, `budget € ${BUDGET}k`, r.cost <= BUDGET ? 'ok' : 'bad'), metric('Energierekening', `€ ${fmt(r.bill * 1000)}`, `was € ${fmt(r.baseBill * 1000)} per jaar`, r.bill < r.baseBill * .4 ? 'ok' : ''), metric('🌱 Duurzaam', leaves(ecoOf(r)), `terugverdiend in ${r.payback > 50 ? '–' : fmt(r.payback)} jaar`, ecoOf(r) >= 4 ? 'ok' : ecoOf(r) >= 2 ? 'warn' : 'bad'));
+      ctx.live([r.red >= 80, r.cost <= BUDGET, r.comfort]);
+      return r;
+    }
+    const clockLbl = el('b', {}, '13:00'); const clockInfo = el('small', { class: 'mut' }, '');
+    const clockRange = el('input', { type: 'range', min: 0, max: 23.5, step: .5, value: hr });
+    clockRange.addEventListener('input', () => { hr = +clockRange.value; playing = false; playBtn.textContent = '▶'; draw(); });
+    const playBtn = el('button', { class: 'tb', onclick: () => { playing = !playing; playBtn.textContent = playing ? '❚❚' : '▶'; if (playing) tick(); } }, '▶');
+    function tick() { if (!playing || !document.body.contains(host)) return; hr = (hr + .5) % 24; clockRange.value = hr; draw(); setTimeout(tick, 220); }
+    const clock = el('div', { class: 'card tight' }, el('div', { class: 'clock' }, playBtn, el('span', { class: 'mut', style: 'font-size:.8rem;white-space:nowrap' }, '🕒 tijd'), clockRange, clockLbl), clockInfo);
+    function test() {
+      const r = draw(); Snd.click();
+      const okR = r.red >= 80, okC = r.cost <= BUDGET, okW = r.comfort; const pass = okR && okC && okW;
+      let score = Math.round(25 * clamp(r.red / 80, 0, 1)) + (okC ? 10 : 4) + (okW ? 5 : 0);
+      if (pass) score += r.payback <= 10 ? 10 : r.payback <= 14 ? 6 : 3; score = clamp(score, 0, 50);
+      const msgs = [];
+      if (!okW) msgs.push('<b>Brrr.</b> Een warmtepomp werkt op lage temperatuur; in een ongeïsoleerde hal krijgt hij het niet warm. Isoleer eerst, dan pas de warmtepomp.');
+      if (!okR) msgs.push(`CO₂-reductie <b>${fmt(clamp(r.red, 0, 100))}%</b> — nog geen 80%.` + (!st.wp ? ' Zolang de gasketel brandt, kom je er niet.' : r.exp > r.direct ? ' Je levert veel zonnestroom terug zonder hem te gebruiken — een batterij helpt.' : ' Meer panelen, betere isolatie of opslag?'));
+      if (!okC) msgs.push(`€ ${fmt(r.cost)}k is over het budget. Welke maatregel levert het minste op per euro?`);
+      if (pass) msgs.push(`<b>Van het gas af!</b> −${fmt(r.red)}% CO₂ voor € ${fmt(r.cost)}k. De energierekening daalt van € ${fmt(r.baseBill * 1000)} naar € ${fmt(r.bill * 1000)} per jaar — terugverdiend in ${fmt(r.payback)} jaar.`);
+      fb.className = 'fb ' + (pass ? 'ok' : 'bad'); fb.innerHTML = msgs.join('<br>');
+      detail.classList.remove('hidden'); detail.innerHTML = '';
+      [['Warmtevraag na isolatie', `${fmt(r.heat)} MWh`], ['Stroomverbruik (incl. warmtepomp)', `${fmt(r.demand)} MWh`], ['Zonnestroom opgewekt', `${fmt(r.solar)} MWh`], ['…direct gebruikt', `${fmt(r.direct)} MWh`], ['…teruggeleverd aan het net', `${fmt(r.exp)} MWh`], ['Van het net gekocht', `${fmt(r.imp)} MWh`], ['CO₂ per jaar', `${fmt(r.co2, 1)} ton (was ${fmt(r.base)})`]].forEach(([k, v]) => detail.append(el('div', { class: 'kv' }, el('span', { class: 'mut' }, k), el('b', {}, v))));
+      const ecoNote = r.red >= 90 ? 'Van 42 ton CO₂ per jaar naar bijna niets: isolatie eerst, dan warmtepomp, dan zon. Zo doe je dat.' : st.iso >= 2 ? 'Isoleren is de slimste eerste stap: warmte die je niet verliest, hoef je niet op te wekken.' : 'De beste energie is de energie die je niet gebruikt. Isolatie levert vaak meer op dan extra panelen.';
+      ctx.report({ pass, score, eco: ecoOf(r), ecoNote, red: r.red, cost: r.cost, co2: r.co2, base: r.base, payback: r.payback });
+    }
+    const ctl = el('div', { class: 'card' },
+      slider('Zonnepanelen (€ 450 per stuk)', 0, 200, 10, st.pv, v => `${v} stuks`, v => { st.pv = v; draw(); }),
+      slider('Batterijopslag (€ 600 per kWh)', 0, 100, 5, st.bat, v => `${v} kWh`, v => { st.bat = v; draw(); }),
+      el('div', { class: 'ctl' }, el('label', {}, el('span', {}, 'Isolatie')), seg(ISO.map((o, i) => ({ v: i, t: `${o.t}${o.c ? ' · €' + o.c + 'k' : ''}` })), st.iso, v => { st.iso = v; draw(); })),
+      toggle('Warmtepomp i.p.v. gasketel', '€ 60.000 · werkt alleen goed in een geïsoleerd gebouw', st.wp, v => { st.wp = v; draw(); }),
+      toggle('LED-verlichting in de hal', '€ 15.000 · bespaart 12 MWh stroom per jaar', st.led, v => { st.led = v; draw(); }),
+      el('button', { class: 'btn big org mt', onclick: test }, '📊 Doorrekenen (1 jaar)'));
+    host.append(viz, clock, mets, fb, detail, ctl);
+    draw();
+  },
+  maak: {
+    who: 'Fatima de installateur', intro: 'De panelen moeten op het dak en de warmtepomp moet aangesloten. Precies waterpas, precies de juiste druk.',
+    action: 'Stop de naald in het groene vlak.', verb: 'Monteren',
+    rounds: [{ t: 'Panelen waterpas leggen', ok: 'Kaarsrecht. Maximale opbrengst.', miss: 'Scheef: minder zon én lekkage-risico.' }, { t: 'Leidingdruk warmtepomp', ok: 'Druk staat perfect.', miss: 'Te hoge druk: het veiligheidsventiel blaast af.' }, { t: 'Omvormer aansluiten', ok: 'Groen lampje. Er stroomt zonnestroom.', miss: 'Fase verwisseld: de omvormer schakelt uit.' }],
+    outro: 'Fatima werkt met 400 volt op een dak van 8 meter hoog. Vakmanschap én veiligheid, elke dag.',
+    engDid: ['Schetste het plan', 'Rekende CO₂, kosten en opbrengst door', 'Koos de combinatie van maatregelen'],
+    vakDid: ['Legt de panelen en trekt de kabels', 'Installeert de warmtepomp', 'Ziet op het dak wat de tekening mist']
+  },
+  handover: {
+    chat: [
+      { from: 'Fatima (installateur)', text: 'Hoi! Ik sta op het dak. Er zit een lichtkoepel die niet op de bouwtekening stond — daar passen 8 panelen niet. Ik kan ze op de noordkant kwijt, maar daar schijnt weinig zon.' },
+    ],
+    choices: [
+      { t: 'Goed dat je het meldt. Ik reken uit of de noordkant zin heeft, of dat 8 minder beter is. Stuur je een foto?', good: true, fb: 'Precies. Fatima ziet de werkelijkheid op het dak, jij rekent de gevolgen door en neemt de ontwerpbeslissing. <b>Praktijk en berekening komen samen.</b>' },
+      { t: 'Leg ze maar op de noordkant, dan klopt het aantal tenminste.', good: false, fb: 'Het aantal klopt, maar de opbrengst niet — en dus ook je CO₂-berekening niet. Een engineer denkt in resultaat, niet in aantallen.' },
+      { t: 'Zaag die lichtkoepel er maar uit.', good: false, half: true, fb: 'Dan heeft de sportzaal geen daglicht meer en meer verlichtingskosten. Eerst rekenen, dan beslissen.' },
+    ]
+  },
+  wdw: [
+    { t: 'Berekent hoeveel panelen en welke warmtepomp er nodig zijn', a: 'eng', why: 'Dimensioneren van de installatie is engineerswerk.' },
+    { t: 'Sluit de omvormer aan en zet het systeem onder spanning', a: 'vak', why: 'Installatie- en elektrotechnisch werk: de monteur, met alle veiligheidsregels.' },
+    { t: 'Ontdekt op het dak dat de tekening niet klopt', a: 'vak', why: 'Wie op het dak staat, ziet het. Daarom is de monteur onmisbaar voor de engineer.' },
+    { t: 'Zorgt na een jaar dat het systeem doet wat beloofd is', a: 'sam', why: 'Monitoren, meten en bijstellen: engineer en installateur samen.' },
+  ],
+  fact: '<b>Wist je dat?</b> Een warmtepomp maakt van 1 kWh stroom zo\'n 3 tot 4 kWh warmte. Dat lijkt magie, maar het is techniek: hij verplaatst warmte in plaats van die te maken — net als je koelkast, maar dan andersom.',
+  impactText: b => b ? `Jouw installatie bespaart ${fmt(b.base - b.co2)} ton CO₂ per jaar — ${fmt(b.red)}% minder — en is in ${fmt(b.payback)} jaar terugverdiend.` : 'De hal stookt nog op gas.',
+  impact: b => ({ n: b ? Math.round((b.base - b.co2) * 30) : 0, l: 'ton CO₂ bespaard in 30 jaar sporthal' }),
+  profile: 'Jij ziet het grote plaatje en snapt hoe systemen samenhangen. Energie- en installatie-engineers maken de energietransitie écht — gebouw voor gebouw, wijk voor wijk.'
+});
+</script>
+</body>
+</html>
