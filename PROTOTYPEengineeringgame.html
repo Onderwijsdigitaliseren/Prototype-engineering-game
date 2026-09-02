@@ -565,6 +565,8 @@ async function mBriefing(run) {
 
 /* ---- sketch canvas ---- */
 function sketchPad(m, onChange) {
+  let cb = onChange;
+  const fire = n => cb(n);
   const wrap = el('div', { class: 'pad' });
   const bg = el('canvas'), fg = el('canvas');
   wrap.append(bg, fg);
@@ -580,8 +582,8 @@ function sketchPad(m, onChange) {
   let drawing = false, last = null;
   const pos = e => { const r = fg.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
   fg.addEventListener('pointerdown', e => { e.preventDefault(); fg.setPointerCapture(e.pointerId); hist.push(fx.getImageData(0, 0, W, H)); if (hist.length > 20) hist.shift(); drawing = true; last = pos(e); dot(last); });
-  fg.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e); line(last, p); last = p; strokes++; if (strokes % 8 === 0) onChange(strokes); });
-  const up = () => { drawing = false; onChange(strokes); }; fg.addEventListener('pointerup', up); fg.addEventListener('pointercancel', up);
+  fg.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e); line(last, p); last = p; strokes++; if (strokes % 8 === 0) fire(strokes); });
+  const up = () => { drawing = false; fire(strokes); }; fg.addEventListener('pointerup', up); fg.addEventListener('pointercancel', up);
   function stroke() { fx.globalCompositeOperation = eraser ? 'destination-out' : 'source-over'; fx.strokeStyle = color; fx.fillStyle = color; fx.lineWidth = eraser ? size * 5 : size; }
   function dot(p) { stroke(); fx.beginPath(); fx.arc(p[0], p[1], fx.lineWidth / 2, 0, 7); fx.fill(); }
   function line(a, b) { stroke(); fx.beginPath(); fx.moveTo(a[0], a[1]); fx.lineTo(b[0], b[1]); fx.stroke(); }
@@ -600,19 +602,29 @@ function sketchPad(m, onChange) {
   const api = {
     node: el('div', {}, wrap, tools),
     export() { const c = document.createElement('canvas'); c.width = W / 2; c.height = H / 2; const x = c.getContext('2d'); x.drawImage(bg, 0, 0, W / 2, H / 2); x.drawImage(fg, 0, 0, W / 2, H / 2); return c.toDataURL('image/jpeg', .7); },
-    get strokes() { return strokes; }
+    get strokes() { return strokes; },
+    onChange(f) { cb = f; }
   };
   return api;
 }
-function mSketch(run) {
+function mSketch(run, back) {
   const box = el('div', { class: 'screen' }, missionHeader(run, 1));
-  box.append(el('div', { class: 'fb info', html: `<b>Schets je eerste idee.</b> ${run.m.sketchHint} Het hoeft niet mooi — elke engineer begint met een krabbel.` }));
-  const status = el('span', { class: 'mut' }, 'Teken iets…');
-  const next = el('button', { class: 'btn', disabled: true, onclick: () => { run.sketch = pad.export(); run.sketchScore = pad.strokes > 120 ? 10 : 6; addXP(run.sketchScore); mDesign(run); } }, 'Schets klaar →');
-  const pad = sketchPad(run.m, n => { if (n > 25) { next.disabled = false; status.textContent = n > 120 ? 'Mooie schets! +10 XP' : 'Goed bezig'; } });
+  box.append(el('div', { class: 'fb info', html: back
+    ? `<b>Terug bij je schets.</b> Pas hem aan zoveel je wilt — je ontwerp en je testresultaten blijven bewaard.`
+    : `<b>Schets je eerste idee.</b> ${run.m.sketchHint} Het hoeft niet mooi — elke engineer begint met een krabbel.` }));
+  const status = el('span', { class: 'mut' }, back ? 'Pas je schets aan' : 'Teken iets…');
+  const done = () => {
+    run.sketch = pad.export();
+    if (!back) { run.sketchScore = pad.strokes > 120 ? 10 : 6; addXP(run.sketchScore); }
+    mDesign(run);
+  };
+  const next = el('button', { class: 'btn', disabled: !back, onclick: done }, back ? 'Naar ontwerp →' : 'Schets klaar →');
+  if (!run.pad) run.pad = sketchPad(run.m, n => { if (n > 25) { next.disabled = false; status.textContent = n > 120 ? 'Mooie schets! +10 XP' : 'Goed bezig'; } });
+  const pad = run.pad;
+  pad.onChange(n => { if (n > 25) { next.disabled = false; status.textContent = back ? 'Aangepast' : (n > 120 ? 'Mooie schets! +10 XP' : 'Goed bezig'); } });
   box.append(pad.node);
   box.append(el('div', { class: 'card tight' }, el('div', { class: 'steplabel' }, 'De klant wil'), el('div', { class: 'eisen' }, run.m.eisen.map(e => el('span', { class: 'eis' }, e)))));
-  box.append(el('div', { class: 'sticky-bottom' }, el('div', {}, status, el('button', { class: 'btn ghost', onclick: () => mDesign(run) }, 'Overslaan'), next)));
+  box.append(el('div', { class: 'sticky-bottom' }, el('div', {}, status, el('button', { class: 'btn ghost', onclick: () => mDesign(run) }, back ? 'Annuleren' : 'Overslaan'), next)));
   show(box);
 }
 
@@ -622,10 +634,13 @@ function mDesign(run) {
   box.append(el('div', { class: 'fb info', html: run.m.designIntro }));
   const checks = el('div', { class: 'eisen' }); box.append(el('div', { class: 'card tight' }, el('div', { class: 'row between' }, el('div', { class: 'steplabel' }, 'Checklist van de klant'), el('span', { class: 'mut', style: 'font-size:.8rem' }, 'wordt live bijgewerkt')), checks));
   const host = el('div', {}); box.append(host);
-  const status = el('span', { class: 'mut' }, 'Nog niet getest');
-  const next = el('button', { class: 'btn grn', disabled: true, onclick: () => mMake(run) }, 'Naar de werkvloer →');
-  box.append(el('div', { class: 'sticky-bottom' }, el('div', {}, status, next)));
+  const status = el('span', { class: 'mut' }, run.attempts ? `Test ${run.attempts} · ${run.best ? run.best.score : 0}/50` : 'Nog niet getest');
+  const next = el('button', { class: 'btn grn', disabled: !(run.best && run.best.pass), onclick: () => mMake(run) }, 'Naar de werkvloer →');
+  box.append(el('div', { class: 'sticky-bottom' }, el('div', {},
+    el('button', { class: 'btn sec', title: 'Terug naar je schets', onclick: () => mSketch(run, true) }, '✏️ Schets'),
+    status, next)));
   const ctx = {
+    st: d => (run.dstate = run.dstate || d),
     live(states) { checks.innerHTML = ''; run.m.eisen.forEach((e, i) => checks.append(el('span', { class: 'eis ' + (states[i] === true ? 'ok' : states[i] === false ? 'bad' : '') }, (states[i] === true ? '✓ ' : states[i] === false ? '✗ ' : '○ ') + e))); },
     report(res) {
       run.attempts++; S.iterations++;
@@ -809,7 +824,7 @@ MISSIONS.push({
   },
   designIntro: '<b>Ontwerp de hoofdligger.</b> Schuif, kies en kijk live wat er gebeurt. Test zo vaak als je wilt.',
   design(host, ctx) {
-    const st = { type: 'I', h: 800, mat: 'staal', pillar: false };
+    const st = ctx.st({ type: 'I', h: 800, mat: 'staal', pillar: false });
     const MAT = { staal: { E: 210000, cost: 1, co2: 1, eco: 2, t: 'Staal' }, rstaal: { E: 210000, cost: 1.1, co2: .45, eco: 4, t: 'Gerecycled staal' }, alu: { E: 70000, cost: 2.2, co2: 1.6, eco: 1, t: 'Aluminium' }, hout: { E: 13000, cost: .4, co2: .2, eco: 5, t: 'Hout' } };
     const TYPE = { I: { k: 1, cost: 1, t: 'I-profiel' }, koker: { k: 1.4, cost: 1.2, t: 'Koker' }, vakwerk: { k: 2.5, cost: 1.3, t: 'Vakwerk' } };
     const L = 24000, q = 15, LIMIT = 96, BUDGET = 400;
@@ -962,7 +977,7 @@ MISSIONS.push({
   },
   designIntro: '<b>Stel de sorteerlijn in.</b> De sensor ziet het product; de <b>duwer</b> staat 0,80 m verderop, de <b>luchtstoot</b> op 1,60 m. De camera denkt 80 ms na. Reken uit wanneer het product bij de duwer is — en test!',
   design(host, ctx) {
-    const st = { v: 1.0, d1: 500, d2: 1000, eco: false };
+    const st = ctx.st({ v: 1.0, d1: 500, d2: 1000, eco: false });
     const SENS = 0.6, PUSH = 1.4, JET = 2.2, END = 3.0, LAT = .08, SPACING = .5, N = 16;
     const cv = el('canvas', { width: 720, height: 300 }); const viz = el('div', { class: 'viz' }, cv); const g = cv.getContext('2d');
     const mets = el('div', { class: 'metrics' }); const fb = el('div', { class: 'fb', html: 'Stel snelheid en timing in en druk op <b>Start de band</b>.' });
@@ -1121,7 +1136,7 @@ MISSIONS.push({
   },
   designIntro: '<b>Stel de helm samen.</b> Vorm, materiaal, extra\'s, afwerking. Laat hem testen door Noor, Jayden en Lars.',
   design(host, ctx) {
-    const st = { form: 'klassiek', mat: 'abs', led: false, vent: false, magnet: false, visor: false, repair: false, finish: 'mat' };
+    const st = ctx.st({ form: 'klassiek', mat: 'abs', led: false, vent: false, magnet: false, visor: false, repair: false, finish: 'mat' });
     const FORM = { klassiek: { safe: 4.5, cool: 2.5, w: 330, p: 18, comf: 3.5, t: 'Klassiek' }, urban: { safe: 4.2, cool: 3.8, w: 360, p: 22, comf: 3.8, t: 'Urban' }, vouw: { safe: 3.6, cool: 4.3, w: 420, p: 30, comf: 3.6, t: 'Opvouwbaar' } };
     const MAT = { abs: { safe: 0, cool: 0, w: 40, p: 0, eco: 1, t: 'ABS', d: 'Goedkoop, robuust, zwaar, nieuw plastic' }, pc: { safe: .4, cool: .3, w: -60, p: 8, eco: 2, t: 'Polycarbonaat', d: 'Licht en sterk, duurder' }, rpp: { safe: -.2, cool: .2, w: 0, p: 1, eco: 4, t: '♻ Gerecycled PP', d: 'Van oude plastic, iets minder stijf' }, flax: { safe: .1, cool: .8, w: -20, p: 14, eco: 5, t: '🌿 Vlasvezel', d: 'Biobased uit Nederlandse vlas, uniek, prijzig' } };
     const FIN = { mat: { p: 0, cool: 0, c: '#374151', t: 'Mat zwart' }, kleur: { p: 2, cool: .5, c: '#e0479b', t: 'Kleur' }, print: { p: 5, cool: 1, c: 'url(#pr)', t: 'Custom print' } };
@@ -1266,7 +1281,7 @@ MISSIONS.push({
   },
   designIntro: '<b>Ontwerp de installatie.</b> Combineer panelen, batterij, warmtepomp, isolatie en LED. Alles beïnvloedt elkaar — reken door en kijk wat er gebeurt.',
   design(host, ctx) {
-    const st = { pv: 40, bat: 0, wp: false, iso: 0, led: false };
+    const st = ctx.st({ pv: 40, bat: 0, wp: false, iso: 0, led: false });
     const BUDGET = 250, BASE_E = 60, BASE_H = 120, CO2E = .3, CO2G = .2, PRICE_E = .30, PRICE_G = .12, FEED = .08;
     const ISO = [{ c: 0, r: 0, t: 'Geen' }, { c: 30, r: .25, t: 'Dak' }, { c: 60, r: .45, t: 'Dak + gevel' }, { c: 100, r: .6, t: 'Compleet' }];
     function calc() {
