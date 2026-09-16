@@ -377,6 +377,25 @@ input[type=range]{width:100%;accent-color:var(--fuchsia-d);height:36px}
 .linkbtn{background:transparent;border:0;color:var(--fuchsia-d);font-weight:700;font-size:.82rem;text-decoration:underline;margin-top:10px;padding:6px}
 .linkbtn.light{color:var(--fuchsia)}
 .ov.dim{z-index:40}
+
+/* dimensioneren-varianten */
+.dimval{text-align:center;font-family:var(--serif);font-size:1.4rem;margin-top:-4px}
+.dimval small{font-size:.8rem;color:var(--mut)}
+.femnote{font-size:.7rem;color:var(--teal);font-weight:700;margin:0 8px 2px}
+.dimopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dimopt{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px;text-align:center;color:var(--indigo)}
+.dimopt .pic svg{width:100%;height:auto}
+.dimopt b{display:block;font-family:var(--serif);font-size:1.15rem;margin:2px 0}
+.dimopt small{display:block;font-size:.7rem;color:var(--mut);line-height:1.35}
+.dimopt.ok{border-color:var(--mint);background:#e6f7f1}
+.dimopt.bad{border-color:var(--red);background:#fde7ec}
+.testrow{display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap}
+.testhint{font-size:.74rem;color:var(--mut)}
+.testlog{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.testlog div{font-size:.8rem;padding:6px 10px;border-radius:10px;background:#eef0fb;animation:pop .3s}
+.testlog div.ok{background:#e6f7f1;color:var(--teal)}
+.testlog div.no{background:#fde7ec;color:var(--red)}
+.dimopt small b{display:inline;font-family:inherit;font-size:inherit;color:var(--indigo);margin:0}
 </style></head><body>
 <div id="app">
 <div id="hud"><div class="logo">BLAUWDRUK<small>engineeringbureau</small></div><div class="rep"><b></b><i></i></div><div class="money">€0</div><button class="menu reset" title="Opnieuw beginnen">↻</button><button class="menu" title="Info">?</button></div>
@@ -634,7 +653,7 @@ function impactOf(s) { let people = 0, co2 = 0; for (const [id, n] of Object.ent
 const COACH = {
   welcome: 'Hoi! Ik ben Sam, je begeleider. Dit is jouw bureau. Links zit jij: de <b>engineer</b>, die bedenkt en tekent. Rechts staan je <b>vakmensen</b>, die het bouwen. Tik op een opdracht om te beginnen.',
   eisen: 'Eisen zijn de dingen die het product <b>moet kunnen</b>. Lees wat de klant vraagt en tik de drie dingen die daarbij horen. De andere drie zijn onzin of juist onhandig.',
-  dim: 'Hier kies je hoe dik of groot iets wordt. Schuif de knop: <b>rood = te zwak</b>, <b>groen = sterk genoeg</b>. De kunst: net groen, en niet veel verder. Groter is zwaarder en duurder.',
+  dim: 'Hier kies je hoe dik of groot iets wordt. <b>Te klein breekt</b>, <b>te groot is zwaar en duur</b>. De kunst: de kleinste maat die veilig is. Soms zie je live of het houdt, soms moet je testen of voorstellen vergelijken.',
   mat: 'Elk materiaal heeft plussen en minnen. Kijk wat de klant belangrijk vindt en kies het materiaal met de <b>hoogste balkjes op precies die punten</b>.',
   schema: 'Elke machine heeft iets dat <b>voelt</b> (een sensor), iets dat <b>denkt</b> (een besturing) en iets dat <b>doet</b> (een motor of grijper). Zet ze in die volgorde. Twee onderdelen horen er niet bij.',
   tek: 'Je ontwerp gaat nu naar de vakman. Die kan alleen bouwen wat <b>op papier</b> staat: maten, materiaal, hoe het in elkaar zit. Wat stuur je mee?',
@@ -843,26 +862,58 @@ function dimDrawing(kind, v, d, ok) {
   return '';
 }
 PUZZLES.dim = (p, ctx) => {
-  const d = p.dim, K = DIMKIND[d.kind]; const mid = (d.min + d.max) / 2; let v = Math.round(mid / d.step) * d.step; let checked = false;
-  const fmtV = x => (Math.round(x * 10) / 10).toLocaleString('nl-NL');
-  ctx.body.append(el('h3', { class: 'q' }, `Dimensioneren: ${d.label.toLowerCase()}`), el('p', { class: 'qs', html: `Situatie: ${d.load}. Kies de <b>kleinste maat die veilig is</b>. Te klein = faalt. Te groot = zwaar, duur en zonde van het materiaal.` }));
-  const box = el('div', { class: 'dimbox' }); const pic = el('div'); const ro = el('div', { class: 'readout' });
-  const zone = el('div', { class: 'zone' }); if (ctx.perks.fem) { const a = (d.need - d.min) / (d.max - d.min) * 100, b = (Math.min(d.max, d.need * 1.25) - d.min) / (d.max - d.min) * 100; zone.append(el('i', { style: `left:${a}%;width:${b - a}%` })); }
+  const d = p.dim, K = DIMKIND[d.kind]; const fmtV = x => (Math.round(x * 10) / 10).toLocaleString('nl-NL');
+  const snap = x => Math.min(d.max, Math.max(d.min, Math.round(x / d.step) * d.step));
+  const judge = v => { const m = K.meas(v, d.need); const ok = m.ok(m.val); const over = v > d.need * 1.25; return { m, c: K.cost(v, d.need), ok, score: !ok ? 0 : over ? .5 : 1 }; };
+  const verdict = (v, score) => score === 1 ? `<b>Precies goed gedimensioneerd.</b> Veilig, en geen gram te veel. Dat is waar een engineer het verschil maakt.` : score === .5 ? `<b>Het werkt, maar het is overgedimensioneerd.</b> ${fmtV(d.need)} ${d.unit} was al genoeg. Groter voelt veilig, maar kost materiaal, geld en CO₂.` : `<b>Te krap: dit faalt in de praktijk.</b> Vanaf ${fmtV(d.need)} ${d.unit} was het veilig. Liever een keer extra rekenen dan een keer te weinig.`;
+  const roHtml = (v, neutral = false) => { const j = judge(v); return neutral ? `<div>${j.m.l}<b>?</b>nog niet getest</div><div>${j.c.l}<b>${j.c.val.toLocaleString('nl-NL')}</b>${j.c.u}</div>` : `<div class="${j.ok ? 'good' : 'badv'}">${j.m.l}<b>${j.m.val.toLocaleString('nl-NL')} ${j.ok ? '✔' : '✘'}</b>${j.m.u}</div><div>${j.c.l}<b>${j.c.val.toLocaleString('nl-NL')}</b>${j.c.u}</div>`; };
+  const mode = ctx.forceMode || pick(['slider', 'tabel', 'test']);
+  let checked = false;
+
+  /* — variant A: schuif met live uitslag — */
+  if (mode === 'slider') {
+    let v = snap((d.min + d.max) / 2);
+    ctx.body.append(el('h3', { class: 'q' }, `Dimensioneren: ${d.label.toLowerCase()}`), el('p', { class: 'qs', html: `Situatie: ${d.load}. Schuif en kijk live mee. Kies de <b>kleinste maat die veilig is</b>: te klein faalt, te groot is zwaar en duur.` }));
+    const box = el('div', { class: 'dimbox' }); const pic = el('div'); const ro = el('div', { class: 'readout' });
+    const zone = el('div', { class: 'zone' }); if (ctx.perks.fem) { const a = (d.need - d.min) / (d.max - d.min) * 100, b = (Math.min(d.max, d.need * 1.25) - d.min) / (d.max - d.min) * 100; zone.append(el('i', { style: `left:${a}%;width:${b - a}%` })); }
+    const rng = el('input', { type: 'range', min: d.min, max: d.max, step: d.step, value: v, oninput: e => { v = parseFloat(e.target.value); draw(); } });
+    const val = el('div', { class: 'dimval' });
+    const draw = () => { const j = judge(v); pic.innerHTML = dimDrawing(d.kind, v, d, j.ok); ro.innerHTML = roHtml(v); val.innerHTML = `${fmtV(v)} <small>${d.unit}</small>`; };
+    box.append(pic, ro, val, ctx.perks.fem ? el('div', { class: 'femnote' }, 'FEM-berekening: groen = veilig én efficiënt') : '', zone, rng); ctx.body.append(box); draw();
+    const chk = el('button', { class: 'btn', style: 'margin-top:14px', onclick: () => { if (checked) return; checked = true; rng.disabled = true; chk.remove(); const j = judge(v); ctx.done(j.score, verdict(v, j.score)); } }, 'Maat vastleggen');
+    ctx.body.append(chk); return;
+  }
+
+  /* — variant B: vier voorstellen vergelijken — */
+  if (mode === 'tabel') {
+    const vals = [snap(d.need * .7), snap(d.need), snap(d.need * 1.6), snap(d.need * 2.3)].filter((x, i, a) => a.indexOf(x) === i);
+    if (vals.length < 4) { vals.push(snap(d.need * 1.3)); }
+    const opts = shuffle(vals.map(v => ({ v, j: judge(v) })));
+    ctx.body.append(el('h3', { class: 'q' }, `Dimensioneren: ${d.label.toLowerCase()}`), el('p', { class: 'qs', html: `Situatie: ${d.load}. Je collega's hebben <b>${opts.length} voorstellen</b> doorgerekend. Welke kies je? Denk aan: veilig, maar niet zwaarder of duurder dan nodig.` }));
+    const grid = el('div', { class: 'dimopts' });
+    const cards = opts.map(o => el('button', { class: 'dimopt', 'data-score': o.j.score, onclick: e => {
+      if (checked) return; checked = true; Snd.tap(); cards.forEach((c, i) => c.classList.add(opts[i].j.score === 1 ? 'ok' : (c === e.currentTarget ? 'bad' : 'x')));
+      ctx.done(o.j.score, verdict(o.v, o.j.score));
+    } }, el('div', { class: 'pic', html: dimDrawing(d.kind, o.v, d, true) }), el('b', {}, `${fmtV(o.v)} ${d.unit}`), el('small', {}, `${o.j.m.l}: <b>${o.j.m.val.toLocaleString('nl-NL')}</b> ${o.j.m.u}<br>${o.j.c.l}: <b>${o.j.c.val.toLocaleString('nl-NL')}</b> ${o.j.c.u}`)));
+    cards.forEach(c => { c.querySelector('small').innerHTML = c.querySelector('small').textContent; }); // veiligheid: tekst i.p.v. html
+    cards.forEach((c, i) => { c.querySelector('small').innerHTML = `${opts[i].j.m.l}: <b>${opts[i].j.m.val.toLocaleString('nl-NL')}</b> ${opts[i].j.m.u}<br>${opts[i].j.c.l}: <b>${opts[i].j.c.val.toLocaleString('nl-NL')}</b> ${opts[i].j.c.u}`; grid.append(c); });
+    ctx.body.append(grid); return;
+  }
+
+  /* — variant C: testbank: geen live uitslag, beperkt aantal tests — */
+  let v = snap(d.max * .85); let tests = ctx.perks.fem ? 4 : 3;
+  ctx.body.append(el('h3', { class: 'q' }, `Testen op de testbank: ${d.label.toLowerCase()}`), el('p', { class: 'qs', html: `Situatie: ${d.load}. Je ziet hier <b>niet</b> live of het houdt. Kies een maat, test hem (je hebt er <b>${tests}</b>), en leg dan de <b>kleinste veilige maat</b> vast.` }));
+  const box = el('div', { class: 'dimbox' }); const pic = el('div'); const ro = el('div', { class: 'readout' }); const log = el('div', { class: 'testlog' });
   const rng = el('input', { type: 'range', min: d.min, max: d.max, step: d.step, value: v, oninput: e => { v = parseFloat(e.target.value); draw(); } });
-  const val = el('div', { style: 'text-align:center;font-family:var(--serif);font-size:1.4rem;margin-top:-4px' });
-  const draw = () => {
-    const m = K.meas(v, d.need), c = K.cost(v, d.need); const ok = m.ok(m.val);
-    pic.innerHTML = dimDrawing(d.kind, v, d, ok);
-    ro.innerHTML = `<div class="${ok ? 'good' : 'badv'}">${m.l}<b>${m.val.toLocaleString('nl-NL')} ${ok ? '✔' : '✘'}</b>${m.u}</div><div>${c.l}<b>${c.val.toLocaleString('nl-NL')}</b>${c.u}</div>`;
-    val.innerHTML = `${fmtV(v)} <small style="font-size:.8rem;color:var(--mut)">${d.unit}</small>`;
-  };
-  box.append(pic, ro, val, ctx.perks.fem ? el('div', { style: 'font-size:.7rem;color:var(--teal);font-weight:700;margin:0 8px 2px' }, 'FEM-berekening: groen = veilig én efficiënt') : '', zone, rng); ctx.body.append(box); draw();
-  const chk = el('button', { class: 'btn', style: 'margin-top:14px', onclick: () => {
-    if (checked) return; checked = true; rng.disabled = true; chk.remove();
-    const m = K.meas(v, d.need); const ok = m.ok(m.val); const over = v > d.need * 1.25;
-    const score = !ok ? 0 : over ? .5 : 1;
-    ctx.done(score, score === 1 ? `<b>Precies goed gedimensioneerd.</b> Veilig, en geen gram te veel. Dat is waar een engineer het verschil maakt.` : score === .5 ? `<b>Het werkt, maar het is overgedimensioneerd.</b> ${fmtV(d.need)} ${d.unit} was al genoeg. Groter voelt veilig, maar kost materiaal, geld en CO₂.` : `<b>Te krap: dit faalt in de praktijk.</b> Vanaf ${fmtV(d.need)} ${d.unit} was het veilig. Liever een keer extra rekenen dan een keer te weinig.`);
-  } }, 'Maat vastleggen');
+  const val = el('div', { class: 'dimval' });
+  const draw = () => { pic.innerHTML = dimDrawing(d.kind, v, d, true); ro.innerHTML = roHtml(v, true); val.innerHTML = `${fmtV(v)} <small>${d.unit}</small>`; };
+  const tbtn = el('button', { class: 'btn ghost sm', onclick: () => {
+    if (checked || tests <= 0) return; tests--; Snd.tap(); const j = judge(v);
+    log.prepend(el('div', { class: j.ok ? 'ok' : 'no' }, el('b', {}, `${fmtV(v)} ${d.unit}`), ` → ${j.m.l.toLowerCase()} ${j.m.val.toLocaleString('nl-NL')} ${j.m.u}: `, el('b', {}, j.ok ? 'houdt ✔' : 'faalt ✘'), j.ok && j.score === .5 ? ' (maar zwaar en duur)' : ''));
+    pic.innerHTML = dimDrawing(d.kind, v, d, j.ok); tbtn.textContent = tests ? `🧪 Testen (nog ${tests})` : '🧪 Geen tests meer'; if (!tests) tbtn.disabled = true;
+  } }, `🧪 Testen (nog ${tests})`);
+  box.append(pic, ro, val, rng, el('div', { class: 'testrow' }, tbtn, el('span', { class: 'testhint' }, 'Tip: begin groot, test, en ga steeds kleiner.')), log); ctx.body.append(box); draw();
+  const chk = el('button', { class: 'btn', style: 'margin-top:14px', onclick: () => { if (checked) return; checked = true; rng.disabled = true; tbtn.disabled = true; chk.remove(); const j = judge(v); pic.innerHTML = dimDrawing(d.kind, v, d, j.ok); ro.innerHTML = roHtml(v); ctx.done(j.score, verdict(v, j.score)); } }, 'Maat vastleggen');
   ctx.body.append(chk);
 };
 
