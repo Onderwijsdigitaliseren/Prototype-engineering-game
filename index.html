@@ -396,6 +396,76 @@ input[type=range]{width:100%;accent-color:var(--fuchsia-d);height:36px}
 .testlog div.ok{background:#e6f7f1;color:var(--teal)}
 .testlog div.no{background:#fde7ec;color:var(--red)}
 .dimopt small b{display:inline;font-family:inherit;font-size:inherit;color:var(--indigo);margin:0}
+/* Alleen de inhoud van bestaande ontwerpstappen. */
+#design .play-note{font-size:.76rem;color:var(--mut);margin:8px 0;line-height:1.35}
+#design .play-counter{font-weight:800;font-size:.78rem;color:var(--teal);margin:10px 0}
+#design .play-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+#design .play-actions .btn{font-size:.84rem}
+#design .play-card{background:#fff;border:2px solid var(--line);border-radius:15px;padding:12px;margin:8px 0;color:var(--indigo)}
+#design .play-card small{font-size:.75rem;color:var(--mut);line-height:1.3}
+#design .play-card.ok{border-color:var(--mint);background:#e6f7f1}
+#design .play-card.bad{border-color:var(--red);background:#fde7ec}
+#design .repair-row{display:flex;align-items:center;gap:8px;min-height:62px}
+#design .repair-row .repair-copy{flex:1;font-size:.84rem;font-weight:700}
+#design .repair-row .repair-copy small{display:block;font-weight:400;margin-top:3px}
+#design .repair-row button,#design .order-controls button{background:#eeedf8;border:0;color:var(--indigo);min-width:37px;min-height:38px;border-radius:10px;font-size:1.1rem;font-weight:800}
+#design .repair-row.changed{border-color:var(--blue)}
+#design .sort-card{text-align:center;padding:25px 16px;min-height:145px;display:flex;flex-direction:column;justify-content:center;animation:pop .2s}
+#design .sort-card strong{font-family:var(--serif);font-size:1.15rem;line-height:1.3}
+#design .sort-choices{display:flex;gap:9px}
+#design .sort-choices button{flex:1}
+#design .sort-track{display:flex;justify-content:center;gap:7px;margin:10px 0}
+#design .sort-track i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+#design .sort-track i.done{background:var(--blue)}
+#design .sort-track i.now{outline:2px solid var(--fuchsia-d);outline-offset:2px}
+#design .pair-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 14px;margin:12px 0}
+#design .pair-col{display:flex;flex-direction:column;gap:8px}
+#design .pair-card{background:#fff;border:2px solid var(--line);color:var(--indigo);border-radius:13px;padding:10px 8px;min-height:72px;text-align:left;font-weight:700;font-size:.8rem;line-height:1.3;position:relative;overflow-wrap:anywhere}
+#design .pair-card small{font-weight:400;display:block;color:var(--mut);font-size:.7rem;margin-top:3px}
+#design .pair-card em{font-style:normal;display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:50%;background:var(--indigo);color:#fff;font-size:.66rem;margin:0 4px 3px 0}
+#design .pair-card.selected{border-color:var(--fuchsia-d);background:#fbedf7}
+#design .pair-card.linked{border-color:var(--blue);background:#edf5ff}
+#design .pair-card.ok{border-color:var(--mint);background:#e6f7f1}
+#design .pair-card.bad{border-color:var(--red);background:#fde7ec}
+#design .order-row{display:flex;align-items:center;gap:8px;padding:9px;cursor:grab}
+#design .order-row .order-text{flex:1;min-width:0;font-size:.82rem;font-weight:700}
+#design .order-row .order-text small{display:block;font-weight:400;margin-top:3px}
+#design .order-controls{display:flex;gap:4px}
+#design .order-number{display:grid;place-items:center;background:var(--indigo);color:#fff;border-radius:50%;width:24px;height:24px;flex:none;font-size:.74rem;font-weight:800}
+#design .sample-card{text-align:center;position:relative}
+#design .sample-card .sample-icon{height:58px;display:grid;place-items:center;font-size:1.8rem;background:linear-gradient(135deg,#d8e2f5,#f9faff);border-radius:9px;margin:7px 0}
+#design .sample-card .sample-result{font-size:.74rem;line-height:1.3;min-height:40px;padding:7px 0;color:var(--mut)}
+#design .sample-card button{font-size:.78rem;min-height:37px;margin:3px 0;width:100%;padding:6px}
+#design .sample-card.tested{border-color:var(--blue)}
+#design .sample-card .sample-test{border:1px solid var(--line);background:#eeedf8;color:var(--indigo);border-radius:9px;font-weight:700}
+#design .sample-card.testing .sample-icon{animation:sampleshake .2s 2}
+@keyframes sampleshake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+#design .trim-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px}
+#design .trim-box svg{width:100%;height:120px}
+#design .trim-compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+#design .trim-compare div{background:#eeedf8;border-radius:11px;padding:9px;font-size:.73rem;color:var(--mut)}
+#design .trim-compare b{display:block;font-size:1.05rem;color:var(--indigo)}
+#design .trim-meter{height:8px;background:#eeedf8;overflow:hidden;border-radius:6px;margin:8px 0}
+#design .trim-meter i{display:block;height:100%;background:var(--mint);transition:width .2s}
+#design .batch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+#design .batch-grid .play-card{text-align:center;padding:10px 4px}
+#design .batch-grid .batch-size{display:block;font-family:var(--serif);font-size:1.1rem}
+#design .batch-grid .batch-controls{display:flex;gap:4px;justify-content:center;align-items:center;margin-top:10px}
+#design .batch-controls button{border:0;min-height:36px;min-width:28px;border-radius:8px;background:#eeedf8;color:var(--indigo);font-size:1.2rem}
+#design .batch-controls b{min-width:15px;font-size:.9rem}
+#design .batch-meter{background:#fff;border:2px solid var(--line);padding:12px;border-radius:14px;margin:10px 0;font-size:.86rem;line-height:1.5}
+#design .batch-meter.ok{border-color:var(--mint)}
+#design .batch-meter.bad{border-color:var(--orange)}
+#design .pack-preview{background:#edf1fa;border:2px dashed var(--lav);border-radius:15px;padding:12px;min-height:85px;margin:10px 0}
+#design .pack-preview b{display:block;font-size:.78rem;margin-bottom:7px}
+#design .pack-preview span{display:inline-block;background:#fff;border-radius:7px;padding:4px 7px;margin:3px;font-size:.75rem}
+#design .play-live{font-size:.8rem;line-height:1.4;margin:8px 0;min-height:2.5em}
+#design .play-live.ok{color:var(--teal)}
+#design .play-live.bad{color:var(--red)}
+#design button:focus-visible{outline:3px solid var(--fuchsia-d);outline-offset:2px}
+@media(max-width:360px){#design .pair-grid{gap:6px 9px}#design .pair-card{font-size:.76rem;padding:8px 6px}#design .order-controls{flex-direction:column}#design .order-controls button{min-height:30px}#design .batch-controls button{min-width:25px}#design .batch-grid{gap:5px}}
+@media(prefers-reduced-motion:reduce){#design .sample-card.testing .sample-icon,#design .sort-card{animation:none}#design .trim-meter i{transition:none}}
+
 </style></head><body>
 <div id="app">
 <div id="hud"><div class="logo">BLAUWDRUK<small>engineeringbureau</small></div><div class="rep"><b></b><i></i></div><div class="money">€0</div><button class="menu reset" title="Opnieuw beginnen">↻</button><button class="menu" title="Info">?</button></div>
@@ -862,9 +932,9 @@ function dimDrawing(kind, v, d, ok) {
   return '';
 }
 PUZZLES.dim = (p, ctx) => {
-  const d = p.dim, K = DIMKIND[d.kind]; const fmtV = x => (Math.round(x * 10) / 10).toLocaleString('nl-NL');
+  const d = p.dim, K = DIMKIND[d.kind]; const fmtV = x => x.toLocaleString('nl-NL', { maximumFractionDigits: 2 });
   const snap = x => Math.min(d.max, Math.max(d.min, Math.round(x / d.step) * d.step));
-  const judge = v => { const m = K.meas(v, d.need); const ok = m.ok(m.val); const over = v > d.need * 1.25; return { m, c: K.cost(v, d.need), ok, score: !ok ? 0 : over ? .5 : 1 }; };
+  const judge = v => { const m = K.meas(v, d.need); const ok = v >= d.need; const over = v > d.need * 1.25; return { m, c: K.cost(v, d.need), ok, score: !ok ? 0 : over ? .5 : 1 }; };
   const verdict = (v, score) => score === 1 ? `<b>Precies goed gedimensioneerd.</b> Veilig, en geen gram te veel. Dat is waar een engineer het verschil maakt.` : score === .5 ? `<b>Het werkt, maar het is overgedimensioneerd.</b> ${fmtV(d.need)} ${d.unit} was al genoeg. Groter voelt veilig, maar kost materiaal, geld en CO₂.` : `<b>Te krap: dit faalt in de praktijk.</b> Vanaf ${fmtV(d.need)} ${d.unit} was het veilig. Liever een keer extra rekenen dan een keer te weinig.`;
   const roHtml = (v, neutral = false) => { const j = judge(v); return neutral ? `<div>${j.m.l}<b>?</b>nog niet getest</div><div>${j.c.l}<b>${j.c.val.toLocaleString('nl-NL')}</b>${j.c.u}</div>` : `<div class="${j.ok ? 'good' : 'badv'}">${j.m.l}<b>${j.m.val.toLocaleString('nl-NL')} ${j.ok ? '✔' : '✘'}</b>${j.m.u}</div><div>${j.c.l}<b>${j.c.val.toLocaleString('nl-NL')}</b>${j.c.u}</div>`; };
   const mode = ctx.forceMode || pick(['slider', 'tabel', 'test']);
@@ -901,17 +971,17 @@ PUZZLES.dim = (p, ctx) => {
   }
 
   /* — variant C: testbank: geen live uitslag, beperkt aantal tests — */
-  let v = snap(d.max * .85); let tests = ctx.perks.fem ? 4 : 3;
-  ctx.body.append(el('h3', { class: 'q' }, `Testen op de testbank: ${d.label.toLowerCase()}`), el('p', { class: 'qs', html: `Situatie: ${d.load}. Je ziet hier <b>niet</b> live of het houdt. Kies een maat, test hem (je hebt er <b>${tests}</b>), en leg dan de <b>kleinste veilige maat</b> vast.` }));
+  let v = snap(d.max * .85);
+  ctx.body.append(el('h3', { class: 'q' }, `Testen op de testbank: ${d.label.toLowerCase()}`), el('p', { class: 'qs', html: `Situatie: ${d.load}. Schuif, druk op testen en bekijk wat er gebeurt. Zoek de <b>kleinste maat die houdt</b>. Je mag blijven proberen.` }));
   const box = el('div', { class: 'dimbox' }); const pic = el('div'); const ro = el('div', { class: 'readout' }); const log = el('div', { class: 'testlog' });
   const rng = el('input', { type: 'range', min: d.min, max: d.max, step: d.step, value: v, oninput: e => { v = parseFloat(e.target.value); draw(); } });
   const val = el('div', { class: 'dimval' });
   const draw = () => { pic.innerHTML = dimDrawing(d.kind, v, d, true); ro.innerHTML = roHtml(v, true); val.innerHTML = `${fmtV(v)} <small>${d.unit}</small>`; };
   const tbtn = el('button', { class: 'btn ghost sm', onclick: () => {
-    if (checked || tests <= 0) return; tests--; Snd.tap(); const j = judge(v);
+    if (checked) return; Snd.tap(); const j = judge(v);
     log.prepend(el('div', { class: j.ok ? 'ok' : 'no' }, el('b', {}, `${fmtV(v)} ${d.unit}`), ` → ${j.m.l.toLowerCase()} ${j.m.val.toLocaleString('nl-NL')} ${j.m.u}: `, el('b', {}, j.ok ? 'houdt ✔' : 'faalt ✘'), j.ok && j.score === .5 ? ' (maar zwaar en duur)' : ''));
-    pic.innerHTML = dimDrawing(d.kind, v, d, j.ok); tbtn.textContent = tests ? `🧪 Testen (nog ${tests})` : '🧪 Geen tests meer'; if (!tests) tbtn.disabled = true;
-  } }, `🧪 Testen (nog ${tests})`);
+    pic.innerHTML = dimDrawing(d.kind, v, d, j.ok); tbtn.textContent = '🧪 Opnieuw testen';
+  } }, '🧪 Testen');
   box.append(pic, ro, val, rng, el('div', { class: 'testrow' }, tbtn, el('span', { class: 'testhint' }, 'Tip: begin groot, test, en ga steeds kleiner.')), log); ctx.body.append(box); draw();
   const chk = el('button', { class: 'btn', style: 'margin-top:14px', onclick: () => { if (checked) return; checked = true; rng.disabled = true; tbtn.disabled = true; chk.remove(); const j = judge(v); pic.innerHTML = dimDrawing(d.kind, v, d, j.ok); ro.innerHTML = roHtml(v); ctx.done(j.score, verdict(v, j.score)); } }, 'Maat vastleggen');
   ctx.body.append(chk);
@@ -1548,7 +1618,9 @@ function showTab(k) {
 /* ===== ONTWERPFLOW (het werk van de engineer) ===== */
 const STEP_NAMES = { eisen: 'Programma van eisen', dim: 'Dimensioneren', mat: 'Materiaalkeuze', schema: 'Systeemschema', proces: 'Productie & aantal', tek: 'Overdracht' };
 function openDesign(order) {
-  const p = PROD[order.pid]; const steps = pickPuzzles(p); const scores = []; let i = 0; let retry = perks().print3d ? 1 : 0;
+  if ($('#design')) return;
+  const p = PROD[order.pid]; const plan = getDesignPlan(order); const steps = plan.steps;
+  const variants = plan.variants; const scores = []; let i = 0; let retry = perks().print3d ? 1 : 0;
   const ov = el('div', { class: 'ov', id: 'design' });
   const top = el('div', { class: 'top' }, el('span', { class: 'dom', style: `background:${DOMS[p.dom].c}` }, DOMS[p.dom].t), el('b', {}, `Ontwerp: ${p.name}`), el('button', { class: 'x', onclick: () => { ov.remove(); dirtyScene = true; render(); } }, '✕'));
   const stepsBar = el('div', { class: 'steps' }); steps.forEach(() => stepsBar.append(el('i')));
@@ -1563,31 +1635,46 @@ function openDesign(order) {
     stepLbl.innerHTML = `Stap <b>${i + 1}</b> van ${steps.length} · ${STEP_NAMES[steps[i]] || ''}`;
     body.append(el('div', { class: 'brief' }, el('div', { class: 'pic', html: artSvg(p.id) }), el('div', {}, el('h3', {}, p.name), el('p', {}, el('b', {}, p.klant + ': '), p.brief))));
     const type = steps[i];
-    const stepHost = el('div'); body.append(stepHost);
-    top.querySelector('.help') && top.querySelector('.help').remove(); top.insertBefore(el('button', { class: 'x help', title: 'Uitleg', onclick: () => coach(type, true) }, '💡'), top.querySelector('.x'));
-    setTimeout(() => coach(type), 400);
-    PUZZLES[type](p, { body: stepHost, perks: perks(), worker: likelyWorker(), done: (score, fb) => {
+    const stepHost = el('div', { 'data-puzzle': type, 'data-variant': variants[i] }); body.append(stepHost);
+    let stepContext; let stepFinished = false;
+    top.querySelector('.help') && top.querySelector('.help').remove(); top.insertBefore(el('button', { class: 'x help', title: 'Uitleg', onclick: () => {
+      const tips = {
+        eisen: 'De klant heeft nodig: <b>' + p.eisen.good.map(esc).join(' · ') + '</b>.',
+        mat: esc(p.mat.opts[p.mat.ok][0]) + ': ' + esc(MAT_INFO[p.id][p.mat.ok]) + '.',
+        dim: p.dim ? 'In dit spel is <b>' + p.dim.need.toLocaleString('nl-NL') + ' ' + p.dim.unit + '</b> de kleinste maat die voldoet. Probeer hem op de testbank.' : '',
+        schema: p.schema ? p.schema.chips.map(esc).join(' → ') : '',
+        proces: PROC[p.id] ? esc(PROC[p.id].ok) + ': ' + esc(PROC[p.id].why) : ''
+      };
+      const previous = COACH[type]; const hint = stepContext?.hint || tips[type]; if (hint) COACH[type] = hint; coach(type, true); COACH[type] = previous;
+    } }, '💡'), top.querySelector('.x'));
+    stepContext = { body: stepHost, perks: perks(), worker: likelyWorker(), variant: variants[i], details: plan.details[i], done: (score, fb) => {
+      if (stepFinished || !ov.isConnected) return; stepFinished = true;
       if (score >= 1) Snd.ok(); else Snd.no();
       const box = el('div', { class: 'fb ' + (score >= 1 ? 'ok' : 'no'), html: fb }); stepHost.append(box); box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      const next = () => { scores.push(score); i++; if (i < steps.length) runStep(); else result(); };
-      if (score < 1 && retry > 0) foot.append(el('button', { class: 'btn ghost', onclick: () => { retry--; Snd.tap(); toast('🖨️ Prototype geprint, getest, geleerd. Nog een keer!'); runStep(); } }, '🖨️ Prototype & opnieuw'));
+      let advanced = false; const next = () => { if (advanced) return; advanced = true; scores.push(score); i++; if (i < steps.length) runStep(); else result(); };
+      if (score < 1 && retry > 0) foot.append(el('button', { class: 'btn ghost', onclick: () => { if (advanced) return; advanced = true; retry--; Snd.tap(); toast('🖨️ Prototype geprint, getest, geleerd. Nog een keer!'); runStep(); } }, '🖨️ Prototype & opnieuw'));
       foot.append(el('button', { class: 'btn', onclick: () => { Snd.tap(); next(); } }, i < steps.length - 1 ? 'Volgende stap →' : 'Ontwerp afronden ✓'));
-    } });
+    } };
+    PUZZLES[type](p, stepContext);
+    save();
   };
   const result = () => {
     body.innerHTML = ''; foot.innerHTML = ''; [...stepsBar.children].forEach(s => s.className = 'done'); stepLbl.innerHTML = 'Klaar · beoordeling van je ontwerp';
     const total = scores.reduce((a, b) => a + b, 0); let stars = Math.round(total / steps.length * 3); if (perks().vr) stars = Math.max(1, stars); stars = clamp(stars, 0, 3);
-    Snd.stamp(); S.stats.designs++; S.stats.stars += stars; if (stars === 3) { S.stats.perfect++; S.streak = (S.streak || 0) + 1; S.bestStreak = Math.max(S.bestStreak || 0, S.streak); confetti(); } else S.streak = 0;
-    const bonus = 1 + .1 * Math.min(5, S.streak);
+    Snd.stamp(); const streak = stars === 3 ? (S.streak || 0) + 1 : 0;
+    const bonus = 1 + .1 * Math.min(5, streak);
     const w = likelyWorker();
     const cbP = [0.85, 0.5, 0.2, 0][stars] * (has('testbank') ? .5 : 1);
     const res = el('div', { class: 'result' }, el('div', { html: artSvg(p.id), style: 'width:140px;margin:0 auto' }), el('div', { class: 'stamp' }, stars ? 'GOEDGEKEURD' : 'TWIJFELACHTIG'), el('div', { class: 'big' }, starStr(stars)),
       el('p', {}, ['De klant heeft twijfels en betaalt de helft. En reken maar dat de werkplaats gaat bellen.', 'Het werkt, maar er zitten losse eindjes in. Grote kans dat de vakman met vragen belt.', 'Een degelijk ontwerp. Kleine kans op vragen uit de werkplaats.', 'Een blauwdruk om in te lijsten. De werkplaats kan zó aan de slag — en de klant betaalt een bonus.'][stars]),
       el('div', { class: 'handoff' }, el('div', { class: 'who' }, el('b', {}, '🧠 ' + S.name.split(' ')[0]), el('span', {}, 'Engineer · ontwerpt')), el('div', { class: 'arr' }, '→📐→'), el('div', { class: 'who' }, el('b', {}, '🔧 ' + (w || 'werkplaats')), el('span', {}, w ? 'Vakmens · bouwt' : 'nog geen vakman!'))),
-      S.streak >= 2 ? el('div', { style: 'display:inline-block;background:var(--yel);color:var(--indigo);font-weight:800;border-radius:99px;padding:4px 12px;font-size:.8rem' }, `🔥 Streak ×${S.streak}: +${Math.round((bonus - 1) * 100)}% beloning`) : null,
+      streak >= 2 ? el('div', { style: 'display:inline-block;background:var(--yel);color:var(--indigo);font-weight:800;border-radius:99px;padding:4px 12px;font-size:.8rem' }, `🔥 Streak ×${streak}: +${Math.round((bonus - 1) * 100)}% beloning`) : null,
       el('p', { style: 'font-size:.78rem' }, `Beloning bij oplevering: ${eur(Math.round(order.pay * [0.5, 0.75, 1, 1.3][stars] * bonus))} · kans op terugbelactie ${Math.round(cbP * 100)}%`));
     body.append(res);
     foot.append(el('button', { class: 'btn fz', onclick: () => {
+      if (!S.inbox.some(o => o.id === order.id)) return;
+      S.stats.designs++; S.stats.stars += stars; S.streak = streak;
+      if (stars === 3) { S.stats.perfect++; S.bestStreak = Math.max(S.bestStreak || 0, streak); confetti(); }
       Snd.tap(); S.inbox = S.inbox.filter(o => o.id !== order.id);
       S.jobs.push({ id: uid(), pid: p.id, dom: p.dom, stars, work: p.work, prog: 0, pay: order.pay, bonus, worker: null, paused: false, cb: Math.random() < cbP ? 'pending' : null });
       ov.remove(); dirtyScene = dirtyLists = true; render(); save(); showTab('bureau'); toast(`📐 Blauwdruk ${p.name} naar de werkplaats!`); checkTitle(); checkAch(); setTimeout(() => coach('built'), 900);
@@ -1753,6 +1840,302 @@ function introBasic(then) {
   const show = () => { const sl = slides[i]; card.innerHTML = ''; card.append(el('div', { class: 'ic' }, sl.ic), el('h2', {}, sl.t), el('p', { html: sl.d }), el('div', { class: 'dots' }, slides.map((_, k) => el('i', { class: k === i ? 'on' : '' }))), el('button', { class: 'btn', onclick: () => { Snd.tap(); if (++i < slides.length) show(); else { ov.remove(); if (then) then(); } } }, i < slides.length - 1 ? 'Volgende →' : (then ? '▶ Aan de slag' : 'Sluiten'))); };
   show();
 }
+/* Kleine variaties binnen de oorspronkelijke ontwerpstappen. */
+const CLEAR_BRIEFS = {
+ rek:'Een stevig buitenrek voor 20 fietsen. Het wordt vastgezet in beton en moet beschermd zijn tegen roest.',
+ hefbrug:'Een hefbrug voor auto’s tot 3.000 kg, onder een plafond van 4 meter. Ook bij stroomuitval moet de auto veilig blijven hangen.',
+ brug:'Een brug van 12 meter voor maximaal 50 mensen tegelijk. Hij moet 25 jaar meegaan met weinig onderhoud.',
+ achtbaan:'Een beugel voor kinderen én volwassenen die bij 4 G gesloten blijft. Hij moet automatisch sluiten en vergrendelen.',
+ estep:'Een e-step voor in de trein: opvouwbaar in 3 seconden, 25 km bereik en maximaal 15 kg zwaar.',
+ koffie:'Een betaalbaar koffiezetapparaat dat je met één hand bedient. Het past onder een keukenkastje en onderdelen moeten los vervangbaar zijn.',
+ drone:'Een lichte inspectiedrone die een val van 2 meter overleeft. De camera moet scherpe beelden maken zonder mee te trillen.',
+ hand:'Een handprothese voor een tiener, lichter dan 400 gram. Hij pakt een ei zonder het te breken; vingers zijn apart vervangbaar.',
+ sorteer:'Een robot die PET-flessen van HDPE-flacons onderscheidt en 2 stuks per seconde sorteert. De noodstop moet binnen handbereik zitten.',
+ grijper:'Een grijper voor 40 broodjes per minuut. Hij mag broodjes niet beschadigen en moet voedselveilig en afwasbaar zijn.',
+ deur:'Een deur die opengaat als je eraan komt en niemand klemt. Bij stroomuitval moet je hem met de hand kunnen openen.',
+ pakket:'Een magazijnrobot die zelf de route vindt, stopt voor mensen en zelfstandig naar zijn laadplek gaat.',
+ wp:'Een school verliest 12 kW warmte bij −10 °C. De warmtepomp moet dan verwarmen met lage watertemperatuur en bij de buren onder 35 dB blijven.',
+ carport:'Een zonnecarport die 16.000 kWh per jaar levert. Het dak moet wind en sneeuw dragen, met laadpunten eronder.',
+ laad:'Acht laadpunten op één aansluiting van 63 A. Verdeel de stroom automatisch over de auto’s en geef ieder punt aardlekbeveiliging tegen lekstroom.',
+ wind:'Een turbine voor 10.000 kWh per jaar. Hij moet automatisch remmen bij storm; de mast moet wind tot 150 km/u doorstaan.',
+ rover:'Een roverwiel dat bij −90 °C over scherpe rotsen rijdt. Het mag niet lek kunnen raken: er is geen monteur op Mars.',
+ exo:'Een draagbaar hulpmiddel dat voelt wanneer iemand tilt en dan 15 kg overneemt. Een medewerker moet het in 30 seconden kunnen aantrekken.',
+ h2bus:'Een tankstation voor 40 bussen per nacht, met waterstof uit eigen zonnestroom. Bij een lek moet de toevoer automatisch sluiten.',
+ sat:'Een satellietbehuizing van 10×10×10 cm, onder 1,3 kg. Hij moet de trillingen van de raketlancering overleven.'
+};
+const MAT_INFO = {
+ rek:['Zinklaag beschermt tegen roest','Licht; duurder in dit ontwerp','Vraagt bescherming buiten','Te slap voor dit rek'],
+ hefbrug:['Stijf en betaalbaar voor dit frame','Hier een duurder frame nodig','Zwaar; niet voor dit lasframe','Boven het projectbudget'],
+ brug:['Beschermende patina; weinig onderhoud','Roest zonder beschermlaag','Draagt de belasting niet','Te zwaar voor deze montage'],
+ achtbaan:['Doorstaat de herhaaltest','Vervormt in deze test','Verbinding doorstaat de test niet','Deze variant doorstaat de test niet'],
+ estep:['Licht en sterk genoeg','Dit frame wordt te zwaar','Verbinding doorstaat de test niet','Boven het projectbudget'],
+ koffie:['Geschikte kwaliteit voor warmte en recycling','Breekt in de valtest','Te zwaar voor dit apparaat','Zwaar en lastig te vervangen'],
+ drone:['Licht en stijf genoeg','Dit frame wordt te zwaar','Deze arm buigt te veel','Deze arm is te slap'],
+ hand:['Licht; vingers op maat printbaar','Deze vingers worden te zwaar','Breekt bij een stoot','Fijne scharnieren lastig te maken'],
+ sorteer:['Afwasbaar en vochtbestendig','Roest zonder bescherming','Neemt vocht op','Te duur voor dit project'],
+ grijper:['Zacht; voedselgeschikte kwaliteit','Drukt broodjes plat','Lastig schoon te houden','Open poriën houden vuil vast'],
+ deur:['Tussenlaag houdt gebroken glas bijeen','Scherpe losse scherven bij breuk','Deze dunne plaat buigt te veel','Je kunt er niet doorheen kijken'],
+ pakket:['Licht en stootvast genoeg','Dit frame wordt te zwaar','Doorstaat de stootproef niet','Breekt bij een botsing'],
+ wp:['Isoleert goed in dit ontwerp','Warmteverlies blijft gelijk','Deze muur isoleert onvoldoende','Losse folie isoleert hier onvoldoende'],
+ carport:['Licht en geschikt voor buiten','Beschermlaag nodig tegen roest','Vraagt meer onderhoud','Boven het projectbudget'],
+ laad:['Geleidend, met beschermende isolatie','Past niet bij dit kabelplan','Geen isolatie om de geleider','Geleidt geen stroom'],
+ wind:['Licht; doorstaat de herhaaltest','Deze wiek wordt te zwaar','Deze uitvoering faalt bij vocht','Deze wiek buigt te veel'],
+ rover:['Doorstaat de kou- en steentest','Deze kwaliteit faalt in de kou','Dit wiel wordt te zwaar','Doorstaat de steentest niet'],
+ exo:['Licht, met zachte contactvlakken','Dit frame wordt te zwaar','Verbinding doorstaat de test niet','Te zwaar om te dragen'],
+ h2bus:['Gecertificeerd voor deze toepassing','Geschiktheid niet aangetoond','Niet geschikt voor deze druk','Voldoet niet aan de specificatie'],
+ sat:['Licht; doorstaat de trillingstest','Deze behuizing wordt te zwaar','Doorstaat de trillingstest niet','Voldoet niet aan de ruimtetest']
+};
+PRODUCTS.forEach(p=>{p.brief=CLEAR_BRIEFS[p.id]||p.brief;});
+
+// Soms drie eisen kiezen, soms één verkeerde keuze ontdekken.
+const standardRequirements=PUZZLES.eisen;
+PUZZLES.eisen=(p,ctx)=>{
+ if(ctx.variant!=='spot')return standardRequirements(p,ctx);
+ let done=false;
+ const opts=shuffle([...shuffle(p.eisen.good).slice(0,2).map(t=>({t,wrong:false})),{t:pick(p.eisen.bad),wrong:true}]);
+ ctx.body.append(el('h3',{class:'q'},'Wat past hier niet?'),el('p',{class:'qs'},'Eén voorstel botst met de klantvraag. Tik het aan.'));
+ const grid=el('div',{class:'chips'});
+ const bs=opts.map(o=>el('button',{onclick:e=>{if(done)return;done=true;Snd.tap();bs.forEach((b,i)=>{b.disabled=true;b.classList.add(opts[i].wrong?'ok':b===e.currentTarget?'bad':'x');});const wrong=opts.find(x=>x.wrong);ctx.done(o.wrong?1:0,o.wrong?'<b>Goed gezien.</b> Dit voorstel past niet bij de afspraak.':`<b>Deze afspraak past juist wel.</b> “${esc(wrong.t)}” hoort hier niet bij.`);}},o.t));
+ bs.forEach(b=>grid.append(b));ctx.body.append(grid);
+};
+
+// Dezelfde materiaalkaarten, af en toe een vergelijking tussen twee kandidaten.
+PUZZLES.mat=(p,ctx)=>{
+ const m=p.mat;let done=false;
+ let ids=m.opts.map((_,i)=>i);
+ if(ctx.variant==='duo')ids=[m.ok,pick(ids.filter(i=>i!==m.ok))];
+ const opts=shuffle(ids.map(i=>({o:m.opts[i],i,ok:i===m.ok})));
+ const hi=ctx.perks.bib?m.opts[m.ok].slice(1).map(x=>x>=4):[false,false,false,false];
+ ctx.body.append(el('h3',{class:'q'},opts.length===2?'Welk van de twee?':'Materiaalkeuze'),el('p',{class:'qs',html:`Kies voor: <b>${esc(m.prio)}</b>.`}));
+ const grid=el('div',{class:'mats'});
+ const cards=opts.map(({o,i,ok})=>el('button',{class:'mat',onclick:e=>{
+  if(done)return;done=true;Snd.tap();cards.forEach((c,k)=>{c.disabled=true;c.classList.add(opts[k].ok?'ok':c===e.currentTarget?'bad':'x');});
+  ctx.done(ok?1:0,ok?`<b>${esc(o[0])} past.</b> ${esc(MAT_INFO[p.id][i])}.`:`<b>Kijk naar de eigenschappen.</b> ${esc(m.opts[m.ok][0])}: ${esc(MAT_INFO[p.id][m.ok])}.`);
+ }},el('b',{},o[0]),el('small',{style:'display:block;min-height:2.5em;margin-bottom:7px;color:var(--mut);font-size:.72rem;line-height:1.25'},MAT_INFO[p.id][i]),el('div',{class:'pr',html:PROPS.map((pr,k)=>`<span class="${hi[k]?'hi':''}">${pr}</span><i style="--w:${o[k+1]*20}%"></i>`).join('')})));
+ cards.forEach(c=>grid.append(c));ctx.body.append(grid);
+};
+
+// Geef betekenis aan onbekende onderdeelnamen, direct op de bestaande knoppen.
+const PART_INFO={
+ 'NIR-sensor':'herkent het soort kunststof','PLC':'beslist wat er moet gebeuren','Persluchtklep':'stuurt de luchtstoot',
+ 'Camera':'ziet waar het broodje ligt','Vacuümgrijper':'pakt het broodje met zuigkracht',
+ 'Bewegingssensor':'merkt dat iemand nadert','Besturing':'beslist wanneer de deur beweegt','Elektromotor':'beweegt de deur',
+ 'Lidar-scanner':'meet afstand tot obstakels','Robotcontroller':'bepaalt de rijbeweging','Aandrijfwielen':'verplaatsen de robot',
+ 'Krachtsensor':'meet wanneer iemand kracht zet','Microcontroller':'verwerkt de meting','Elektrische actuator':'helpt de tilbeweging',
+ 'Lamp':'geeft licht','Luidspreker':'geeft geluid','Verwarmingselement':'maakt warmte','Wifi-router':'verbindt met een netwerk',
+ 'Zonnepaneel':'wekt stroom op','Ventilator':'verplaatst lucht','Toeter':'geeft een geluidssignaal','Koffiezetter':'maakt koffie'
+};
+const standardSchema=PUZZLES.schema;
+PUZZLES.schema=(p,ctx)=>{standardSchema(p,ctx);ctx.body.querySelectorAll('.chips button').forEach(b=>{const tip=PART_INFO[b.textContent];if(tip)b.append(el('small',{style:'display:block;font-weight:400;font-size:.72rem;margin-top:3px'},tip));});};
+
+// Variatie gebeurt vanzelf: bij een volgend ontwerp krijgen andere stappen voorrang.
+pickPuzzles=function(p){
+ const list=PUZZLE_SETS[p.dom].filter(t=>t!=='dim'||p.dim).filter(t=>t!=='schema'||p.schema).filter(t=>t!=='proces'||PROC[p.id]);
+ const recent=S.lastDesignSteps||[];
+ const n=Math.min(p.dream?4:3,p.cx+1);
+ const chosen=[...shuffle(list.filter(t=>!recent.includes(t))),...shuffle(list.filter(t=>recent.includes(t)))].slice(0,n);
+ return chosen.filter(t=>t!=='tek').concat(chosen.includes('tek')?['tek']:[]);
+};
+function stepVariant(type){
+ S.stepVariants||={};
+ const variants=type==='dim'?['slider','tabel','test']:type==='eisen'?['select','spot']:type==='mat'?['all','duo']:['standard'];
+ const previous=S.stepVariants[type];const next=pick(variants.filter(v=>v!==previous));
+ const value=next||variants[0];S.stepVariants[type]=value;return value;
+}
+
+/* Variatie in de bestaande zes ontwerpstappen. Geen extra spelmodi of schermen. */
+const DESIGN_VARIANTS = {
+ eisen:[['repair','repair'],['sort','sort'],['select','multi']],
+ dim:[['trim','tune'],['test','experiment'],['slider','tune']],
+ mat:[['lab','experiment'],['cards','choice'],['duo','choice']],
+ schema:[['connect','match'],['repair','repair'],['chain','order']],
+ proces:[['order','order'],['batch','build'],['choose','choice']],
+ tek:[['match','match'],['pack','multi'],['choose','choice']]
+};
+const MAKE_STEPS = {
+ rek:[['Buizen op maat zagen','Begin met losse buizen.'],['Buizen buigen','Gebruik de gezaagde lengtes.'],['Het rek lassen','Verbind de gebogen buizen.'],['Tegen roest beschermen','Behandel het complete gelaste rek.']],
+ hefbrug:[['Staalplaten snijden','Maak eerst de losse delen.'],['Frame lassen','Verbind de gesneden delen.'],['Hefmechanisme monteren','Monteer het in het gelaste frame.'],['Heffen en vergrendelen testen','Controleer het gemonteerde mechanisme.']],
+ brug:[['Profielen op maat maken','Start met losse profielen.'],['Brugdelen lassen','Gebruik de profielen op maat.'],['Brugdelen op locatie monteren','Plaats de gelaste delen.'],['Belasting controleren','Test de gemonteerde brug.']],
+ achtbaan:[['Ruwe stalen vorm smeden','Maak de basisvorm.'],['Vlakken en gaten frezen','Werk de gesmede vorm op maat af.'],['Sluiting monteren','Gebruik de afgewerkte delen.'],['Beugel testen','Controleer beugel en sluiting samen.']],
+ estep:[['Profiel op lengte zagen','Begin met het aluminium profiel.'],['Frame lassen','Verbind de gezaagde delen.'],['Scharnier en wielen monteren','Monteer ze aan het gelaste frame.'],['Inklappen en rijden testen','Controleer het complete model.']],
+ koffie:[['Kunststof verhitten','Maak de kunststof vloeibaar.'],['In de vorm spuiten','Gebruik de vloeibare kunststof.'],['Afkoelen en uitnemen','Laat het gevormde deel hard worden.'],['Onderdelen monteren','Gebruik de afgekoelde behuizing.']],
+ drone:[['Armen uit de plaat snijden','Start met de koolstofplaat.'],['Randen en gaten afwerken','Werk de uitgesneden armen af.'],['Frame samenbouwen','Gebruik de afgewerkte armen.'],['Frame en camera testen','Controleer het samengebouwde model.']],
+ hand:[['Maten van de gebruiker opnemen','Begin bij de gebruiker.'],['Het model op maat maken','Gebruik de opgenomen maten.'],['De vingers printen','Gebruik het aangepaste model.'],['Monteren en grijpen testen','Gebruik de geprinte vingers.']],
+ sorteer:[['Frame lassen','Maak de drager van de machine.'],['Band en sensoren monteren','Monteer alles op het frame.'],['Besturing instellen','Koppel de gemonteerde onderdelen.'],['Sorteren testen','Controleer de ingestelde machine.']],
+ grijper:[['De mal printen','Maak eerst de gietvorm.'],['Siliconen gieten','Vul de geprinte mal.'],['Laten uitharden en uitnemen','Haal de uitgeharde vingers uit de mal.'],['Grijper monteren en testen','Gebruik de uitgeharde vingers.']],
+ deur:[['Profielen op maat zagen','Start met losse profielen.'],['Deurframe monteren','Gebruik de profielen op maat.'],['Aandrijving en sensoren aansluiten','Sluit ze aan op de gemonteerde deur.'],['Openen en stoppen testen','Controleer de aangesloten deur.']],
+ pakket:[['Plaatwerk buigen','Maak de vorm van het chassis.'],['Wielen en sensoren monteren','Monteer ze op het chassis.'],['Route en besturing instellen','Gebruik de gemonteerde sensoren.'],['Route met obstakels testen','Controleer de ingestelde robot.']],
+ wp:[['Locatie en leidingen uitmeten','Begin met de ruimte.'],['Warmtepomp plaatsen','Gebruik de uitgemeten locatie.'],['Leidingen en regeling aansluiten','Sluit de geplaatste pomp aan.'],['Verwarming en geluid controleren','Test de aangesloten installatie.']],
+ carport:[['Fundering maken','Maak eerst de draagpunten.'],['Frame op de fundering monteren','Gebruik de gereedgemaakte draagpunten.'],['Panelen en kabels monteren','Monteer ze op het frame.'],['Opbrengst controleren','Controleer de aangesloten panelen.']],
+ laad:[['Verdeling en kabelplan maken','Verdeel eerst de beschikbare stroom.'],['Laadpalen en kabels plaatsen','Werk volgens het kabelplan.'],['Beveiliging en regeling aansluiten','Sluit de geplaatste onderdelen aan.'],['Gelijktijdig laden testen','Test alle aangesloten laadpunten.']],
+ wind:[['Glasvezel in de mal leggen','Bouw de vorm van de wiek op.'],['Laten uitharden en lossen','Haal de harde wiek uit de mal.'],['Wieken aan de rotor monteren','Gebruik de uitgeharde wieken.'],['Rotor en stormrem testen','Controleer de gemonteerde rotor.']],
+ rover:[['Het wielmodel maken','Begin met het gewenste wiel.'],['Wieldelen produceren','Gebruik het wielmodel.'],['Wiel monteren','Gebruik de geproduceerde delen.'],['Over stenen en in kou testen','Controleer het complete wiel.']],
+ exo:[['Lichaamsmaten opnemen','Begin bij de gebruiker.'],['Frame en contactdelen maken','Gebruik de opgenomen maten.'],['Sensoren en aandrijving monteren','Monteer ze aan het gemaakte frame.'],['Ondersteuning testen','Controleer het complete hulpmiddel.']],
+ h2bus:[['Het installatieplan uitwerken','Bepaal eerst de aansluitingen.'],['Geschikte tanks en delen inkopen','Bestel volgens het plan.'],['De installatie samenbouwen','Gebruik de ingekochte delen.'],['Lekdetectie en afsluiting testen','Controleer de complete installatie.']],
+ sat:[['Het model op maat maken','Begin met de beschikbare ruimte.'],['Behuizing frezen','Gebruik het model op maat.'],['Modules bevestigen','Monteer ze in de gefreesde behuizing.'],['Trillingen testen','Test behuizing en modules samen.']]
+};
+function getDesignPlan(order){
+ if(order.designPlan?.version===3)return order.designPlan;
+ const p=PROD[order.pid];S.designMix||={routes:[],used:{},last:{},lastAction:''};const h=S.designMix;
+ const list=PUZZLE_SETS[p.dom].filter(t=>t!=='dim'||p.dim).filter(t=>t!=='schema'||p.schema);
+ const n=Math.min(p.dream?4:3,p.cx+1),candidates=[];
+ function walk(a){if(a.length===n){if(a.includes('tek')&&a.at(-1)!=='tek')return;candidates.push(a);return;}for(const t of list)if(!a.includes(t))walk([...a,t]);}walk([]);
+ const last=h.routes.at(-1)||[];
+ const rank=a=>{let score=0;h.routes.slice(-4).reverse().forEach((r,age)=>{const weight=4-age;score+=a.filter(t=>r.includes(t)).length*weight;if(a.join()===r.join())score+=100;if(a.slice().sort().join()===r.slice().sort().join())score+=20*weight;for(let i=0;i<a.length;i++){if(a[i]===r[i])score+=5*weight;if(i&&r.some((v,j)=>j&&r[j-1]===a[i-1]&&v===a[i]))score+=8*weight;}});if(a[0]===last[0])score+=300;return score;};
+ let pool=candidates.filter(a=>a[0]!==last[0]);if(!pool.length)pool=candidates;const best=Math.min(...pool.map(rank));const steps=pick(pool.filter(a=>rank(a)===best));
+ let previous=h.lastAction;const variants=steps.map(t=>{
+  let choices=DESIGN_VARIANTS[t].filter(([v])=>!(v==='batch'&&PROC[p.id].serie<8));
+  const different=choices.filter(([v])=>v!==h.last[t]);if(different.length)choices=different;
+  const otherAction=choices.filter(([,kind])=>kind!==previous);if(otherAction.length)choices=otherAction;
+  const used=h.used[t]||{};const minimum=Math.min(...choices.map(([v])=>used[v]||0));
+  choices=choices.filter(([v])=>(used[v]||0)===minimum);
+  // The first encounter starts with an active task; thereafter rotate fairly.
+  const selection=!h.last[t]?choices[0]:pick(choices);const [v,kind]=selection;h.used[t]||={};h.used[t][v]=(h.used[t][v]||0)+1;h.last[t]=v;previous=kind;return v;
+ });
+ h.lastAction=previous;h.routes.push(steps.slice());h.routes=h.routes.slice(-8);
+ order.designPlan={version:3,steps,variants,details:steps.map(()=>({}))};save();return order.designPlan;
+}
+function playPrompt(ctx,title,line){ctx.body.append(el('h3',{class:'q'},title),el('p',{class:'qs'},line));}
+function playButton(ctx,title,fn,disabled=false){const b=el('button',{class:'btn',disabled:disabled||null,onclick:fn},title);ctx.body.append(el('div',{class:'play-actions'},b));return b;}
+function playState(ctx,key,create){ctx.details||={};if(ctx.details[key]===undefined)ctx.details[key]=create();return ctx.details[key];}
+function pairTask(ctx,rows,rights,answer){
+ let active=null,locked=false;const links=rows.map(()=>null),grid=el('div',{class:'pair-grid'}),left=el('div',{class:'pair-col'}),right=el('div',{class:'pair-col'}),counter=el('div',{class:'play-counter'},'0 van '+rows.length+' gekoppeld');
+ const leftButtons=rows.map((r,i)=>el('button',{class:'pair-card',onclick:()=>{if(locked)return;active=i;draw();}},''));
+ const rightButtons=rights.map((r,j)=>el('button',{class:'pair-card',onclick:()=>{if(locked)return;if(active===null){counter.textContent='Kies eerst een vak links.';return;}const occupied=links.indexOf(j);if(occupied!==-1)links[occupied]=null;links[active]=j;active=links.findIndex(v=>v===null);if(active===-1)active=null;draw();Snd.tap();}},''));
+ leftButtons.forEach(b=>left.append(b));rightButtons.forEach(b=>right.append(b));grid.append(left,right);ctx.body.append(grid,counter);
+ const go=playButton(ctx,'Verbindingen controleren',()=>{if(locked||links.includes(null))return;locked=true;go.remove();let good=0;links.forEach((j,i)=>{const ok=rows[i].id===rights[j].id;if(ok)good++;leftButtons[i].classList.add(ok?'ok':'bad');rightButtons[j].classList.add(ok?'ok':'bad');});[...leftButtons,...rightButtons].forEach(b=>b.disabled=true);ctx.done(good===rows.length?1:good>=rows.length-1?.5:0,`<b>${good===rows.length?'Goed gekoppeld.':'Niet elke verbinding klopt.'}</b> ${answer}`);},true);
+ function draw(){leftButtons.forEach((b,i)=>{b.className='pair-card'+(active===i?' selected':'')+(links[i]!==null?' linked':'');b.innerHTML='';b.append(el('em',{},i+1),rows[i].title,rows[i].note?el('small',{},rows[i].note):null);b.setAttribute('aria-pressed',String(active===i));});rightButtons.forEach((b,j)=>{const k=links.indexOf(j);b.className='pair-card'+(k>=0?' linked':'');b.innerHTML='';if(k>=0)b.append(el('em',{},k+1));b.append(rights[j].title,rights[j].note?el('small',{},rights[j].note):null);});const n=links.filter(x=>x!==null).length;counter.textContent=`${n} van ${rows.length} gekoppeld`;go.disabled=n!==rows.length;}
+ draw();
+}
+
+// Eisen: kiezen, een voorstel herstellen of kaarten één voor één beoordelen.
+const classicRequirements=standardRequirements;
+PUZZLES.eisen=(p,ctx)=>{
+ if(ctx.variant==='select'){classicRequirements(p,ctx);return;}
+ if(ctx.variant==='sort'){
+  const items=playState(ctx,'cards',()=>shuffle([...p.eisen.good.map(t=>({t,ok:true})),...p.eisen.bad.map(t=>({t,ok:false}))]));let i=0,correct=0,locked=false;const misses=[];
+  playPrompt(ctx,'Hoort dit bij de opdracht?','Beoordeel de kaarten. De klantvraag staat hierboven.');
+  const track=el('div',{class:'sort-track'},items.map(()=>el('i'))),card=el('div',{class:'play-card sort-card','aria-live':'polite'}),row=el('div',{class:'sort-choices'});ctx.body.append(track,card,row);
+  [false,true].forEach(v=>row.append(el('button',{class:'btn '+(v?'':'ghost'),onclick:()=>{if(locked)return;if(items[i].ok===v)correct++;else misses.push(items[i]);i++;if(i<items.length)show();else{locked=true;row.querySelectorAll('button').forEach(b=>b.disabled=true);track.querySelectorAll('i').forEach(e=>e.className='done');card.innerHTML='';card.append(el('strong',{},`${correct} van ${items.length} juist`));ctx.done(correct===items.length?1:correct>=items.length-2?.5:0,correct===items.length?'<b>De klantvraag zit goed in je hoofd.</b> Je herkent wat wel en niet nodig is.':`<b>Vergelijk nog eens met de klantvraag.</b> ${misses.map(x=>`“${esc(x.t)}”: ${x.ok?'past wel':'past niet'}.`).join(' ')}`);}}},v?'✓ Past wel':'✕ Past niet')));
+  function show(){card.innerHTML='';card.append(el('small',{},`Kaart ${i+1} van ${items.length}`),el('strong',{},items[i].t));track.querySelectorAll('i').forEach((e,k)=>e.className=k<i?'done':k===i?'now':'');}show();return;
+ }
+ let locked=false;const initial=playState(ctx,'wrongRows',()=>shuffle([0,1,2]).slice(0,p.cx===1?1:2));const values=p.eisen.good.map((_,i)=>initial.includes(i)?1:0);const rows=[];
+ playPrompt(ctx,'Maak het voorstel kloppend','Er zitten fouten in dit voorstel. Tik op ↻ om een keuze te wijzigen.');
+ ctx.body.append(el('div',{class:'dimbox',html:artSvg(p.id),style:'max-width:150px;margin:0 auto 10px'}));
+ p.eisen.good.forEach((text,i)=>{const copy=el('div',{class:'repair-copy'}),b=el('button',{'aria-label':'Keuze '+(i+1)+' wijzigen',onclick:()=>{if(locked)return;values[i]=1-values[i];row.classList.add('changed');draw();Snd.tap();}},'↻'),row=el('div',{class:'play-card repair-row'},copy,b);rows.push(row);ctx.body.append(row);function draw(){copy.innerHTML='';copy.append(el('small',{},'Keuze '+(i+1)),values[i]?p.eisen.bad[i]:text);}draw();});
+ const go=playButton(ctx,'Voorstel controleren',()=>{if(locked)return;locked=true;go.remove();let good=0;rows.forEach((r,i)=>{const ok=values[i]===0;if(ok)good++;r.classList.add(ok?'ok':'bad');r.querySelector('button').disabled=true;});ctx.done(good===3?1:good===2?.5:0,good===3?'<b>De fouten zijn eruit.</b> Het voorstel voldoet aan de drie klantafspraken.':`<b>Er klopt nog iets niet.</b> Nodig: ${p.eisen.good.map(esc).join(' · ')}.`);});
+};
+
+// Materiaal: eerst proefstukken onderzoeken, daarna pas vastleggen.
+const materialCards=PUZZLES.mat;
+PUZZLES.mat=(p,ctx)=>{
+ if(ctx.variant!=='lab'){materialCards(p,{...ctx,variant:ctx.variant==='duo'?'duo':'all'});return;}
+ const m=p.mat,ids=playState(ctx,'samples',()=>shuffle(m.opts.map((_,i)=>i)));const seen=new Set();let locked=false;
+ playPrompt(ctx,'Welk proefstuk gebruik je?',`Test de kandidaten voor: ${m.prio}. Vergelijk er minstens twee.`);
+ const grid=el('div',{class:'mats'}),cards=[],choose=[],counter=el('div',{class:'play-counter'},'0 proefstukken onderzocht');
+ ids.forEach((id,i)=>{
+  const result=el('div',{class:'sample-result','aria-live':'polite'},'Nog niet getest'),card=el('div',{class:'play-card sample-card'},el('b',{},m.opts[id][0]),el('div',{class:'sample-icon','aria-hidden':'true'},'▰'),result);
+  const test=el('button',{class:'sample-test',onclick:()=>{if(locked||seen.has(id))return;seen.add(id);test.disabled=true;test.textContent='✓ Getest';card.classList.add('tested','testing');result.textContent=MAT_INFO[p.id][id]+'.';counter.textContent=`${seen.size} proefstukken onderzocht`;choose.forEach((b,k)=>b.disabled=seen.size<2||!seen.has(ids[k]));Snd.tap();}},'Test dit proefstuk');
+  const select=el('button',{class:'btn sm',disabled:true,onclick:()=>{if(locked||seen.size<2||!seen.has(id))return;locked=true;cards.forEach((c,k)=>{c.querySelectorAll('button').forEach(b=>b.disabled=true);c.classList.add(ids[k]===m.ok?'ok':k===i?'bad':'x');});ctx.done(id===m.ok?1:0,id===m.ok?`<b>Gekozen op basis van de proef.</b> ${esc(MAT_INFO[p.id][id])}.`:`<b>Bekijk de proefuitslag.</b> ${esc(MAT_INFO[p.id][id])}. ${esc(m.opts[m.ok][0])} past beter bij deze opdracht.`);}},'Gebruik dit');
+  choose.push(select);card.append(test,select);cards.push(card);grid.append(card);
+ });ctx.body.append(grid,counter);
+};
+
+// Maat kiezen: ook een werkend maar veel te zwaar/groot ontwerp kunnen verbeteren.
+const classicDimension=PUZZLES.dim;
+PUZZLES.dim=(p,ctx)=>{
+ if(ctx.variant!=='trim'){classicDimension(p,{...ctx,forceMode:ctx.variant});return;}
+ const d=p.dim,K=DIMKIND[d.kind],fmt=x=>x.toLocaleString('nl-NL',{maximumFractionDigits:2});let v=d.max,tested=null,locked=false;
+ const baseline=K.cost(d.max,d.need);
+ ctx.hint=`De oorspronkelijke waarde is ${fmt(d.max)} ${d.unit}. In dit speelmodel voldoet ${fmt(d.need)} ${d.unit} al. Maak kleiner en test opnieuw.`;
+ playPrompt(ctx,'Kan dit slimmer?',`Het ontwerp werkt, maar is te ruim. Verlaag ${d.label.toLowerCase()} en test of het nog voldoet.`);
+ const box=el('div',{class:'trim-box'}),pic=el('div'),compare=el('div',{class:'trim-compare'}),read=el('div',{class:'dimval'}),live=el('div',{class:'play-live','aria-live':'polite'},'Pas de maat aan en test het verschil.'),meter=el('div',{class:'trim-meter'}),fill=el('i');meter.append(fill);
+ const range=el('input',{type:'range',min:d.min,max:d.max,step:d.step,value:v,'aria-label':d.label,oninput:e=>{if(locked)return;v=Number(e.target.value);tested=null;go.disabled=true;live.className='play-live';live.textContent='Nieuwe maat: test opnieuw.';draw();}});
+ const test=el('button',{class:'btn ghost sm',onclick:()=>{if(locked)return;tested=v;const ok=v>=d.need,lean=v<=d.need*1.25;live.className='play-live '+(ok?'ok':'bad');live.textContent=!ok?'✕ Dit model haalt de belasting niet. Maak de maat groter.':lean?'✓ Het werkt, met minder materiaal of capaciteit.':'✓ Het werkt. Er kan nog meer af.';pic.innerHTML=dimDrawing(d.kind,v,d,ok);go.disabled=false;Snd.tap();}},'Test de aanpassing');
+ box.append(pic,compare,read,range,meter,test,live);ctx.body.append(box);
+ const go=playButton(ctx,'Verbetering vastleggen',()=>{if(locked||tested!==v)return;locked=true;range.disabled=true;test.disabled=true;go.remove();const score=v<d.need?0:v>d.need*1.25?.5:1;ctx.done(score,score===1?`<b>Slanker én werkend.</b> ${esc(baseline.l)} daalt van ${fmt(baseline.val)} naar ${fmt(K.cost(v,d.need).val)} ${esc(baseline.u)} in dit model.`:score===.5?'<b>Het werkt, maar kan nog slanker.</b> Test een kleinere maat om verder te besparen.':'<b>Je hebt te veel weggehaald.</b> Test een grotere maat. Een besparing telt pas als het ontwerp ook werkt.');},true);
+ function draw(){const cost=K.cost(v,d.need);pic.innerHTML=dimDrawing(d.kind,v,d,true);compare.innerHTML=`<div>Oorspronkelijk<b>${fmt(baseline.val)} ${esc(baseline.u)}</b></div><div>Jouw ontwerp<b>${fmt(cost.val)} ${esc(cost.u)}</b></div>`;read.innerHTML=`${fmt(v)} <small>${esc(d.unit)}</small>`;fill.style.width=Math.max(0,(1-cost.val/baseline.val)*100)+'%';}draw();
+};
+
+// Schema: koppelen of één verkeerd onderdeel in een gegeven systeem vervangen.
+const classicSchema=PUZZLES.schema;
+PUZZLES.schema=(p,ctx)=>{
+ if(ctx.variant==='chain'){classicSchema(p,ctx);return;}
+ const s=p.schema;
+ if(ctx.variant==='connect'){
+  playPrompt(ctx,'Sluit de onderdelen aan','Tik op een functie links, daarna op het passende onderdeel rechts.');
+  pairTask(ctx,[{id:0,title:'Waarnemen',note:'Wat is er aan de hand?'},{id:1,title:'Beslissen',note:'Wat moet er gebeuren?'},{id:2,title:'Uitvoeren',note:'Laat het gebeuren.'}],shuffle(s.chips.map((t,i)=>({id:i,title:t,note:PART_INFO[t]}))),s.chips.map(esc).join(' → ')+'.');return;
+ }
+ const fault=playState(ctx,'fault',()=>Math.floor(Math.random()*3));const values=s.chips.slice();values[fault]=s.extra[0];let active=null,locked=false;
+ playPrompt(ctx,'Herstel de machine','Eén onderdeel zit verkeerd. Tik op dat vak en kies een vervanger.');
+ const slots=el('div',{class:'slots'}),slotButtons=s.chips.map((_,i)=>el('button',{class:'slot f',onclick:()=>{if(locked)return;active=i;slotButtons.forEach((b,k)=>b.style.outline=i===k?'3px solid var(--fuchsia-d)':'');}},''));
+ const update=()=>slotButtons.forEach((b,i)=>{b.innerHTML='';b.append(el('small',{},['voelt','denkt','doet'][i]),el('b',{},values[i]));});slotButtons.forEach((b,i)=>{if(i)slots.append(el('span',{class:'arrow'},'→'));slots.append(b);});
+ const chips=el('div',{class:'chips'});shuffle([...s.chips,...s.extra]).forEach(t=>chips.append(el('button',{onclick:()=>{if(locked)return;if(active===null){note.textContent='Tik eerst op het vak dat je wilt aanpassen.';return;}values[active]=t;update();note.textContent='Vervangen. Controleer de hele keten.';Snd.tap();}},t,el('small',{style:'display:block;font-weight:400;font-size:.72rem;margin-top:3px'},PART_INFO[t]||''))));
+ const note=el('div',{class:'play-note','aria-live':'polite'},'Voelt → denkt → doet.');ctx.body.append(slots,note,chips);update();
+ const go=playButton(ctx,'Machine controleren',()=>{if(locked)return;locked=true;go.remove();let correct=0;values.forEach((t,i)=>{const ok=t===s.chips[i];if(ok)correct++;slotButtons[i].classList.add(ok?'ok':'bad');});[...slotButtons,...chips.querySelectorAll('button')].forEach(b=>b.disabled=true);ctx.done(correct===3?1:correct===2?.5:0,correct===3?'<b>De machine werkt weer.</b> Waarnemen, beslissen en uitvoeren sluiten op elkaar aan.':`<b>Controleer de functies.</b> ${s.chips.map(esc).join(' → ')}.`);});
+};
+
+// Productie: maakvolgorde leggen of zelf de juiste serie samenstellen.
+const classicProcess=PUZZLES.proces;
+function batchData(p){
+ const quantity=PROC[p.id].serie,base=Math.pow(10,Math.max(0,Math.floor(Math.log10(quantity))-2)),n=quantity/base;
+ const sizes=n<10?[1,3,5]:n<50?[1,5,10]:n<200?[1,10,25]:[1,25,100];
+ const rates=[12,10,8],costs=sizes.map((v,i)=>v*rates[i]*base),dp=Array(n+1).fill(Infinity),choice=Array(n+1).fill(0);dp[0]=0;
+ for(let x=1;x<=n;x++)sizes.forEach((size,i)=>{if(x>=size&&dp[x-size]+costs[i]<dp[x]){dp[x]=dp[x-size]+costs[i];choice[x]=i;}});
+ const solution=[0,0,0];for(let x=n;x>0;){const i=choice[x];solution[i]++;x-=sizes[i];}
+ return {quantity,sizes:sizes.map(v=>v*base),costs,budget:Math.ceil(dp[n]*1.04/10)*10,solution};
+}
+PUZZLES.proces=(p,ctx)=>{
+ if(ctx.variant==='choose'){classicProcess(p,ctx);return;}
+ if(ctx.variant==='batch'){
+  const d=batchData(p),counts=[0,0,0];let locked=false;
+  ctx.hint=d.solution.map((n,i)=>n?`${n}× een serie van ${d.sizes[i].toLocaleString('nl-NL')}`:'').filter(Boolean).join(' + ')+'. Daarmee haal je het aantal binnen budget.';
+  playPrompt(ctx,'Stel de bestelling samen',`Precies ${d.quantity.toLocaleString('nl-NL')} stuks nodig. Kies series en blijf binnen ${eur(d.budget)}.`);
+  const grid=el('div',{class:'batch-grid'}),meter=el('div',{class:'batch-meter','aria-live':'polite'}),displays=[],minus=[],plus=[];
+  d.sizes.forEach((size,i)=>{const count=el('b',{},'0'),sub=el('button',{'aria-label':'Serie van '+size+' weghalen',onclick:()=>{if(locked||counts[i]===0)return;counts[i]--;draw();Snd.tap();}},'−'),add=el('button',{'aria-label':'Serie van '+size+' toevoegen',onclick:()=>{if(locked||amount()+size>d.quantity)return;counts[i]++;draw();Snd.tap();}},'+');displays.push(count);minus.push(sub);plus.push(add);grid.append(el('div',{class:'play-card'},el('span',{class:'batch-size'},size.toLocaleString('nl-NL')+' st.'),el('small',{},eur(d.costs[i])+' per serie'),el('div',{class:'batch-controls'},sub,count,add)));});
+  ctx.body.append(grid,meter);
+  const go=playButton(ctx,'Productie vrijgeven',()=>{if(locked||amount()!==d.quantity)return;locked=true;go.remove();[...minus,...plus].forEach(b=>b.disabled=true);const cost=price(),score=cost<=d.budget?1:.5;ctx.done(score,score===1?`<b>Bestelling compleet, budget gehaald.</b> ${d.quantity.toLocaleString('nl-NL')} stuks voor ${eur(cost)}.`:`<b>Het aantal klopt, de kosten kunnen lager.</b> ${eur(cost)} is boven het budget van ${eur(d.budget)}. Combineer meer grote series met kleine aanvullingen.`);},true);
+  function amount(){return counts.reduce((s,n,i)=>s+n*d.sizes[i],0);}function price(){return counts.reduce((s,n,i)=>s+n*d.costs[i],0);}function draw(){const n=amount(),cost=price();displays.forEach((b,i)=>b.textContent=counts[i]);minus.forEach((b,i)=>b.disabled=counts[i]===0);plus.forEach((b,i)=>b.disabled=n+d.sizes[i]>d.quantity);meter.innerHTML=`<b>${n.toLocaleString('nl-NL')} / ${d.quantity.toLocaleString('nl-NL')} stuks</b><br>${eur(cost)} / ${eur(d.budget)}`;meter.className='batch-meter'+(cost>d.budget?' bad':n===d.quantity?' ok':'');go.disabled=n!==d.quantity;}draw();return;
+ }
+ const steps=MAKE_STEPS[p.id];let order=playState(ctx,'order',()=>{const ids=shuffle([0,1,2,3]);return ids.every((v,i)=>v===i)?[1,0,3,2]:ids;}).slice(),locked=false,dragFrom=null;
+ ctx.hint=steps.map(x=>x[0]).join(' → ')+'.';
+ playPrompt(ctx,'Wat moet eerst?','Zet de werkkaarten op volgorde. Sleep of gebruik de pijltjes.');
+ const list=el('div');ctx.body.append(list);
+ const draw=()=>{list.innerHTML='';order.forEach((id,i)=>{
+  const controls=el('div',{class:'order-controls'});[-1,1].forEach(delta=>controls.append(el('button',{'aria-label':steps[id][0]+(delta<0?' omhoog':' omlaag'),disabled:locked||i+delta<0||i+delta>3,onclick:()=>{if(locked)return;const j=i+delta;[order[i],order[j]]=[order[j],order[i]];draw();Snd.tap();}},delta<0?'↑':'↓')));
+  const row=el('div',{class:'play-card order-row',draggable:locked?'false':'true',ondragstart:e=>{dragFrom=i;if(e.dataTransfer)e.dataTransfer.setData('text/plain',String(i));},ondragover:e=>{if(!locked)e.preventDefault();},ondrop:e=>{e.preventDefault();if(locked||dragFrom===null||dragFrom===i)return;const moved=order.splice(dragFrom,1)[0];order.splice(i,0,moved);dragFrom=null;draw();}},el('span',{class:'order-number'},i+1),el('div',{class:'order-text'},steps[id][0],p.cx===1?el('small',{},steps[id][1]):null),controls);list.append(row);
+ });};draw();
+ const go=playButton(ctx,'Werkvolgorde controleren',()=>{if(locked)return;locked=true;go.remove();draw();let good=0;[...list.children].forEach((r,i)=>{const ok=order[i]===i;if(ok)good++;r.classList.add(ok?'ok':'bad');});ctx.done(good===4?1:good>=2?.5:0,good===4?'<b>De werkplaats kan door.</b> Elke stap heeft wat hij nodig heeft van de vorige.':`<b>Kijk wat van elkaar afhangt.</b> ${steps.map(x=>esc(x[0])).join(' → ')}.`);});
+};
+
+const DOCUMENT_NEEDS={
+ vakman:{title:'Werkplaats',note:'Maten en materiaal',docs:['Werktekening met maten','Materiaalspecificatie'],needs:'maten en materiaal'},
+ klant:{title:'Klant',note:'Beeld, prijs en levertijd',docs:['Ontwerpbeeld voor de klant','Kosten en planning'],needs:'het ontwerpbeeld, de kosten en de planning'},
+ inkoper:{title:'Inkoop',note:'Onderdelen en aantallen',docs:['Onderdelenlijst met aantallen','Maten en leveranciers'],needs:'de bestellijst en de leveranciers'},
+ printer:{title:'3D-printer',note:'Printbaar model en instellingen',docs:['3D-model als STL-bestand','Materiaal en printinstellingen'],needs:'het printbare model en de instellingen'},
+ cnc:{title:'Verspaner',note:'Model en precieze maten',docs:['3D CAD-model','Tekening met toleranties'],needs:'het 3D-model en de toegestane maatafwijkingen'},
+ installateur:{title:'Installateur',note:'Aansluitingen en locatie',docs:['Installatieschema','Leidingplan met maten'],needs:'de aansluitingen en waar de leidingen komen'},
+ plc:{title:'Programmeur',note:'Signalen en machinegedrag',docs:['Schema van in- en uitgangen','Beschrijving van de machinewerking'],needs:'de signalen en wat de machine wanneer doet'},
+ keur:{title:'Keurmeester',note:'Bewijs van veiligheid',docs:['Gecontroleerde berekeningen','Testrapport met resultaten'],needs:'de berekeningen en de testresultaten'}
+};
+const classicHandoff=PUZZLES.tek;
+PUZZLES.tek=(p,ctx)=>{
+ if(ctx.variant==='choose'){classicHandoff(p,ctx);return;}
+ if(ctx.variant==='match'){
+  const keys=playState(ctx,'people',()=>shuffle(HANDOFF_BY_DOM[p.dom]).slice(0,3));
+  ctx.hint=keys.map(k=>DOCUMENT_NEEDS[k].title+': '+HANDOFF[k].ok[1]).join(' · ')+'.';
+  playPrompt(ctx,'Wie krijgt wat?','Koppel elke ontvanger aan het juiste document. Tik links, dan rechts.');
+  pairTask(ctx,keys.map(k=>({id:k,title:DOCUMENT_NEEDS[k].title,note:DOCUMENT_NEEDS[k].note})),shuffle(keys.map(k=>({id:k,title:HANDOFF[k].ok[1]}))),keys.map(k=>esc(DOCUMENT_NEEDS[k].title)+': '+esc(HANDOFF[k].ok[1])).join(' · ')+'.');return;
+ }
+ const key=playState(ctx,'recipient',()=>pick(HANDOFF_BY_DOM[p.dom])),need=DOCUMENT_NEEDS[key];let locked=false;const selected=new Set();
+ ctx.hint='Leg deze twee klaar: '+need.docs.join(' + ')+'.';
+ playPrompt(ctx,'Leg het pakket klaar',`${need.title} heeft ${need.needs} nodig. Kies twee documenten.`);
+ const preview=el('div',{class:'pack-preview'}),wrap=el('div',{class:'chips'}),opts=playState(ctx,'documents',()=>shuffle([...need.docs.map(t=>({t,ok:true})),{t:'Promotiefoto voor de website',ok:false},{t:'Factuur van het vorige project',ok:false}]));
+ const bs=opts.map((o,i)=>el('button',{'aria-pressed':'false',onclick:()=>{if(locked)return;if(selected.has(i))selected.delete(i);else if(selected.size<2)selected.add(i);bs.forEach((b,k)=>{b.classList.toggle('sel',selected.has(k));b.setAttribute('aria-pressed',String(selected.has(k)));});draw();Snd.tap();}},o.t));bs.forEach(b=>wrap.append(b));ctx.body.append(preview,wrap);
+ const go=playButton(ctx,'Pakket overdragen',()=>{if(locked||selected.size!==2)return;locked=true;go.remove();let good=0;opts.forEach((o,i)=>{bs[i].disabled=true;if(o.ok)bs[i].classList.add('ok');else if(selected.has(i))bs[i].classList.add('bad');if(o.ok&&selected.has(i))good++;});ctx.done(good===2?1:good===1?.5:0,good===2?`<b>Het pakket is compleet.</b> ${esc(need.title)} kan hiermee verder.`:`<b>Er ontbreekt informatie.</b> Nodig: ${need.docs.map(esc).join(' + ')}.`);},true);
+ function draw(){preview.innerHTML='';preview.append(el('b',{},'Naar: '+need.title+' · '+selected.size+'/2 documenten'));if(!selected.size)preview.append(el('span',{},'Tik hieronder om documenten toe te voegen.'));else [...selected].forEach(i=>preview.append(el('span',{},'✓ '+opts[i].t)));go.disabled=selected.size!==2;}draw();
+};
+
 startScreen();
 window.BD = { get S() { return S; }, dirty: () => { dirtyScene = dirtyLists = true; }, PRODUCTS, UPGRADES, openDesign, tick, save, render, showTab, buy, hire, celebrate, checkAch, coach, intro, confetti };
 </script></body></html>
