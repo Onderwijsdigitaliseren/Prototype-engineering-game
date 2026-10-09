@@ -210,10 +210,10 @@ input[type=range]{width:100%;accent-color:var(--fuchsia-d);height:36px}
 .handoff .arr{font-size:1.6rem;color:var(--mint)}
 /* toasts */
 #toasts{position:absolute;left:12px;right:12px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;flex-direction:column-reverse;gap:6px;pointer-events:none}
-.toast{background:var(--indigo);color:#fff;padding:10px 14px;border-radius:14px;font-size:.85rem;font-weight:600;box-shadow:0 10px 30px rgba(32,17,110,.35);animation:toast 3.6s forwards;display:flex;gap:10px;align-items:center;border-left:5px solid var(--mint)}
+.toast{pointer-events:auto;cursor:pointer;background:var(--indigo);color:#fff;padding:10px 14px;border-radius:14px;font-size:.85rem;font-weight:600;box-shadow:0 10px 30px rgba(32,17,110,.35);animation:toast 3.6s forwards;display:flex;gap:10px;align-items:center;border-left:5px solid var(--mint)}
 .toast.gold{border-left-color:var(--yel);background:#3a1e8f}
 .toast.red{border-left-color:var(--red)}
-@keyframes toast{0%{opacity:0;transform:translateY(-10px)}8%{opacity:1;transform:none}85%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+@keyframes toast{0%{opacity:0;transform:translateY(-10px)}6%{opacity:1;transform:none}93%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
 /* dialog */
 .dlg{background:#fff;border-radius:20px;padding:18px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:pop .3s}
 .dlg h3{margin:0 0 6px;font-family:var(--serif);font-size:1.2rem}
@@ -491,6 +491,15 @@ input[type=range]{width:100%;accent-color:var(--fuchsia-d);height:36px}
 #design .sample-card .sample-icon{font-size:2.6rem;text-shadow:0 0 1px #20116e,0 2px 3px rgba(32,17,110,.35)}
 .cat .it.see{cursor:pointer;border-color:var(--blue)}
 .cat .it.see:after{content:"👆 bekijk in 3D";display:block;color:var(--blue);font-size:.62rem;margin-top:2px}
+.samtip{background:#d3f2e6;border-radius:12px;padding:8px 10px;font-size:.82rem;line-height:1.35;margin-bottom:10px;color:var(--ink)}
+.samtip b{color:#0b5c50}
+.up .cx.indienst{font-weight:700;margin:1px 0 2px}
+.teamtip{display:flex;align-items:center;gap:10px;border-color:var(--blue)}
+.teamtip>div{flex:1;min-width:0}.teamtip b{display:block;font-size:.92rem}.teamtip small{display:block;color:var(--mut);font-size:.78rem;line-height:1.3;margin-top:2px}
+.teamtip .btn{flex:none;white-space:nowrap}
+.teamtip.warn{border-color:var(--red);background:#fbd5de}.teamtip.warn small{color:var(--ink)}
+#nav button{letter-spacing:.03em}
+#nav button .n{right:12%}
 </style></head><body>
 <div id="app">
 <div id="hud"><div class="logo">BLAUWDRUK<small>engineeringbureau</small></div><div class="rep"><b></b><i></i></div><div class="money">€0</div><button class="menu reset" title="Opnieuw beginnen">↻</button><button class="menu" title="Info">?</button></div>
@@ -504,7 +513,7 @@ input[type=range]{width:100%;accent-color:var(--fuchsia-d);height:36px}
   <div class="tab" id="tab-shop"><div id="shop"></div></div>
   <div class="tab" id="tab-cat"><div id="catalog"></div></div>
 </div>
-<nav id="nav"><button data-tab="bureau" class="on"><span>🏢</span>Bureau<em class="n n-inbox hidden"></em></button><button data-tab="shop"><span>🏗️</span>Uitbreiden<em class="n n-shop hidden"></em></button><button data-tab="cat"><span>🌍</span>Impact</button></nav>
+<nav id="nav"><button data-tab="bureau" class="on"><span>🏢</span>Bureau<em class="n n-inbox hidden"></em></button><button data-tab="shop"><span>🏗️</span>Uitbreiden<em class="n n-shop hidden"></em></button><button data-tab="team"><span>👷</span>Team<em class="n n-team hidden"></em></button><button data-tab="cat"><span>🌍</span>Impact</button></nav>
 <div id="toasts"></div>
 </div>
 <script>
@@ -752,7 +761,7 @@ const COACH = {
   mat: 'Elk materiaal heeft plussen en minnen. Kijk wat de klant belangrijk vindt en kies het materiaal met de <b>hoogste balkjes op precies die punten</b>.',
   schema: 'Elke machine heeft iets dat <b>voelt</b> (een sensor), iets dat <b>denkt</b> (een besturing) en iets dat <b>doet</b> (een motor of grijper). Zet ze in die volgorde. Twee onderdelen horen er niet bij.',
   tek: 'Je ontwerp gaat nu naar de vakman. Die kan alleen bouwen wat <b>op papier</b> staat: maten, materiaal, hoe het in elkaar zit. Wat stuur je mee?',
-  built: 'Kijk, je vakman is aan het bouwen! Ondertussen kun jij alvast de volgende opdracht ontwerpen. Met het geld bouw je bij <b>Uitbreiden</b> je bureau groter.',
+  built: 'Kijk, je vakman is aan het bouwen! Ondertussen kun jij alvast de volgende opdracht ontwerpen. Met het geld neem je bij <b>Team</b> extra vakmensen aan en bouw je bij <b>Uitbreiden</b> je bureau groter.',
   callback: 'Je vakman belt met een vraag over jouw tekening. Dit gebeurt echt, elke dag. Een goede engineer luistert, denkt mee en past de tekening aan.',
   shop: 'Elke uitbreiding is iets wat je in de opleiding tegenkomt. Sommige maken jou beter in ontwerpen, andere maken je team sneller, en het PLC-lab en Energielab openen nieuwe soorten klanten.',
 };
@@ -1243,12 +1252,13 @@ const Scene3D = (() => {
     // lege plekken bovenste rij
     if (rooms.length % 3) for (let c = rooms.length % 3; c < 3; c++) { const x = -4 + c * 4, y = FH * rows; const o = box(building, 3.6, FH - .4, D - .6, COL.light, x, y + .2, 0, { transparent: true, opacity: .18 }); o.castShadow = false; }
     // dak + bord
-    const top = FH * (rows + 1); box(building, 12.4, .3, D + .8, COL.indigo, 0, top, 0); box(building, 12.4, .08, D + .8, COL.mint, 0, top + .3, 0);
-    plane(building, 6, 1.2, label(`BLAUWDRUK`, 480, 96, 64, null, '#ffffff'), -3, top + 1, D / 2 + .1);
-    plane(building, 5.5, .6, label(S.name ? `bureau van ${S.name}` : 'jouw engineeringbureau', 440, 48, 30, null, '#47d7ad'), 3, top + .75, D / 2 + .1);
-    box(building, 7, 1.5, .1, COL.indigo, -1, top + .3, D / 2 - .05);
+    const top = FH * (rows + 1), roofY = top + .25, signZ = D / 2 - .1;
+    box(building, 12.3, .25, D + .3, COL.indigo, 0, top, 0); box(building, 12.3, .1, .12, COL.mint, 0, top + .08, D / 2 + .16).castShadow = false;
+    box(building, 7, 1.5, .2, COL.indigo, 0, roofY, signZ); box(building, 7, .08, .22, COL.mint, 0, roofY + 1.5, signZ);
+    plane(building, 6.4, .8, label('BLAUWDRUK', 512, 64, 54, null, '#ffffff'), 0, roofY + .98, signZ + .11);
+    plane(building, 6.4, .45, label(S.name ? `bureau van ${S.name}` : 'jouw engineeringbureau', 512, 36, 28, null, '#47d7ad'), 0, roofY + .36, signZ + .11);
     // zonnedak?
-    if (S.upgrades.includes('zonnedak')) for (let i = 0; i < 6; i++) { const p = box(building, 1.6, .06, 1.6, COL.blue, -4.5 + i * 1.8, top + .45, -1); p.rotation.x = -.2; }
+    if (S.upgrades.includes('zonnedak')) for (let i = 0; i < 6; i++) { const p = box(building, 1.6, .06, 1.6, COL.blue, -4.5 + i * 1.8, top + .45, -1.2); p.rotation.x = -.2; }
   }
 
   /* ---------- vakmensen ---------- */
@@ -1379,7 +1389,8 @@ function newOrder() {
   // spoedopdracht: af en toe, hogere beloning, beperkte tijd
   if (!p.dream && S.nextRush <= 0 && S.stats.built >= 2) { o.rush = true; o.pay = Math.round(o.pay * 1.6 / 5) * 5; o.expires = Date.now() + 90000; S.nextRush = 200 + Math.random() * 200; }
   S.inbox.push(o);
-  toast(o.rush ? `🚨 SPOEDOPDRACHT: ${p.name} — 90 seconden om te starten!` : p.dream ? `✨ DROOMOPDRACHT: ${p.name} (${p.klant})` : `📨 Nieuwe opdracht: ${p.name} (${p.klant})`, o.rush || p.dream ? 'gold' : '');
+  const inView = $('#tab-bureau').classList.contains('on') && !$('#design');
+  if (o.rush || p.dream || !inView) toast(o.rush ? `🚨 SPOEDOPDRACHT: ${p.name} — 90 seconden om te starten!` : p.dream ? `✨ DROOMOPDRACHT: ${p.name} (${p.klant})` : `📨 Nieuwe opdracht: ${p.name} (${p.klant})`, o.rush || p.dream ? 'gold' : '');
 }
 
 /* ===== TICK ===== */
@@ -1423,7 +1434,9 @@ function finishJob(j, offline, log) {
 /* ===== TERUGBELACTIE (vakman belt de engineer) ===== */
 function callback(j) {
   const p = PROD[j.pid]; const w = S.staff.find(s => s.id === j.worker); const c = pick(CALLBACKS[p.dom]);
-  Snd.ring(); setTimeout(() => coach('callback'), 600);
+  if (!S.jobs.includes(j) || j.cb !== 'asking') return;
+  if ($(BUSY + ',#design')) { setTimeout(() => callback(j), 1500); return; }
+  { const oc = $('.coach'); if (oc) oc.remove(); } Snd.ring();
   const opts = shuffle([{ t: c.ok, k: 'ok' }, { t: c.half, k: 'half' }, { t: c.bad, k: 'bad' }]);
   const ov = el('div', { class: 'ov dim' }); const dlg = el('div', { class: 'dlg' });
   dlg.append(el('div', { class: 'who' }, el('div', { html: SV(44, 44, `<g transform="translate(22 40)">${workerSvg(w ? w.type : 'monteur', 0, 0, 'idle', 0, '').replace(/<text[^>]*>.*?<\/text>/, '')}</g>`) }), el('div', {}, el('b', {}, `📞 ${w ? w.name : 'De werkplaats'} belt`), el('small', {}, `${STAFF_TYPES[w ? w.type : 'monteur'].t} · bouwt jouw ${p.name.toLowerCase()}`))),
@@ -1438,6 +1451,7 @@ function callback(j) {
     dlg.append(msg, el('div', { class: 'actions' }, el('button', { class: 'btn', onclick: () => { ov.remove(); j.paused = false; j.cb = 'done'; dirtyScene = dirtyLists = true; render(); checkAch(); } }, 'Verder bouwen')));
   } }, o.t)));
   dlg.append(box); ov.append(dlg); $('#app').append(ov);
+  S.seen = S.seen || {}; if (!S.seen.callback) { S.seen.callback = true; dlg.prepend(el('div', { class: 'samtip', html: '<b>Sam:</b> ' + COACH.callback })); }
 }
 
 /* ===== TITELS / LEVEL ===== */
@@ -1453,7 +1467,18 @@ function checkTitle() {
 const promoText = t => ['', 'Je eerste eigen ontwerpen staan. Nieuwe uitbreidingen zijn beschikbaar, en klanten durven je iets complexers te vragen.', 'Je bent nu officieel engineer. Complexe opdrachten (★★★) komen binnen. Tijd om het bureau te laten groeien.', 'Klanten vragen naar jóu. Je ziet in één oogopslag waar een ontwerp gaat wringen.', 'Je leidt het bureau. Vakmensen komen graag bij je werken: ze weten dat jouw tekeningen kloppen.', 'Chief Engineer. Van fietsenrek tot achtbaan: alles wat je bureau maakt, begint bij jouw blauwdruk.', 'Jouw ontwerpen veranderen letterlijk de wereld: schoner, veiliger, slimmer. Dít is engineering.'][t] || '';
 
 /* ===== TOASTS ===== */
-function toast(msg, cls = '') { const t = el('div', { class: 'toast ' + cls, html: msg }); $('#toasts').append(t); setTimeout(() => t.remove(), 3700); while ($('#toasts').children.length > 3) $('#toasts').firstChild.remove(); }
+/* Meldingen komen één voor één, blijven langer staan naarmate de tekst langer is, en wachten tot een uitleg of venster dicht is. Tik om weg te halen. */
+const toastQ = []; const BUSY = '.ov.dim,.lvlup,#intro,#start';
+function toast(msg, cls = '') { toastQ.push({ msg, cls, at: Date.now() }); if (toastQ.length > 5) toastQ.shift(); pumpToasts(); }
+function pumpToasts() {
+  const host = $('#toasts'); if (!host) return;
+  while (toastQ.length && Date.now() - toastQ[0].at > 25000) toastQ.shift(); // verouderd nieuws overslaan
+  if (!toastQ.length || host.children.length >= 1 || $(BUSY + ',.coach')) return;
+  const { msg, cls } = toastQ.shift(); const t = el('div', { class: 'toast ' + cls, html: msg });
+  const ms = clamp(2500 + t.textContent.length * 70, 5000, 9000); t.style.animationDuration = ms + 'ms';
+  let gone = false; const close = () => { if (gone) return; gone = true; t.remove(); setTimeout(pumpToasts, 400); }; t.addEventListener('click', close); setTimeout(close, ms - 100); host.append(t);
+}
+setInterval(pumpToasts, 800);
 function bumpMoney() { const m = $('#hud .money'); m.classList.remove('bump'); void m.offsetWidth; m.classList.add('bump'); }
 
 /* ===== RENDER: HUD ===== */
@@ -1472,7 +1497,7 @@ function sceneState() {
 let use3d = false;
 const scene3dCtx = () => ({ UPG, STAFF_TYPES, WORKER_COL, PROD, CITY });
 function renderScene(force) {
-  if (use3d) { try { Scene3D.sync(S, scene3dCtx()); } catch (e) { console.error(e); } const host = $('#scene'); const hint = sceneHint(); const old = host.querySelector('.hint'); if (old) old.remove(); if (hint) host.append(el('div', { class: 'hint' + (/→/.test(hint) ? ' go' : ''), html: hint, onclick: () => { if (/→/.test(hint)) { Snd.tap(); shopView = 'team'; showTab('shop'); } } })); return; }
+  if (use3d) { try { Scene3D.sync(S, scene3dCtx()); } catch (e) { console.error(e); } const host = $('#scene'); const hint = sceneHint(); const old = host.querySelector('.hint'); if (old) old.remove(); if (hint) host.append(el('div', { class: 'hint' + (/→/.test(hint) ? ' go' : ''), html: hint, onclick: () => { if (/→/.test(hint)) { Snd.tap(); showTab('team'); } } })); return; }
   const key = sceneState(); const host = $('#scene');
   if (!force && key === sceneKey) { // alleen voortgang patchen
     host.querySelectorAll('.pbar[data-job]').forEach(b => { const j = S.jobs.find(x => x.id === b.dataset.job); if (j) b.setAttribute('width', 28 * clamp(j.prog / j.work, 0, 1)); });
@@ -1523,7 +1548,7 @@ function renderScene(force) {
   g += `</g>`;
   host.innerHTML = SV(W, H, `<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe7ff"/><stop offset="1" stop-color="#f4f3fb"/></linearGradient></defs>${g}`);
   // hint
-  const hint = sceneHint(); const old = host.querySelector('.hint'); if (old) old.remove(); if (hint) host.append(el('div', { class: 'hint' + (/→/.test(hint) ? ' go' : ''), html: hint, onclick: () => { if (/→/.test(hint)) { Snd.tap(); shopView = 'team'; showTab('shop'); } } }));
+  const hint = sceneHint(); const old = host.querySelector('.hint'); if (old) old.remove(); if (hint) host.append(el('div', { class: 'hint' + (/→/.test(hint) ? ' go' : ''), html: hint, onclick: () => { if (/→/.test(hint)) { Snd.tap(); showTab('team'); } } }));
 }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 function sceneHint() {
@@ -1563,9 +1588,10 @@ let shopFilter = 'alle', shopView = 'upg';
 function renderShop() {
   const host = $('#shop'); host.innerHTML = '';
   const need = teamNeeds();
-  const sw = el('div', { class: 'switch' }, el('button', { class: shopView === 'upg' ? 'on' : '', onclick: () => { shopView = 'upg'; renderShop(); } }, '🏗️ Uitbreidingen'), el('button', { class: shopView === 'team' ? 'on' : '', onclick: () => { shopView = 'team'; renderShop(); setTimeout(() => coach('team'), 200); } }, '👷 Team', need.length ? el('em', { class: 'n' }, '!') : null));
+  const sw = el('div', { class: 'switch' }, el('button', { class: shopView === 'upg' ? 'on' : '', onclick: () => showTab('shop') }, '🏗️ Uitbreidingen'), el('button', { class: shopView === 'team' ? 'on' : '', onclick: () => showTab('team') }, '👷 Team', need.length ? el('em', { class: 'n' }, '!') : null));
   host.append(sw);
   if (shopView === 'team') { renderTeam(host, need); return; }
+  { const wj = waitingJobs(), ch = cheapestHire(); if (ch != null) host.append(el('div', { class: 'card teamtip' + (wj ? ' warn' : '') }, el('div', {}, el('b', {}, wj ? `⏳ ${wj} ontwerp${wj > 1 ? 'en wachten' : ' wacht'} op een vrije vakman` : `👷 Je team: ${S.staff.length} vakmensen`), el('small', {}, (wj ? 'Een extra vakman helpt nu meer dan een uitbreiding. Aannemen' : 'Elke vakman bouwt één product tegelijk. Houd geld over voor een extra vakman: aannemen') + ` kan vanaf ${eur(ch)}.`)), el('button', { class: 'btn sm' + (wj ? ' red' : ' ghost'), onclick: () => { Snd.tap(); showTab('team'); } }, 'Naar team →'))); }
   const tabs = el('div', { class: 'shop-tabs' }); [['alle', 'Alles'], ['wtb', 'Werktuigbouw'], ['mech', 'Mechatronica'], ['ipo', 'Productontwerp'], ['ene', 'Energie']].forEach(([k, t]) => tabs.append(el('button', { class: k === shopFilter ? 'on' : '', onclick: () => { shopFilter = k; renderShop(); } }, t)));
   host.append(el('h2', { class: 'sec' }, 'Uitbreidingen ', el('small', {}, 'uit de opleiding'), el('span', { class: 'r' }, `${S.upgrades.length}/${UPGRADES.length}`)), el('p', { class: 'lead' }, 'Alles wat je hier bouwt, kom je in de opleiding tegen. Sommige maken jou beter in ontwerpen, andere maken je team sneller, en twee ervan openen nieuwe soorten klanten.'), tabs);
   UPGRADES.filter(u => shopFilter === 'alle' || u.dom === shopFilter).forEach(u => {
@@ -1574,6 +1600,9 @@ function renderShop() {
       owned ? el('span', { class: 'btn sm buy' }, '✔ gebouwd') : locked ? el('span', { class: 'btn sm ghost buy' }, `🔒 ${TITLES[u.lvl].t.split(' ')[0]}`, el('small', {}, `vanaf ${TITLES[u.lvl].t}`)) : el('button', { class: 'btn sm buy' + (afford ? ' fz' : ''), disabled: !afford, onclick: () => buy(u) }, eur(u.cost), el('small', {}, afford ? 'bouwen' : 'te weinig'))));
   });
 }
+const hireCost = k => Math.round(STAFF_TYPES[k].cost * Math.pow(1.7, S.hired[k] || 0));
+const cheapestHire = () => { const c = Object.keys(STAFF_TYPES).filter(k => S.staff.filter(s => s.type === k).length < 3).map(hireCost); return c.length ? Math.min(...c) : null; };
+const waitingJobs = () => S.jobs.filter(j => !j.worker && !j.paused).length;
 function teamNeeds() {
   const out = [];
   S.jobs.filter(j => !j.worker && !j.paused).forEach(j => { if (!canBuild(j.dom)) { Object.entries(STAFF_TYPES).forEach(([k, t]) => { if (t.skills[j.dom] >= .8 && !out.includes(k)) out.push(k); }); } });
@@ -1590,12 +1619,19 @@ function renderTeam(host, need) {
   Object.entries(STAFF_TYPES).forEach(([k, T]) => {
     const n = S.staff.filter(s => s.type === k).length; const cost = Math.round(T.cost * Math.pow(1.7, S.hired[k] || 0)); const afford = S.money >= cost; const full = n >= 3;
     const sk = Object.entries(T.skills).filter(([d, v]) => v >= .6).map(([d, v]) => el('span', { class: 'dom', style: `background:${DOMS[d].c};font-size:.55rem` }, DOMS[d].t));
-    host.append(el('div', { class: 'card up' + (need.includes(k) ? ' needed' : '') }, el('div', { class: 'pic', html: SV(60, 60, `<g transform="translate(30 52)">${workerSvg(k, 0, 0, 'idle', 0, '').replace(/<text[^>]*>.*?<\/text>/g, '')}</g>`) }), el('div', {}, need.includes(k) ? el('div', { class: 'tag red' }, '⚠️ nu nodig') : null, el('h3', {}, T.t, ' ', el('span', { class: 'cx' }, `${n} van 3 in dienst`)), el('p', {}, T.desc), el('div', { style: 'margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;align-items:center' }, el('span', { style: 'font-size:.7rem;color:var(--mut);font-weight:700' }, 'Bouwt:'), sk)),
+    host.append(el('div', { class: 'card up' + (need.includes(k) ? ' needed' : '') }, el('div', { class: 'pic', html: SV(60, 60, `<g transform="translate(30 52)">${workerSvg(k, 0, 0, 'idle', 0, '').replace(/<text[^>]*>.*?<\/text>/g, '')}</g>`) }), el('div', {}, need.includes(k) ? el('div', { class: 'tag red' }, '⚠️ nu nodig') : null, el('h3', {}, T.t), el('div', { class: 'cx indienst' }, `${n} van 3 in dienst`), el('p', {}, T.desc), el('div', { style: 'margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;align-items:center' }, el('span', { style: 'font-size:.7rem;color:var(--mut);font-weight:700' }, 'Bouwt:'), sk)),
       full ? el('span', { class: 'btn sm buy' }, 'team vol') : el('button', { class: 'btn sm buy' + (need.includes(k) ? ' red' : ''), disabled: !afford, onclick: () => hire(k, cost) }, eur(cost), el('small', {}, afford ? 'aannemen' : 'te weinig geld'))));
   });
 }
-function buy(u) {
-  if (S.money < u.cost || has(u.id)) return; Snd.init(); S.money -= u.cost; S.upgrades.push(u.id); Snd.up(); bumpMoney();
+function buy(u, sure) {
+  if (S.money < u.cost || has(u.id)) return;
+  { /* waarschuw als er werk wacht en deze aankoop het geld voor een extra vakman opmaakt */
+    const wj = waitingJobs(), ch = cheapestHire();
+    if (!sure && wj && ch != null && S.money >= ch && S.money - u.cost < ch) {
+      const ov = el('div', { class: 'ov dim' }); ov.append(el('div', { class: 'dlg' }, el('h3', {}, 'Eerst iemand aannemen?'), el('p', {}, `Er ${wj > 1 ? 'wachten ' + wj + ' ontwerpen' : 'wacht 1 ontwerp'} op een vrije vakman. Na deze aankoop heb je nog ${eur(S.money - u.cost)}: te weinig om iemand aan te nemen (vanaf ${eur(ch)}).`), el('div', { class: 'actions' }, el('button', { class: 'btn ghost sm', onclick: () => { ov.remove(); buy(u, true); } }, 'Toch bouwen'), el('button', { class: 'btn sm', onclick: () => { ov.remove(); Snd.tap(); showTab('team'); } }, '👷 Naar team'))));
+      $('#app').append(ov); return;
+    }
+  } Snd.init(); S.money -= u.cost; S.upgrades.push(u.id); Snd.up(); bumpMoney();
   toast(`🏗️ ${u.t} gebouwd! ${u.eff}`, 'gold'); if (u.unlock) { toast(`🔓 Nieuwe klanten: ${DOMS[u.unlock].op}`, 'gold'); S.nextOrder = Math.min(S.nextOrder, 3); }
   dirtyScene = dirtyLists = true; render(); save();
 }
@@ -1631,13 +1667,15 @@ function render() {
   if (dirtyScene) { renderScene(true); dirtyScene = false; } else renderScene(false);
   if (dirtyLists) { renderBureau(); if ($('#tab-shop').classList.contains('on')) renderShop(); if ($('#tab-cat').classList.contains('on')) renderCatalog(); dirtyLists = false; }
   $('#nav .n-inbox').textContent = S.inbox.length; $('#nav .n-inbox').classList.toggle('hidden', !S.inbox.length);
-  const affordable = UPGRADES.some(u => !has(u.id) && u.lvl <= level() && S.money >= u.cost); const tn = teamNeeds().length > 0; $('#nav .n-shop').classList.toggle('hidden', !affordable && !tn); $('#nav .n-shop').textContent = '!'; $('#nav .n-shop').style.background = tn ? 'var(--red)' : 'var(--orange)';
+  const affordable = UPGRADES.some(u => !has(u.id) && u.lvl <= level() && S.money >= u.cost); $('#nav .n-shop').classList.toggle('hidden', !affordable); $('#nav .n-shop').textContent = '!'; $('#nav .n-shop').style.background = 'var(--orange)';
+  const wj = waitingJobs(); $('#nav .n-team').classList.toggle('hidden', !wj); $('#nav .n-team').textContent = wj;
 }
 function showTab(k) {
   const oc = $('.coach'); if (oc) oc.remove();
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + k));
+  if (k === 'team') shopView = 'team'; else if (k === 'shop') shopView = 'upg'; const tab = k === 'team' ? 'shop' : k;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + tab));
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === k));
-  if (k === 'shop') { renderShop(); setTimeout(() => coach('shop'), 300); } if (k === 'cat') renderCatalog(); $('#main').scrollTop = 0;
+  if (tab === 'shop') { renderShop(); setTimeout(() => coach(k), 300); } if (k === 'cat') renderCatalog(); $('#main').scrollTop = 0;
 }
 
 /* ===== ONTWERPFLOW (het werk van de engineer) ===== */
@@ -1712,7 +1750,7 @@ function openDesign(order) {
       if (stars === 3) { S.stats.perfect++; S.bestStreak = Math.max(S.bestStreak || 0, streak); confetti(); }
       Snd.tap(); S.inbox = S.inbox.filter(o => o.id !== order.id);
       S.jobs.push({ id: uid(), pid: p.id, dom: p.dom, stars, work: p.work, prog: 0, pay: order.pay, bonus, worker: null, paused: false, tint: look.tint, cb: Math.random() < cbP ? 'pending' : null });
-      ov.remove(); dirtyScene = dirtyLists = true; render(); save(); showTab('bureau'); toast(`📐 Blauwdruk ${p.name} naar de werkplaats!`); checkTitle(); checkAch(); setTimeout(() => coach('built'), 900);
+      ov.remove(); dirtyScene = dirtyLists = true; render(); save(); showTab('bureau'); if ((S.seen || {}).built) toast(`📐 Blauwdruk ${p.name} naar de werkplaats!`); coach('built'); checkTitle(); checkAch();
     } }, '📐 Blauwdruk naar de werkplaats'));
   };
   runStep();
@@ -1753,7 +1791,7 @@ function boot(first = false) {
   // wachtende terugbelacties
   const asking = S.jobs.find(j => j.cb === 'asking' && j.paused); if (asking) setTimeout(() => callback(asking), 800);
   lastFrame = performance.now();
-  const loop = now => { const dt = Math.min(1, (now - lastFrame) / 1000); lastFrame = now; acc += dt; tick(dt); if (acc >= 1) { acc = 0; render(); if (celebQ.length && !$('.celeb') && !$('#design')) showCeleb(); } requestAnimationFrame(loop); };
+  const loop = now => { const dt = Math.min(1, (now - lastFrame) / 1000); lastFrame = now; acc += dt; tick(dt); if (acc >= 1) { acc = 0; render(); if (celebQ.length && !$(BUSY + ',#design')) showCeleb(); } requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
   setInterval(save, 5000); document.addEventListener('visibilitychange', () => { if (document.hidden) save(); else lastFrame = performance.now(); }); window.addEventListener('pagehide', save);
   const asked = S.jobs.filter(j => j.cb === 'asking' && j.paused && j !== asking); asked.forEach((j, k) => setTimeout(() => callback(j), 1500 + k * 600));
@@ -1830,9 +1868,9 @@ function renderCity() {
 }
 /* ===== v2: CELEBRATION ===== */
 const celebQ = [];
-function celebrate(j, p, pay, rep) { if ($('#design')) { toast(`✅ ${p.name} opgeleverd: +${eur(pay)} · +${rep} rep`, 'gold'); checkAch(); return; } celebQ.push({ j, p, pay, rep }); if (!$('.celeb')) showCeleb(); }
+function celebrate(j, p, pay, rep) { if ($('#design')) { toast(`✅ ${p.name} opgeleverd: +${eur(pay)} · +${rep} rep`, 'gold'); checkAch(); return; } celebQ.push({ j, p, pay, rep }); if (!$(BUSY)) showCeleb(); }
 function showCeleb() {
-  const c = celebQ.shift(); if (!c) return; const { j, p, pay, rep } = c; const q = pick(QUOTES[j.stars]); const im = IMPACT[p.id] || [0, 0];
+  const c = celebQ.shift(); if (!c) return; const { j, p, pay, rep } = c; { const oc = $('.coach'); if (oc) oc.remove(); } const q = pick(QUOTES[j.stars]); const im = IMPACT[p.id] || [0, 0];
   const ov = el('div', { class: 'ov dim celeb' });
   const box = el('div', { class: 'dlg cel' },
     el('div', { class: 'kick' }, 'Opgeleverd!'), el('div', { class: 'art', html: artSvg(p.id) }), el('h3', {}, p.name), el('div', { class: 'stars big' }, starStr(j.stars)),
