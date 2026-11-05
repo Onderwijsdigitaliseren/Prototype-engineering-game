@@ -1249,7 +1249,7 @@ const Scene3D = (() => {
     box(gf, .4, .5, .12, COL.red, 5.7, 1.3, D / 2 - .5); box(gf, .14, .14, .06, COL.yel, 5.7, 1.48, D / 2 - .42);
     // tekenkamer: boekenkast, plant, groot scherm aan de achterwand
     box(gf, 1.2, 2.2, .4, WHITE, -5.3, 0, -D / 2 + .3); for (let sh = 0; sh < 3; sh++) [[COL.blue, -5.6], [COL.fd, -5.25], [COL.mint, -4.95]].forEach(([c, bxx]) => box(gf, .22, .4, .3, c, bxx, .2 + sh * .7, -D / 2 + .32));
-    box(gf, 2.4, 1.3, .08, 0x0b2a5a, -3.2, .9, -D / 2 + .15); box(gf, 2.5, 1.4, .06, WHITE, -3.2, .85, -D / 2 + .11); plane(gf, 2.2, 1.1, label('📐 CAD', 220, 110, 48, '#0b2a5a', '#47d7ad'), -3.2, 1.55, -D / 2 + .2);
+    box(gf, 2.4, 1.3, .08, 0x0b2a5a, -3.2, .9, -D / 2 + .15); box(gf, 2.5, 1.4, .06, WHITE, -3.2, .85, -D / 2 + .11); plane(gf, 2.2, 1.1, label('📐 CAD', 220, 110, 48, '#0b2a5a', '#47d7ad'), -3.2, 1.55, -D / 2 + .28);
     cyl(gf, .18, .3, 0x8d6e63, -2.5, 0, D / 2 - .5); sph(gf, .32, 0x2e9e6d, -2.5, .55, D / 2 - .5);
     building.add(gf);
     // entree: luifel, plantenbakken, lantaarns, fietsenrek, vlaggenmast
@@ -1264,10 +1264,10 @@ const Scene3D = (() => {
     rooms.forEach((u, i) => {
       const r = Math.floor(i / 3), c = i % 3; const x = -4 + c * 4, y = FH * (r + 1); const g = new T.Group();
       box(g, 4, FH, D, COL.wall, x, y, 0); box(g, 4.05, .15, D + .05, DOMCOL[u.dom] || COL.indigo, x, y + FH - .1, 0);
-      [-1.3, 0, 1.3].forEach(dx => { const xx = x + dx; box(g, .95, 1.35, .06, 0x8fc6ef, xx, y + 1.2, D / 2 + .02, { transparent: true, opacity: .72 }).castShadow = false; box(g, 1.08, .08, .12, WHITE, xx, y + 1.15, D / 2 + .02); box(g, 1.08, .08, .12, WHITE, xx, y + 2.55, D / 2 + .02); box(g, .07, 1.5, .12, WHITE, xx - .52, y + 1.15, D / 2 + .02); box(g, .07, 1.5, .12, WHITE, xx + .52, y + 1.15, D / 2 + .02); const lit = new T.Mesh(new T.PlaneGeometry(.86, 1.26), new T.MeshBasicMaterial({ color: 0xffe9a8, transparent: true, opacity: 0 })); lit.position.set(xx, y + 1.88, D / 2 - .01); g.add(lit); nightLights.push(lit); });
+      [-1.3, 0, 1.3].forEach(dx => { const xx = x + dx; box(g, .95, 1.35, .04, 0x8fc6ef, xx, y + 1.2, D / 2 + .07, { transparent: true, opacity: .72 }).castShadow = false; box(g, 1.08, .08, .12, WHITE, xx, y + 1.15, D / 2 + .02); box(g, 1.08, .08, .12, WHITE, xx, y + 2.55, D / 2 + .02); box(g, .07, 1.5, .12, WHITE, xx - .52, y + 1.15, D / 2 + .02); box(g, .07, 1.5, .12, WHITE, xx + .52, y + 1.15, D / 2 + .02); const lit = new T.Mesh(new T.PlaneGeometry(.86, 1.26), new T.MeshBasicMaterial({ color: 0xffe9a8, transparent: true, opacity: 0 })); lit.position.set(xx, y + 1.88, D / 2 + .02); g.add(lit); nightLights.push(lit); });
       box(g, 4.06, .14, .3, WHITE, x, y + .92, D / 2 + .02); box(g, 4.06, .14, .3, WHITE, x, y + 2.72, D / 2 + .02);
       box(g, 3.2, .5, .08, WHITE, x, y + .28, D / 2 + .03);
-      plane(g, 3.1, .42, label(`${ROOM_ICON[u.room] || '🏗️'} ${u.t.toUpperCase()}`, 420, 48, 28, null, '#20116e'), x, y + .53, D / 2 + .09);
+      plane(g, 3.1, .42, label(`${ROOM_ICON[u.room] || '🏗️'} ${u.t.toUpperCase()}`, 420, 48, 28, null, '#20116e'), x, y + .53, D / 2 + .13);
       g.userData.info = `${u.t}: ${u.eff}`; g.children.forEach(m => m.userData.info = g.userData.info);
       building.add(g);
     });
@@ -1315,7 +1315,7 @@ const Scene3D = (() => {
       let it = cityItems.get(id);
       if (!it) { const g = new T.Group(); g.position.set(x, 0, z); const ring = new T.Mesh(new T.RingGeometry(1.1, 1.3, 32), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .35, side: T.DoubleSide })); ring.rotation.x = -Math.PI / 2; ring.position.y = .03; g.add(ring); const q = plane(g, .8, .8, label('?', 64, 64, 44, null, '#ffffff'), 0, .8, 0); q.material.opacity = .5; it = { g, ring, q, model: null, cnt: 0, x }; cityItems.set(id, it); cityG.add(g); }
       if (!cnt && it.model) { it.g.remove(it.model); it.model = null; it.g.children.slice().forEach(c => { if (c !== it.ring && c !== it.q) it.g.remove(c); }); if (!it.q.parent) it.g.add(it.q); it.ring.material.color.set(0xffffff); it.ring.material.opacity = .35; if (it.badge) it.badge = null; }
-      if (cnt && !it.model) { const m = makeProduct(id); m.scale.setScalar(.001); it.g.add(m); it.model = m; it.pop = 0; it.g.remove(it.q); it.ring.material.color.set(COL.mint); it.ring.material.opacity = .8; const base = new T.Mesh(new T.CylinderGeometry(1.2, 1.3, .12, 24), mat(0xffffff)); base.position.y = .06; base.receiveShadow = true; it.g.add(base); const nm = plane(it.g, 2.6, .5, label(PROD[id].name, 260, 50, 28, null, '#20116e'), 0, 2.9, .2); it.model.traverse(o => { o.userData.info = `${PROD[id].name} — ontworpen door jou, gebouwd door je team`; }); }
+      if (cnt && !it.model) { const m = makeProduct(id); { const lk = (S.looks || {})[id]; if (lk) { try { const pr = lookParts(T, m); pr.forEach(p => { const src = p.o.material; p.o.material = new T.MeshPhongMaterial({ color: src.color.getHex(), transparent: src.transparent, opacity: src.opacity }); }); lookApply(T, pr, lk); const fx = lookAddons(T, m, lk); fx.traverse(o => { if (o.isMesh && o.material.emissive && (o.userData.lamp || o.userData.led || o.userData.blink || o.userData.beacon)) o.material.emissiveIntensity = .7; }); } catch (e) { console.warn('look', e); } } } m.scale.setScalar(.001); it.g.add(m); it.model = m; it.pop = 0; it.g.remove(it.q); it.ring.material.color.set(COL.mint); it.ring.material.opacity = .8; const base = new T.Mesh(new T.CylinderGeometry(1.2, 1.3, .12, 24), mat(0xffffff)); base.position.y = .06; base.receiveShadow = true; it.g.add(base); const nm = plane(it.g, 2.6, .5, label(PROD[id].name, 260, 50, 28, null, '#20116e'), 0, 2.9, .2); it.model.traverse(o => { o.userData.info = `${PROD[id].name} — ontworpen door jou, gebouwd door je team`; }); }
       if (cnt !== it.cnt) { it.cnt = cnt; if (it.badge) { it.g.remove(it.badge); it.badge = null; } if (cnt > 1) it.badge = plane(it.g, .7, .7, label('×' + cnt, 64, 64, 30, '#c02a86', '#ffffff'), 1.1, 2.5, .2); }
     });
   }
@@ -1355,7 +1355,7 @@ const Scene3D = (() => {
   function sync(S, ctx) { if (!ready) return; buildBuilding(S, ctx.UPG); bKeyRooms = S.upgrades.filter(id => ctx.UPG[id] && ctx.UPG[id].room).length; syncWorkers(S, ctx.STAFF_TYPES, ctx.WORKER_COL, ctx.PROD); syncCity(S, ctx.CITY, ctx.PROD); }
   function setMode(m, snap = false) { mode = m; lerpRate = m === 'game' ? 5 : 2.2; autoT = 0; if (snap) snapNext = true; if (m === 'game') { theta = .35; phi = 1.25; } if (m === 'opening') { openT = 0; lerpRate = 8; } }
   function setView(v) { view = v; flyTo = null; autoT = 0; if (v === 'stad') { const ids = cityOrder.filter(id => cityItems.get(id) && cityItems.get(id).model); if (ids.length) targetX = cityItems.get(ids[ids.length - 1]).x; else targetX = 0; } }
-  return { makeProduct, init, mount, sync, setView, setMode, focusProduct, get cam() { return camera; }, get mode() { return mode; }, get view() { return view; }, set onPick(f) { onPick = f; }, get ok() { return ready; } };
+  return { cityFx(id) { const it = cityItems.get(id); return it && it.model ? !!it.model.getObjectByName('lookfx') : null; }, makeProduct, init, mount, sync, setView, setMode, focusProduct, get cam() { return camera; }, get mode() { return mode; }, get view() { return view; }, set onPick(f) { onPick = f; }, get ok() { return ready; } };
 })();
 /* ===== HELPERS ===== */
 const $ = s => document.querySelector(s);
@@ -2120,7 +2120,7 @@ function pairTask(ctx,rows,rights,answer){
  const rightButtons=rights.map((r,j)=>el('button',{class:'pair-card',onclick:()=>{if(locked)return;if(active===null){counter.textContent='Kies eerst een vak links.';return;}const occupied=links.indexOf(j);if(occupied!==-1)links[occupied]=null;links[active]=j;active=links.findIndex(v=>v===null);if(active===-1)active=null;draw();Snd.tap();}},''));
  leftButtons.forEach(b=>left.append(b));rightButtons.forEach(b=>right.append(b));grid.append(left,right);ctx.body.append(grid,counter);
  const go=playButton(ctx,'Verbindingen controleren',()=>{if(locked||links.includes(null))return;locked=true;go.remove();let good=0;links.forEach((j,i)=>{const ok=rows[i].id===rights[j].id;if(ok)good++;leftButtons[i].classList.add(ok?'ok':'bad');rightButtons[j].classList.add(ok?'ok':'bad');});[...leftButtons,...rightButtons].forEach(b=>b.disabled=true);ctx.done(good===rows.length?1:good>=rows.length-1?.5:0,`<b>${good===rows.length?'Goed gekoppeld.':'Niet elke verbinding klopt.'}</b> ${answer}`);},true);
- function draw(){leftButtons.forEach((b,i)=>{b.className='pair-card'+(active===i?' selected':'')+(links[i]!==null?' linked':'');b.innerHTML='';b.append(el('em',{},i+1),rows[i].title,rows[i].note?el('small',{},rows[i].note):null);b.setAttribute('aria-pressed',String(active===i));});rightButtons.forEach((b,j)=>{const k=links.indexOf(j);b.className='pair-card'+(k>=0?' linked':'');b.innerHTML='';if(k>=0)b.append(el('em',{},k+1));b.append(rights[j].title,rights[j].note?el('small',{},rights[j].note):null);});const n=links.filter(x=>x!==null).length;counter.textContent=`${n} van ${rows.length} gekoppeld`;go.disabled=n!==rows.length;}
+ function draw(){leftButtons.forEach((b,i)=>{b.className='pair-card'+(active===i?' selected':'')+(links[i]!==null?' linked':'');b.innerHTML='';b.append(el('em',{},i+1),rows[i].title,...(rows[i].note?[el('small',{},rows[i].note)]:[]));b.setAttribute('aria-pressed',String(active===i));});rightButtons.forEach((b,j)=>{const k=links.indexOf(j);b.className='pair-card'+(k>=0?' linked':'');b.innerHTML='';if(k>=0)b.append(el('em',{},k+1));b.append(rights[j].title,...(rights[j].note?[el('small',{},rights[j].note)]:[]));});const n=links.filter(x=>x!==null).length;counter.textContent=`${n} van ${rows.length} gekoppeld`;go.disabled=n!==rows.length;}
  draw();
 }
 
@@ -2264,6 +2264,70 @@ const matHex = m => '#' + m.c.toString(16).padStart(6, '0');
 const DIM_WARN = { beam: '⚠ buigt te ver door', tube: '⚠ te veel spanning', arm: '⚠ te veel spanning', axle: '⚠ te veel spanning', cyl: '⚠ te veel druk', shell: '⚠ barst bij een val', heat: '🥶 te weinig vermogen', solar: '⚠ te weinig opbrengst', rotor: '⚠ te weinig opbrengst', cable: '🔥 kabel wordt te heet' };
 let dimLive = false; // true: de maatstap tekent in 3D in plaats van in de 2D-schets
 
+/* ===== v7: levend ontwerp — gedeelde helpers voor Mini3D (ontwerpvenster) en Scene3D (stad) ===== */
+const LOOK_SKIN = 0xf6d5c0;
+function lookParts(T, m) {
+  m.updateMatrixWorld(true); const parts = [], area = {};
+  m.traverse(o => {
+    if (!o.isMesh) return; const src = o.material, c0 = src.color.getHex();
+    const wb = new T.Box3().setFromObject(o), s = wb.getSize(new T.Vector3());
+    const fixed = src.transparent || c0 === LOOK_SKIN || (wb.max.y <= .16 && s.x * s.z > .5);
+    if (!fixed) area[c0] = (area[c0] || 0) + s.x * s.y + s.y * s.z + s.x * s.z;
+    parts.push({ o, c0, fixed, s0: o.scale.clone() });
+  });
+  const top = Object.keys(area).map(Number).sort((a, b) => area[b] - area[a]).slice(0, 2);
+  parts.forEach(p => { p.rank = p.fixed ? -1 : top.indexOf(p.c0); });
+  return parts;
+}
+/* eis-tekst → zichtbaar onderdeel */
+const LOOK_FEATS = [
+  ['sensor', /herken|voelt|detect|nadering|stopt voor|vindt zelf|camera|\blek|\bmeet|trilt niet/i],
+  ['solar', /zonne|laadt zichzelf|kwh|zonnestroom/i],
+  ['safety', /noodstop|vergrendel|beveilig|aardlek|sluit nooit|remt|bescherm|veilig|stopt/i],
+  ['battery', /stroomuitval|accu|batterij|bereik/i],
+  ['anchor', /beton|fundering|mast|vast te zetten|anker|sneeuw en wind/i],
+  ['screen', /bedien|app|scherm|display|één hand|automatisch/i],
+  ['lamp', /licht|verlicht|lamp|led|nacht/i],
+  ['shine', /roest|verzinkt|rvs|voedselveilig|afwasbaar|weer/i],
+];
+function lookFeatOf(text) { for (const [k, re] of LOOK_FEATS) if (re.test(text)) return k; return null; }
+function lookMat(T, c, o) { return new T.MeshPhongMaterial(Object.assign({ color: c, shininess: 30, specular: 0x222233 }, o)); }
+/* bouwt de toevoegingen (lampen, sensor, zonnepaneel …) rond het model; g = groep waarin het model staat */
+function lookAddons(T, g, look) {
+  const old = g.getObjectByName('lookfx'); if (old) g.remove(old);
+  const fx = new T.Group(); fx.name = 'lookfx'; g.add(fx);
+  const feats = (look && look.feats) || []; if (!feats.length && !(look && look.power)) return fx;
+  const b = new T.Box3().setFromObject(g), s = b.getSize(new T.Vector3()), c = b.getCenter(new T.Vector3());
+  const u = Math.max(.12, Math.max(s.x, s.z) * .07), top = b.max.y, base = b.min.y;
+  const add = (geo, m, x, y, z) => { const o = new T.Mesh(geo, typeof m === 'number' ? lookMat(T, m) : m); o.position.set(x, y, z); o.castShadow = true; fx.add(o); return o; };
+  const glow = (col) => lookMat(T, col, { emissive: col, emissiveIntensity: look.power ? .9 : .15 });
+  const has = k => feats.includes(k);
+  if (has('lamp')) for (const x of [c.x - s.x / 2 + u, c.x + s.x / 2 - u]) { add(new T.CylinderGeometry(u * .12, u * .12, u * 2.2, 10), 0x9aa0bd, x, top + u * 1.1, c.z + s.z / 2 - u); const l = add(new T.SphereGeometry(u * .38, 12, 10), glow(0xffd35a), x, top + u * 2.3, c.z + s.z / 2 - u); l.userData.lamp = true; l.castShadow = false; }
+  if (has('solar')) { const pan = new T.Group(); pan.position.set(c.x, top + u * 1.2, c.z); pan.rotation.x = .35; fx.add(pan); const pw = Math.max(u * 4, s.x * .7), pd = Math.max(u * 2.5, s.z * .45); const pm = new T.Mesh(new T.BoxGeometry(pw, u * .12, pd), lookMat(T, 0x1f66d1, { shininess: 90, specular: 0x8899bb })); pm.castShadow = true; pan.add(pm); for (let i = 1; i < 4; i++) { const ln = new T.Mesh(new T.BoxGeometry(u * .04, u * .14, pd), lookMat(T, 0xdde6ff)); ln.position.x = -pw / 2 + pw * i / 4; pan.add(ln); } add(new T.CylinderGeometry(u * .1, u * .1, u * 1.2, 8), 0x9aa0bd, c.x, top + u * .6, c.z); }
+  if (has('sensor')) { add(new T.BoxGeometry(u * 1.1, u * .7, u * .8), 0x1b1140, c.x, top + u * .35, c.z + s.z / 2 - u * .6); const eye = add(new T.SphereGeometry(u * .2, 10, 8), glow(0xdd1c50), c.x, top + u * .35, c.z + s.z / 2 - u * .15); eye.userData.blink = true; eye.castShadow = false; }
+  if (has('safety')) { const r = Math.hypot(s.x, s.z) / 2 + u * .6; for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; const seg = add(new T.BoxGeometry(r * .4, u * .25, u * .25), i % 2 ? 0xffc915 : 0x1b1140, c.x + Math.cos(a) * r, base + u * .13, c.z + Math.sin(a) * r); seg.rotation.y = -a; } const bc = add(new T.CylinderGeometry(u * .28, u * .34, u * .5, 12), glow(0xff8f1a), c.x - s.x / 2 + u * .5, top + u * .25, c.z - s.z / 2 + u * .5); bc.userData.beacon = true; bc.castShadow = false; }
+  if (has('battery')) { add(new T.BoxGeometry(u * 1.6, u * 1, u * .8), 0x138273, c.x + s.x / 2 + u * .9, base + u * .5, c.z); add(new T.BoxGeometry(u * .9, u * .5, u * .06), glow(0x47d7ad), c.x + s.x / 2 + u * .9, base + u * .5, c.z + u * .42); }
+  if (has('anchor')) { add(new T.BoxGeometry(s.x + u * 1.4, u * .18, s.z + u * 1.4), 0xc9cdd9, c.x, base + u * .09, c.z); for (const x of [-1, 1]) for (const z of [-1, 1]) add(new T.CylinderGeometry(u * .18, u * .18, u * .35, 8), 0x5b6480, c.x + x * (s.x / 2 + u * .45), base + u * .3, c.z + z * (s.z / 2 + u * .45)); }
+  if (has('screen')) { add(new T.BoxGeometry(u * 1.3, u * .9, u * .12), 0x1b1140, c.x + s.x / 2 - u * .8, top + u * .5, c.z + s.z / 2 + u * .05); const sc = add(new T.BoxGeometry(u * 1.1, u * .7, u * .04), glow(0x47d7ad), c.x + s.x / 2 - u * .8, top + u * .5, c.z + s.z / 2 + u * .13); sc.castShadow = false; }
+  if (look.power) { const led = add(new T.SphereGeometry(u * .16, 10, 8), glow(0x47d7ad), c.x + s.x / 2 + u * .3, top + u * .2, c.z - s.z / 2); led.userData.led = true; led.castShadow = false; }
+  return fx;
+}
+/* kleur, glans en dikte op de onderdelen van het model */
+function lookApply(T, parts, look) {
+  const tint = look && look.tint, col = tint ? new T.Color(tint.c) : null; const shine = look && (look.feats || []).includes('shine');
+  const f = look && look.dimF != null ? look.dimF : null; const k = f == null ? 1 : .86 + .4 * f;
+  parts.forEach(p => {
+    const mt = p.o.material; mt.color.setHex(p.c0); mt.shininess = 22; mt.specular.setHex(0x1a1a2a); mt.emissive && mt.emissive.setHex(0);
+    if (col && p.rank >= 0) { mt.color.lerp(col, p.rank ? .78 : .92); if (p.rank) mt.color.multiplyScalar(.8); mt.shininess = tint.s; mt.specular.setHex(tint.s > 50 ? 0x77778a : 0x1a1a2a); }
+    if (shine && p.rank >= 0) { mt.shininess = Math.max(mt.shininess, 85); mt.specular.setHex(0x9aa3bb); }
+    p.o.scale.copy(p.s0);
+    if (p.rank === 0 && k !== 1) { const g = p.o.geometry; if (!g.boundingBox) g.computeBoundingBox(); const sz = g.boundingBox.getSize(new T.Vector3()); const ax = ['x', 'y', 'z'].sort((a, b) => sz[a] - sz[b]); p.o.scale[ax[0]] *= k; p.o.scale[ax[1]] *= k; }
+  });
+}
+function lookTick(fx, t) {
+  if (!fx) return; fx.traverse(o => { if (!o.isMesh || !o.material.emissive) return; if (o.userData.blink) o.material.emissiveIntensity = Math.sin(t * 6) > .3 ? 1 : .1; else if (o.userData.beacon) o.material.emissiveIntensity = .4 + .5 * Math.max(0, Math.sin(t * 5)); else if (o.userData.led) o.material.emissiveIntensity = .6 + .4 * Math.sin(t * 2.5); });
+}
+
 const Mini3D = (() => {
   if (typeof THREE === 'undefined' || !Scene3D) return null;
   const T = THREE; let R = null, failed = false, scene, cam, pivot, raf = 0, W = 0, H = 0;
@@ -2297,26 +2361,39 @@ const Mini3D = (() => {
   function product(pid) {
     if (models[pid]) return models[pid];
     const m = Scene3D.makeProduct(pid); m.updateMatrixWorld(true);
-    const parts = [], area = {};
-    m.traverse(o => {
-      if (!o.isMesh) return; const src = o.material, c0 = src.color.getHex();
-      o.material = new T.MeshPhongMaterial({ color: c0, transparent: src.transparent, opacity: src.opacity, shininess: 22, specular: 0x1a1a2a }); o.castShadow = true;
-      const wb = new T.Box3().setFromObject(o), s = wb.getSize(new T.Vector3());
-      const fixed = src.transparent || c0 === C.skin || (wb.max.y <= .16 && s.x * s.z > .5); // glas, huid en grondplaten houden hun kleur
-      if (!fixed) area[c0] = (area[c0] || 0) + s.x * s.y + s.y * s.z + s.x * s.z;
-      parts.push({ o, c0, fixed });
-    });
-    const top = Object.keys(area).map(Number).sort((a, b) => area[b] - area[a]).slice(0, 2);
-    parts.forEach(p => { p.rank = p.fixed ? -1 : top.indexOf(p.c0); });
+    m.traverse(o => { if (!o.isMesh) return; const src = o.material; o.material = new T.MeshPhongMaterial({ color: src.color.getHex(), transparent: src.transparent, opacity: src.opacity, shininess: 22, specular: 0x1a1a2a }); o.castShadow = true; });
+    const parts = lookParts(T, m);
     const b = new T.Box3().setFromObject(m), s = b.getSize(new T.Vector3()), c = b.getCenter(new T.Vector3());
     const k = Math.min(3.1 / Math.max(s.x, s.z, .1), 2.3 / Math.max(s.y, .1)); m.scale.setScalar(k); m.position.set(-c.x * k, -b.min.y * k, -c.z * k);
     const g = new T.Group(); g.add(m); g.userData.parts = parts; fit(g); return models[pid] = g;
   }
-  function tint(look) {
-    if (!curModel) return; const col = look ? new T.Color(look.c) : null;
-    curModel.userData.parts.forEach(p => { const mt = p.o.material; mt.color.setHex(p.c0); mt.shininess = 22; mt.specular.setHex(0x1a1a2a);
-      if (col && p.rank >= 0) { mt.color.lerp(col, p.rank ? .78 : .92); if (p.rank) mt.color.multiplyScalar(.8); mt.shininess = look.s; mt.specular.setHex(look.s > 50 ? 0x77778a : 0x1a1a2a); } });
+  let curLook = null, fxNow = null, tags = [];
+  function tint(t) { if (!curModel) return; const lk = Object.assign({}, curLook || {}, { tint: t }); lookApply(T, curModel.userData.parts, lk); }
+  function tagTex(text, bg, fg) { const cv = document.createElement('canvas'); cv.width = 512; cv.height = 72; const x = cv.getContext('2d'); if (x) { x.fillStyle = bg; const r = 34; x.beginPath(); x.moveTo(r, 0); x.lineTo(512 - r, 0); x.arc(512 - r, r, r, -Math.PI / 2, Math.PI / 2); x.lineTo(r, 72); x.arc(r, r, r, Math.PI / 2, Math.PI * 1.5); x.fill(); x.fillStyle = fg; x.font = '700 30px Source Sans 3, sans-serif'; x.textBaseline = 'middle'; x.fillText(text.length > 28 ? text.slice(0, 27) + '…' : text, 26, 38); } const tx = new T.CanvasTexture(cv); tx.anisotropy = 4; return tx; }
+  function tagsDraw() {
+    tags.forEach(tg => { if (tg.sp && tg.sp.parent) tg.sp.parent.remove(tg.sp); });
+    if (!curModel || curModel !== cur) return; const b = new T.Box3().setFromObject(curModel), s = b.getSize(new T.Vector3());
+    tags.forEach((tg, i) => { const col = tg.state === 'ok' ? ['#138273', '#ffffff'] : tg.state === 'bad' ? ['#dd1c50', '#ffffff'] : ['#ffffff', '#20116e']; const sp = new T.Sprite(new T.SpriteMaterial({ map: tagTex((tg.state === 'ok' ? '✓ ' : tg.state === 'bad' ? '✕ ' : '• ') + tg.text, col[0], col[1]), transparent: true, depthTest: false })); sp.scale.set(1.9, .27, 1); sp.position.set(s.x / 2 + .55, b.max.y - .1 - i * .34, 0); sp.renderOrder = 5; curModel.add(sp); tg.sp = sp; });
   }
+  /* eis gekozen/losgelaten tijdens de eisenstap */
+  function require(text, on) {
+    if (!curModel) return; const k = lookFeatOf(text); curLook = curLook || { feats: [] };
+    if (on) { if (!tags.some(t => t.text === text)) tags.push({ text, state: 'sel', feat: k }); if (k && !curLook.feats.includes(k)) curLook.feats.push(k); }
+    else { tags = tags.filter(t => t.text !== text); if (k && !tags.some(t => t.feat === k)) curLook.feats = curLook.feats.filter(f => f !== k); }
+    apply(curLook); if (on && k) { cap.className = 'cap'; cap.textContent = { sensor: '👁 sensor toegevoegd', solar: '☀️ zonnepaneel toegevoegd', safety: '⚠️ beveiliging toegevoegd', battery: '🔋 accu toegevoegd', anchor: '🔩 fundering toegevoegd', screen: '📟 bediening toegevoegd', lamp: '💡 verlichting toegevoegd', shine: '✨ beschermlaag toegevoegd' }[k]; }
+  }
+  /* na "eisen vastleggen": goede eisen groen, foute rood en weg */
+  function confirmReqs(goodTexts) {
+    tags.forEach(t => t.state = goodTexts.includes(t.text) ? 'ok' : 'bad'); apply(curLook);
+    setTimeout(() => { const bad = tags.filter(t => t.state === 'bad'); tags = tags.filter(t => t.state !== 'bad'); if (curLook) bad.forEach(t => { if (t.feat && !tags.some(x => x.feat === t.feat)) curLook.feats = curLook.feats.filter(f => f !== t.feat); }); apply(curLook); }, 1400);
+  }
+  function apply(look) {
+    curLook = look || null; if (!curModel) return;
+    tags.forEach(tg => { if (tg.sp && tg.sp.parent) tg.sp.parent.remove(tg.sp); });
+    lookApply(T, curModel.userData.parts, curLook); fxNow = lookAddons(T, curModel, curLook || {}); fit(curModel); tagsDraw();
+  }
+  function caption(txt, bad) { if (!cap) return; cap.className = 'cap' + (bad ? ' bad' : ''); cap.textContent = txt; }
+  function getLook() { return curLook ? JSON.parse(JSON.stringify(curLook)) : null; }
 
   /* ---------- proefopstellingen voor de maatstap ---------- */
   function bend(g, kind) {
@@ -2380,8 +2457,9 @@ const Mini3D = (() => {
   /* host: een .view3d-element. Toont het product; geeft false terug als 3D niet beschikbaar is. */
   function attach(host, pid, look) {
     if (!ensure()) return false;
-    curModel = product(pid); setObj(curModel); rigNow = null; tint(look || null);
+    curModel = product(pid); setObj(curModel); rigNow = null;
     tag = el('em', {}, '3D · jouw ontwerp'); cap = el('div', { class: 'cap hidden' });
+    tags = (look && look.tags) ? look.tags.map(t => ({ text: t, state: 'ok', feat: lookFeatOf(t) })) : []; apply(look && typeof look === 'object' && ('feats' in look || 'tint' in look) ? look : (look ? { tint: look } : null));
     host.innerHTML = ''; host.append(R.domElement, tag, el('span', {}, '↔ sleep om te draaien'), cap);
     W = H = 0; idleAt = 0; if (!raf) raf = requestAnimationFrame(loop); return true;
   }
@@ -2400,10 +2478,10 @@ const Mini3D = (() => {
     if (w !== W || h !== H) { W = w; H = h; R.setSize(W, H, false); cam.aspect = W / H; cam.updateProjectionMatrix(); }
     const now = performance.now(); if (!still && !drag && now - idleAt > 2500) rot += .005;
     pivot.rotation.y = rot; const F = cur.userData.fit, tf = Math.tan(17 * Math.PI / 180), D = Math.max((F.hy + F.r * Math.sin(tilt)) / tf, F.r / (tf * cam.aspect)) * 1.1 + F.r * .45; cam.position.set(0, F.y + D * Math.sin(tilt), D * Math.cos(tilt)); cam.lookAt(0, F.y - F.hy * .04, 0);
-    if (rigNow && rigNow.tick) rigNow.tick(now / 1000);
+    if (rigNow && rigNow.tick) rigNow.tick(now / 1000); if (!rigNow && fxNow) lookTick(fxNow, now / 1000);
     R.render(scene, cam);
   }
-  return { attach, tint, rig, dim, get rigged() { return !!rigNow; } };
+  return { attach, tint, rig, dim, apply, require, confirmReqs, caption, getLook, get look() { return curLook; }, get rigged() { return !!rigNow; } };
 })();
 
 /* de maatstap tekent in de 3D-proefopstelling; zonder 3D blijft de 2D-schets staan */
@@ -2592,13 +2670,14 @@ openDesign = function (order) {
   const stepsBar = el('div', { class: 'steps' }); steps.forEach(() => stepsBar.append(el('i')));
   const stepLbl = el('div', { class: 'steplbl' });
   const body = el('div', { class: 'body' }); const foot = el('div', { class: 'foot' });
-  const look = { tint: null }; const view = Mini3D ? el('div', { class: 'view3d' }) : null;
-  const stage = () => { dimLive = false; const on = !!(view && Mini3D.attach(view, p.id, look.tint)); ov.classList.toggle('has3d', on); if (on) body.append(view); return on; };
+  const look = { tint: null, feats: [], tags: [], dimF: null, power: false }; let curType = null; const view = Mini3D ? el('div', { class: 'view3d' }) : null;
+  const stage = () => { dimLive = false; const on = !!(view && Mini3D.attach(view, p.id, look)); ov.classList.toggle('has3d', on); if (on) body.append(view); return on; };
   if (view) {
     const matAt = e => { const c = e.target.closest('.mat,.sample-card'), b = c && c.querySelector('b'); return b ? matLook(b.textContent) : undefined; };
     body.addEventListener('click', e => { const m = matAt(e); if (m !== undefined && !Mini3D.rigged) { look.tint = m; Mini3D.tint(m); } });
     body.addEventListener('pointerover', e => { if (e.pointerType !== 'mouse' || Mini3D.rigged) return; const c = e.target.closest('.mat'); if (c && !c.disabled) Mini3D.tint(matAt(e) || null); });
     body.addEventListener('pointerout', e => { if (e.pointerType === 'mouse' && !Mini3D.rigged && e.target.closest('.mat')) Mini3D.tint(look.tint); });
+    body.addEventListener('click', e => { const b = e.target.closest('.chips button'); if (!b || curType !== 'eisen' || Mini3D.rigged || b.disabled) return; Mini3D.require(b.textContent, b.classList.contains('sel')); });
   }
   const oc = $('.coach'); if (oc) oc.remove();
   ov.append(top, stepsBar, stepLbl, body, foot); $('#app').append(ov); dirtyScene = true; renderScene(true); window.loopPhase = 'ontwerpen'; updateLoop();
@@ -2606,7 +2685,7 @@ openDesign = function (order) {
   const runStep = () => {
     body.innerHTML = ''; foot.innerHTML = ''; body.scrollTop = 0;
     [...stepsBar.children].forEach((s, k) => { s.className = k < i ? 'done' : k === i ? 'now' : ''; });
-    const type = steps[i]; const [ktKey, wpIdx] = STEP_KT[type] || ['ontwerpen', 0]; const K = KT[ktKey]; window.loopPhase = ktKey; updateLoop();
+    const type = steps[i]; curType = type; const [ktKey, wpIdx] = STEP_KT[type] || ['ontwerpen', 0]; const K = KT[ktKey]; window.loopPhase = ktKey; updateLoop();
     stepLbl.innerHTML = `Stap <b>${i + 1}</b> van ${steps.length} · ${STEP_NAMES[type] || ''}`; if (S.stats.built >= 1) stepLbl.append(el('span', { class: 'ktbadge', title: K.wp[wpIdx] }, `${K.ic} ${K.t}`));
     stage();
     body.append(el('div', { class: 'brief' }, el('div', { class: 'pic', html: artSvg(p.id) }), el('div', {}, el('h3', {}, p.name), el('p', {}, el('b', {}, p.klant + ': '), p.brief))));
@@ -2625,13 +2704,26 @@ openDesign = function (order) {
     stepContext = { body: stepHost, perks: perks(), worker: likelyWorker(), variant: variants[i], details: plan.details[i], done: (score, fb) => {
       if (stepFinished || !ov.isConnected) return; stepFinished = true;
       if (score >= 1) Snd.ok(); else { Snd.no(); setTimeout(() => { if (ov.isConnected) coach(type); }, 500); } skillUp(ktKey, score);
+      try { liveLook(type, score); } catch (e) { console.warn(e); }
       const box = el('div', { class: 'fb ' + (score >= 1 ? 'ok' : 'no'), html: fb }); stepHost.append(box); box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       let advanced = false; const next = () => { if (advanced) return; advanced = true; scores.push(score); i++; if (i < steps.length) runStep(); else result(); };
       if (score < 1 && retry > 0) foot.append(el('button', { class: 'btn ghost', onclick: () => { if (advanced) return; advanced = true; retry--; Snd.tap(); toast('🖨️ Prototype geprint, getest, geleerd. Nog een keer!'); runStep(); } }, '🖨️ Prototype & opnieuw'));
       foot.append(el('button', { class: 'btn', onclick: () => { Snd.tap(); next(); } }, i < steps.length - 1 ? 'Volgende stap →' : 'Ontwerp afronden ✓'));
     } };
     PUZZLES[type](p, stepContext);
+    if (type !== 'dim' && view && Mini3D && !Mini3D.rigged && look.dimTxt && Mini3D.look === look) Mini3D.caption('📏 ' + look.dimTxt + ' ✓');
     save();
+  };
+  /* v7: het 3D-model reageert op de afgeronde stap */
+  const liveLook = (type, score) => {
+    if (!view || !Mini3D) return;
+    if (type === 'eisen' && p.eisen) {
+      const good = p.eisen.good; const sel = [...body.querySelectorAll('.chips button.sel')].map(b => b.textContent);
+      if (!sel.length) good.forEach(t => Mini3D.require(t, true)); // andere varianten: alle echte eisen tonen
+      Mini3D.confirmReqs(good); look.tags = (sel.length ? sel.filter(t => good.includes(t)) : good.slice()); if (!look.feats.length) look.feats = look.tags.map(lookFeatOf).filter(Boolean);
+    }
+    if (type === 'dim' && window.__lastDim) { const { v, d, ok } = window.__lastDim; if (ok) { look.dimF = Math.max(0, Math.min(1, (v - d.min) / (d.max - d.min))); look.dimTxt = `${d.label}: ${v.toLocaleString('nl-NL', { maximumFractionDigits: 2 })} ${d.unit}`; } }
+    if (type === 'schema' && score >= 1) { look.power = true; Mini3D.apply(look); Mini3D.caption('⚡ Schakeling klopt — alles staat aan'); }
   };
   const result = () => {
     body.innerHTML = ''; foot.innerHTML = ''; [...stepsBar.children].forEach(s => s.className = 'done'); stepLbl.innerHTML = 'Klaar · beoordeling en planning'; if (S.stats.built >= 1) stepLbl.append(el('span', { class: 'ktbadge' }, '🗂️ Voorbereiden')); window.loopPhase = 'voorbereiden'; updateLoop();
@@ -2658,7 +2750,7 @@ openDesign = function (order) {
       S.stats.designs++; S.stats.stars += stars; S.streak = streak; skillUp('voorbereiden', 1); if (streak > 0 && streak % 5 === 0) { S.boostNext = 2; Snd.up(); setTimeout(() => toast('🔥 Perfecte week! Je volgende opdracht levert DUBBEL geld op.', 'gold'), 900); }
       if (stars === 3) { S.stats.perfect++; S.bestStreak = Math.max(S.bestStreak || 0, streak); confetti(); }
       Snd.tap(); S.inbox = S.inbox.filter(o => o.id !== order.id);
-      const boostNow = S.boost || 1; S.boost = S.boostNext || 0; S.boostNext = 0; S.jobs.push({ id: uid(), pid: p.id, dom: p.dom, stars, work: p.work, prog: 0, pay: order.pay, bonus: bonus * boostNow, boosted: boostNow > 1, worker: null, plan: planId, paused: false, tint: look.tint, weak, cb: S.stats.built >= 2 && Math.random() < cbP ? 'pending' : null, qc: S.stats.built >= 3 && Math.random() < (has('testbank') ? .18 : .3) ? 'pending' : null, cq: S.stats.built >= 3 && Math.random() < .22 ? 'pending' : null });
+      const boostNow = S.boost || 1; S.boost = S.boostNext || 0; S.boostNext = 0; S.jobs.push({ id: uid(), pid: p.id, dom: p.dom, stars, work: p.work, prog: 0, pay: order.pay, bonus: bonus * boostNow, boosted: boostNow > 1, worker: null, plan: planId, paused: false, tint: look.tint, look: JSON.parse(JSON.stringify(look)), weak, cb: S.stats.built >= 2 && Math.random() < cbP ? 'pending' : null, qc: S.stats.built >= 3 && Math.random() < (has('testbank') ? .18 : .3) ? 'pending' : null, cq: S.stats.built >= 3 && Math.random() < .22 ? 'pending' : null });
       const fp = el('div', { class: 'flypaper' }, '📐'); fp.style.left = '46%'; fp.style.top = '42%'; $('#app').append(fp); setTimeout(() => fp.remove(), 1200);
       close(); dirtyLists = true; render(); save(); showTab('bureau'); if ((S.seen || {}).built) toast(`📐 Blauwdruk ${p.name} naar productie!`); coach('built'); checkTitle(); checkAch();
     } }, '📐 Blauwdruk naar productie'));
@@ -2750,7 +2842,7 @@ showCeleb = function () {
     el('p', { class: 'built' }, `Ontworpen door jou · gemaakt door ${(S.staff.find(s => s.id === j.worker) || {}).name || 'productie'}`),
     evalq, el('div', { style: 'margin-top:10px' }, nextBtn));
   ov.append(box); $('#app').append(ov); confetti(j.stars >= 2 ? 90 : 30);
-  if (Mini3D && !PHOTOS[p.id]) { const v = el('div', { class: 'view3d box' }); if (Mini3D.attach(v, p.id, j.tint || null)) box.querySelector('.art').replaceWith(v); }
+  { const own = j.look && (j.look.tint || (j.look.feats || []).length || j.look.dimF != null || j.look.power); if (Mini3D && (own || !PHOTOS[p.id])) { const v = el('div', { class: 'view3d box' }); if (Mini3D.attach(v, p.id, j.look || j.tint || null)) { const a = box.querySelector('.art,.celphoto'); if (a) a.replaceWith(v); } } }
   const cnt = box.querySelector('.cnt'); let t0 = null; const step = t => { if (!t0) t0 = t; const f = Math.min(1, (t - t0) / 900); cnt.textContent = eur(pay * (1 - Math.pow(1 - f, 3))); if (f < 1) requestAnimationFrame(step); }; requestAnimationFrame(step);
   S.seen = S.seen || {}; if (!S.seen.eval) { S.seen.eval = true; evalq.prepend(el('div', { class: 'samtip', html: '<b>Sam:</b> ' + COACH.eval })); }
   const cs = $('#city'); if (!use3d && cs && CITY[p.id]) cs.scrollTo({ left: Math.max(0, (CITY[p.id] / 900) * cs.scrollWidth - cs.clientWidth / 2), behavior: 'smooth' });
@@ -2949,6 +3041,11 @@ const renderBureau2 = renderBureau; renderBureau = function () {
   const inbox = $('#inbox'); if (inbox && S.boost && !inbox.querySelector('.boostbanner')) inbox.prepend(el('div', { class: 'boostbanner' }, '🔥 Perfecte week! Je volgende ontwerp levert dubbel geld op.'));
 };
 
+
+/* ===== v7: laatste maat onthouden + ontwerp in de stad ===== */
+{ const dd = dimDrawing; dimDrawing = function (kind, v, d, ok) { window.__lastDim = { v, d, ok }; return dd(kind, v, d, ok); }; }
+const finishJob7 = finishJob; finishJob = function (j, offline, log) { if (j.look) { S.looks = S.looks || {}; S.looks[j.pid] = j.look; cityKey = ''; } finishJob7(j, offline, log); };
+
 startScreen();
-window.BD = { get S() { return S; }, dirty: () => { dirtyScene = dirtyLists = true; }, PRODUCTS, UPGRADES, openDesign, tick, save, render, showTab, buy, hire, celebrate, checkAch, coach, intro, confetti, get newOrder() { return newOrder; }, get Snd() { return Snd; } };
+window.BD = { get S() { return S; }, dirty: () => { dirtyScene = dirtyLists = true; }, PRODUCTS, UPGRADES, openDesign, tick, save, render, showTab, buy, hire, celebrate, checkAch, coach, intro, confetti, get newOrder() { return newOrder; }, get Snd() { return Snd; }, get Mini3D() { return Mini3D; }, get Scene3D() { return Scene3D; } };
 </script></body></html>
